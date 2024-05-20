@@ -19,7 +19,7 @@ const ListProduct: React.FC = () => {
               <div className='flex justify-between'>
                 <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
                   <img
-                    className='w-full h-full object-cover'
+                    className='object-cover w-full h-full'
                     src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
                     alt=''
                   />
@@ -28,13 +28,12 @@ const ListProduct: React.FC = () => {
 
                 <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
                   <img
-                    className='w-full h-full object-cover'
+                    className='object-cover w-full h-full'
                     src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
                     alt=''
                   />
                   <h1>hêlo</h1>
                 </div>
-                
               </div>
             </nav>
           </div>
