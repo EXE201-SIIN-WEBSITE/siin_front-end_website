@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ListProduct: React.FC = () => {
+const TopSeller: React.FC = () => {
   return (
     <>
       <div className='grid grid-cols-3'>
@@ -43,4 +43,4 @@ const ListProduct: React.FC = () => {
   )
 }
 
-export default ListProduct
+export default TopSeller
