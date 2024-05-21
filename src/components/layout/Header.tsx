@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
               </a>
             </li>
             <li>
-              <a href='/about' className='text-white hover:text-gray-400 text-[20px]'>
+              <a href='/products' className='text-white hover:text-gray-400 text-[20px]'>
                 Sản phẩm
               </a>
             </li>
