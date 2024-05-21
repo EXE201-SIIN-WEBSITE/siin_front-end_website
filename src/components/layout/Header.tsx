@@ -6,8 +6,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
-    <header className='bg-black text-white p-4 w-full'>
-      <div className='container mx-auto flex justify-between  items-center'>
+    <header className='w-full p-4 text-white bg-black'>
+      <div className='container flex items-center justify-between mx-auto'>
         <h1 className='text-[30px] md:text-left ml-[120px]'>{title}</h1>
         <nav className='flex items-center space-x-8 mr-[140px]'>
           <ul className='flex flex-col md:flex-row md:space-x-40 mr-[180px]'>
@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
               </a>
             </li>
             <li>
-              <a href='/about' className='text-white hover:text-gray-400 text-[20px]'>
+              <a href='/products' className='text-white hover:text-gray-400 text-[20px]'>
                 Sản phẩm
               </a>
             </li>
