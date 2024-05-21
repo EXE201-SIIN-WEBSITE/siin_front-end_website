@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 
 const TopSeller: React.FC = () => {
   return (
@@ -9,63 +10,22 @@ const TopSeller: React.FC = () => {
         </div>
         <div className='md:col-span-2'>
           {/* <div className='text-[36px]'>SIIN</div> */}
-          <div className='grid md:grid-cols-3 m-[46px]'>
+          <div className='grid md:grid-cols-2 m-[46px] '>
             <nav className='md:col-span-2'>
-              <ul className='flex justify-around items-center'>
-                <li className='text-[26px] md:w-auto md:inline-block bg-black text-white p-[7px]'>TOP SELLER</li>
+              <ul className='flex text-justify items-center'>
+                {/* <li className='text-[26px] md:w-auto md:inline-block bg-black text-white p-[7px]'>TOP SELLER</li> */}
 
-                <li className='text-[26px]'>GIFT</li>
+                <NavLink to={'topSeller'}>TOP SELLER</NavLink>
+                <NavLink to={'gift'}>
+                  {/* <li className='text-[26px]'>GIFT</li> */}
+                  GIFT
+                </NavLink>
               </ul>
-              <div className='flex justify-between'>
-                <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
-                  <img
-                    className='object-cover w-full h-full'
-                    src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
-                    alt=''
-                  />
-                  <h1>hêlo</h1>
-                </div>
-
-                <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
-                  <img
-                    className='object-cover w-full h-full'
-                    src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
-                    alt=''
-                  />
-                  <h1>hêlo</h1>
-                </div>
-              </div>
             </nav>
           </div>
 
           {/* Top seller product */}
-          <div className='grid md:grid-cols-3 m-[46px] justify-between'>
-            <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
-              <img
-                className='w-full h-full object-cover'
-                src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
-                alt=''
-              />
-              <h1>hêlo</h1>
-            </div>
-
-            <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
-              <img
-                className='w-full h-full object-cover'
-                src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
-                alt=''
-              />
-              <h1>hêlo</h1>
-            </div>
-            <div className='mt-[40px] border-2 p-[20px] w-[200px] h-[220px] shadow-lg'>
-              <img
-                className='w-full h-full object-cover'
-                src='https://img.ws.mms.shopee.vn/9b3bbe137de44ca23ab7b95d98af429b'
-                alt=''
-              />
-              <h1>hêlo</h1>
-            </div>
-          </div>
+          <Outlet />
         </div>
       </div>
     </>
