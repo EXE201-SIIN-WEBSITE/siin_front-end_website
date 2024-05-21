@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 const TopSeller: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const TopSeller: React.FC = () => {
           {/* <div className='text-[36px]'>SIIN</div> */}
           <div className='grid md:grid-cols-2 m-[46px] '>
             <nav className='md:col-span-2'>
-              <ul className='flex text-justify items-center'>
+              <ul className='flex items-center text-justify'>
                 {/* <li className='text-[26px] md:w-auto md:inline-block bg-black text-white p-[7px]'>TOP SELLER</li> */}
 
                 <NavLink to={'topSeller'}>TOP SELLER</NavLink>
