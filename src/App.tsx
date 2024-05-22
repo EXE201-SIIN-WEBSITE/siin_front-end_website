@@ -5,28 +5,35 @@ import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import ProductGift from './components/ProductGift'
 import ListItem from './components/ListItem'
+import CustomizeProduct from './pages/CustomizeProduct'
 import IntroPoduct from './pages/product/IntroPoduct'
 import TopSeller from './components/TopSeller'
 import ProductDetail from './pages/product/ProductDetail'
 
 function App() {
   return (
-    <div className='flex flex-col items-center min-h-screen'>
+    <>
       <Header />
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/products' element={<IntroPoduct />}>
-          <Route index element={<Navigate to='topSeller' />} />
-          <Route path='topSeller' element={<TopSeller />} />
-          <Route path='gift' element={<ProductGift />} />
-        </Route>
-        <Route path='/productdetail' element={<ProductDetail />} />
-        <Route path='/sell' element={<ListItem title='sell' />} />
-        <Route path='*' element={<div>404 Not Found</div>} />
-      </Routes>
+      <body>
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/products' element={<IntroPoduct />}>
+            <Route index element={<Navigate to='topSeller' />} />
+            <Route path='topSeller' element={<TopSeller />} />
+            <Route path='gift' element={<ProductGift />} />
+          </Route>
+          <Route path='/productdetail' element={<ProductDetail />} />
+          <Route path='/sell' element={<ListItem title='sell' />} />
+          <Route path='/buy' element={<ListItem title='buy' />} />
+
+          <Route path='/customize' element={<CustomizeProduct />} />
+
+          <Route path='*' element={<div>404 Not Found</div>} />
+        </Routes>
+      </body>
 
       <Footer />
-    </div>
+    </>
   )
 }
 
