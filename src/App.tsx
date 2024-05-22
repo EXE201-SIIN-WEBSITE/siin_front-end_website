@@ -3,23 +3,22 @@ import './App.css'
 import HomePage from './pages/HomePage'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
-import TopSeller from './pages/product/TopSeller'
-import ProductSeller from './components/ProductSeller'
 import ProductGift from './components/ProductGift'
 import ListItem from './components/ListItem'
 import CustomizeProduct from './pages/CustomizeProduct'
+import IntroPoduct from './pages/product/IntroPoduct'
+import TopSeller from './components/TopSeller'
 
 function App() {
   return (
     <>
       <Header />
-      <body className='w-full'>
-        {' '}
+      <body>
         <Routes>
           <Route path='/' element={<HomePage />} />
-          <Route path='/products' element={<TopSeller />}>
+          <Route path='/products' element={<IntroPoduct />}>
             <Route index element={<Navigate to='topSeller' />} />
-            <Route path='topSeller' element={<ProductSeller />} />
+            <Route path='topSeller' element={<TopSeller />} />
             <Route path='gift' element={<ProductGift />} />
           </Route>
 
