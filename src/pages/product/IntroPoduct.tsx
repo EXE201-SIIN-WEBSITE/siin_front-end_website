@@ -15,13 +15,13 @@ const IntroPoduct: React.FC = () => {
               <ul className='flex md:items-center md:justify-start justify-center  space-x-5  md:text-justify'>
                 {/* <li className='text-[26px] md:w-auto md:inline-block bg-black text-white p-[7px]'>TOP SELLER</li> */}
                 <NavLink
-                  className={({ isActive }) => (!isActive ? ' items-start text-[14px] md:text-[26px]' : 'text-[14px] md:text-[26px] active_tag_product md:p-2')}
+                  className={({ isActive }) => (!isActive ? ' items-start text-[14px] md:text-[26px]' : 'text-[14px] md:text-[26px] active_tag_product md:p-2 p-1')}
                   to={'topSeller'}
                 >
                   TOP SELLER
                 </NavLink>
                 <NavLink
-                  className={({ isActive }) => (!isActive ? 'items-start text-[14px] md:text-[26px]' : 'text-[14px] md:text-[26px] active_tag_product md:p-2')}
+                  className={({ isActive }) => (!isActive ? 'items-start text-[14px] md:text-[26px]' : 'text-[14px] md:text-[26px] active_tag_product md:p-2 p-1')}
                   to={'gift'}
                 >
                   {/* <li className='text-[26px]'>GIFT</li> */}
@@ -32,8 +32,8 @@ const IntroPoduct: React.FC = () => {
             
           </div>
           <Outlet />
-          <div className='flex mt-[16%] items-center justify-center md:row-span-1'>
-          <img className='w-[80%] h-[76px]'  src='../src/assets/banner_voucher.jpg' />
+          <div className='flex mt-[16%] md:mt-[11%] items-center justify-center md:row-span-1'>
+          <img className='md:w-[80%] md:h-[76px] m-5'  src='../src/assets/banner_voucher.jpg' />
           </div>
         </div>
       </div>
