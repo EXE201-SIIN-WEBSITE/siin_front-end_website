@@ -1,10 +1,10 @@
-import { products } from '~/dummyData/product';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import { products } from '~/dummyData/product'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
-const NextArrow = (props:any) => {
-  const { className, style, onClick } = props;
+const NextArrow = (props: any) => {
+  const { className, style, onClick } = props
   return (
     <div
       className={`${className} custom-arrow next-arrow flex items-center justify-center w-8 h-8 bg-black bg-opacity-50 text-white rounded-full absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer z-10`}
@@ -13,11 +13,11 @@ const NextArrow = (props:any) => {
     >
       ➔
     </div>
-  );
-};
+  )
+}
 
-const PrevArrow = (props:any) => {
-  const { className, style, onClick } = props;
+const PrevArrow = (props: any) => {
+  const { className, style, onClick } = props
   return (
     <div
       className={`${className} custom-arrow prev-arrow flex items-left bg-black justify-center w-8 h-8  bg-opacity-50 text-white rounded-full absolute left-[-20px] top-1/2 transform -translate-y-1/2 cursor-pointer z-10`}
@@ -26,8 +26,8 @@ const PrevArrow = (props:any) => {
     >
       ←
     </div>
-  );
-};
+  )
+}
 
 const ProductSeller = () => {
   const settings = {
@@ -45,33 +45,33 @@ const ProductSeller = () => {
           slidesToShow: 2,
           slidesToScroll: 2,
           infinite: true,
-          dots: true,
-        },
+          dots: true
+        }
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          initialSlide: 1,
-        },
-      },
-    ],
-  };
+          initialSlide: 1
+        }
+      }
+    ]
+  }
 
   return (
     <div className='w-full mx-auto overflow-hidden'>
-    <Slider {...settings}>
-      {products.map((item) => (
-        <div className='p-1' key={item.id}>
-          <div className='mt-2  shadow-lg w-[200px] h-[250px]'>
-            <img className='object-cover w-[200px] h-[250px]' src={item.img} alt={item.name} />
+      <Slider {...settings}>
+        {products.map((item) => (
+          <div className='p-1' key={item.id}>
+            <div className='mt-2  shadow-lg w-[200px] h-[250px]'>
+              <img className='object-cover w-[200px] h-[250px]' src={item.img} alt={item.name} />
+            </div>
           </div>
-        </div>
-      ))}
-    </Slider>
-  </div>
-  );
-};
+        ))}
+      </Slider>
+    </div>
+  )
+}
 
-export default ProductSeller;
+export default ProductSeller

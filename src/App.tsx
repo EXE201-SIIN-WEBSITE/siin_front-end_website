@@ -11,26 +11,29 @@ import CustomizeProduct from './pages/CustomizeProduct'
 
 function App() {
   return (
-    <div className='flex flex-col items-center min-h-screen'>
+    <>
       <Header />
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/products' element={<TopSeller />}>
-          <Route index element={<Navigate to='topSeller' />} />
-          <Route path='topSeller' element={<ProductSeller />} />
-          <Route path='gift' element={<ProductGift />} />
-        </Route>
+      <body className='w-full'>
+        {' '}
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/products' element={<TopSeller />}>
+            <Route index element={<Navigate to='topSeller' />} />
+            <Route path='topSeller' element={<ProductSeller />} />
+            <Route path='gift' element={<ProductGift />} />
+          </Route>
 
-        <Route path='/sell' element={<ListItem title='sell' />} />
-        <Route path='/buy' element={<ListItem title='buy' />} />
+          <Route path='/sell' element={<ListItem title='sell' />} />
+          <Route path='/buy' element={<ListItem title='buy' />} />
 
-        <Route path='/customize' element={<CustomizeProduct />} />
+          <Route path='/customize' element={<CustomizeProduct />} />
 
-        <Route path='*' element={<div>404 Not Found</div>} />
-      </Routes>
+          <Route path='*' element={<div>404 Not Found</div>} />
+        </Routes>
+      </body>
 
       <Footer />
-    </div>
+    </>
   )
 }
 
