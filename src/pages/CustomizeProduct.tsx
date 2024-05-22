@@ -8,7 +8,6 @@ import 'swiper/css/effect-coverflow'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { products } from '~/dummyData/product'
-import { log } from 'console'
 
 export default function CustomizeProduct() {
   const swiperRef = useRef<SwiperCore | null>(null)
