@@ -5,3 +5,13 @@
 .active_tag_product {
   @apply bg-black text-white;
 }
+
+.slick-prev::before {
+  color: black;
+  font-size: 40px;
+}
+
+.slick-arrow::before {
+  color: black;
+  font-size: 40px;
+}
