@@ -14,17 +14,22 @@ const TopSeller: React.FC = () => {
             <nav className='md:col-span-2'>
               <ul className='flex items-center text-justify'>
                 {/* <li className='text-[26px] md:w-auto md:inline-block bg-black text-white p-[7px]'>TOP SELLER</li> */}
-
-                <NavLink to={'topSeller'}>TOP SELLER</NavLink>
-                <NavLink to={'gift'}>
+                <NavLink
+                  className={({ isActive }) => (!isActive ? 'text-[26px]' : 'text-[26px] active_tag_product')}
+                  to={'topSeller'}
+                >
+                  TOP SELLER
+                </NavLink>
+                <NavLink
+                  className={({ isActive }) => (!isActive ? 'text-[26px]' : 'text-[26px] active_tag_product')}
+                  to={'gift'}
+                >
                   {/* <li className='text-[26px]'>GIFT</li> */}
                   GIFT
                 </NavLink>
               </ul>
             </nav>
           </div>
-
-          {/* Top seller product */}
           <Outlet />
         </div>
       </div>

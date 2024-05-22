@@ -11,7 +11,7 @@ import ListItem from './components/ListItem'
 function App() {
   return (
     <div className='flex flex-col items-center min-h-screen'>
-      <Header title='SIIN' />
+      <Header />
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/products' element={<TopSeller />}>
