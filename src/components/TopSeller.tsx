@@ -20,7 +20,7 @@ const NextArrow: React.FC<ArrowProps> = ({ onClick, className }) => (
 
 const PrevArrow: React.FC<ArrowProps> = ({ onClick, className }) => (
   <div
-    className={`${className} custom-arrow prev-arrow flex  md:mt-[140px] w-12 h-12 absolute 
+    className={`${className} custom-arrow prev-arrow flex md:mt-[140px] w-12 h-12 absolute 
     bottom-[-1.5rem] md:left-[28%] left-[15%] transform -translate-x-1/2 cursor-pointer z-10`}
     onClick={onClick}
   >
@@ -66,8 +66,8 @@ const TopSeller = () => {
             {/* <div className='flex md:mt-2 shadow-lg  md:w-[200px] flex-col justify-center s '>
               <img className='object-cover w-[180px] h-[180px]' src={item.img} alt={item.name} />
             </div> */}
-            <div className='flex my-2 md:shadow-lg md:w-[200px] flex-col justify-center items-center'>
-              <div className='flex md:mt-2 shadow-lg  md:w-[200px] items-center justify-center'>
+            <div className='flex my-2 md:shadow-lg md:w-[180px] flex-col justify-center items-center'>
+              <div className='flex md:mt-2 shadow-lg  md:w-[180px] items-center justify-center'>
                 <img className='object-cover w-[180px] h-[180px]' src={item.img} alt={item.name} />
               </div>
               <div className='md:hidden'>{item.name}</div>

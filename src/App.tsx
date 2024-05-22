@@ -8,6 +8,7 @@ import ListItem from './components/ListItem'
 import CustomizeProduct from './pages/CustomizeProduct'
 import IntroPoduct from './pages/product/IntroPoduct'
 import TopSeller from './components/TopSeller'
+import ProductDetail from './pages/product/ProductDetail'
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
             <Route path='topSeller' element={<TopSeller />} />
             <Route path='gift' element={<ProductGift />} />
           </Route>
-
+          <Route path='/productdetail' element={<ProductDetail />} />
           <Route path='/sell' element={<ListItem title='sell' />} />
           <Route path='/buy' element={<ListItem title='buy' />} />
 
