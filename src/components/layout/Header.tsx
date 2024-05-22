@@ -1,42 +1,41 @@
-import React from 'react'
+import Logo from '../Logo'
 
-interface HeaderProps {
-  title: string
-}
-
-export const Header: React.FC<HeaderProps> = ({ title }) => {
+export const Header = () => {
   return (
-    <header className='w-full p-4 text-white bg-black'>
-      <div className='container flex items-center justify-between mx-auto'>
-        <h1 className='text-[30px] md:text-left ml-[120px]'>{title}</h1>
-        <nav className='flex items-center space-x-8 mr-[140px]'>
-          <ul className='flex flex-col md:flex-row md:space-x-40 mr-[180px]'>
+    <header className='w-full text-white bg-black'>
+      <div className='container flex items-center justify-around mx-auto'>
+        <div className='flex justify-start basis-2/12'>
+          <Logo />
+        </div>
+
+        <nav className='flex items-center justify-end basis-8/12'>
+          <ul className='flex items-center w-full justify-evenly'>
             <li>
-              <a href='/' className='text-white hover:text-gray-400 size-7 text-[20px]'>
+              <a href='/' className='text-white hover:text-gray-400 size-7 sm:text-[20px] lg:text-[24px]'>
                 Trang chủ
               </a>
             </li>
             <li>
-              <a href='/products' className='text-white hover:text-gray-400 text-[20px]'>
+              <a href='/products' className='text-white hover:text-gray-400 sm:text-[20px] lg:text-[24px]'>
                 Sản phẩm
               </a>
             </li>
             <li>
-              <a href='/contact' className='text-white hover:text-gray-400 text-[20px]'>
+              <a href='/contact' className='text-white hover:text-gray-400 sm:text-[20px] lg:text-[24px]'>
                 Customize
               </a>
             </li>
           </ul>
-
-          <div className='flex flex-col md:flex-row md:space-x-10'>
-            <a href='/cart' className='text-white hover:text-gray-400 text-[20px]'>
-              <i className='fa-solid fa-cart-shopping'></i>
-            </a>
-            <a href='/account' className='text-white hover:text-gray-400 text-[20px]'>
-              <i className='fa-solid fa-circle-user'></i>
-            </a>
-          </div>
         </nav>
+
+        <div className='flex gap-4 sm:justify-around lg:justify-evenly basis-2/12'>
+          <a href='/cart' className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>
+            <i className='fa-solid fa-cart-shopping'></i>
+          </a>
+          <a href='/account' className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>
+            <i className='fa-solid fa-circle-user'></i>
+          </a>
+        </div>
       </div>
     </header>
   )
