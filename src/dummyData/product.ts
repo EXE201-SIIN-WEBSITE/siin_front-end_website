@@ -5,7 +5,7 @@ export const products: product[] = [
     id: 1,
     name: 'Apple iPhone 13',
     quantity: 50,
-    img: 'src/assets/toppng.com-white-titanium-apple-iphone-15-pro-max-front-and-back-views-in-png-6400x6400.png',
+    img: '../src/assets/toppng.com-white-titanium-apple-iphone-15-pro-max-front-and-back-views-in-png-6400x6400.png',
     price: 999.99,
     description: 'Latest model with A15 Bionic chip',
     status: true
