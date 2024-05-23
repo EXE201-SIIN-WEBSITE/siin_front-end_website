@@ -6,7 +6,14 @@ export default {
   // purge: ['./public/**/*.html', './src/**/*.{js,jsx,ts,tsx,vue}'],
   purge: ['./public/**/*.html', './src/**/*.{js,jsx,ts,tsx,vue}'],
   theme: {
-    extend: {}
+    extend: {
+      gridTemplateColumns: {
+        'custom': 'repeat(6, minmax(0, 1fr))',
+      },
+      gridColumn: {
+        'span-1.5': 'span 3 / span 3',
+      },
+    }
   },
   plugins: []
 }
