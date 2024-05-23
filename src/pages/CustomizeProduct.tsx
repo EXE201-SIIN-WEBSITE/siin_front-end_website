@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Swiper as SwiperCore } from 'swiper/types'
-import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules'
+import { EffectCoverflow, Navigation } from 'swiper/modules'
 
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
@@ -51,25 +51,32 @@ export default function CustomizeProduct() {
   }
 
   return (
-    <div className='flex flex-col md:flex-row min-h-screen px-[1%]'>
-      <div className='slider-container basis-[55%] bg-slate-600 grid grid-rows-6 '>
+    <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
+      <div className='slider-container basis-[55%] grid grid-rows-6 '>
         <div className='row-span-2'></div>
         <Swiper
+          speed={500}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
-          className='swiper-container h-[80%] w-full relative row-span-4'
+          className='h-[80%] w-full relative row-span-4'
           effect={'coverflow'}
           grabCursor={true}
           centeredSlides={true}
           slidesPerView={'auto'}
           coverflowEffect={{
             rotate: 0,
-            stretch: 0,
-            depth: 100,
-            modifier: 2.5
+            stretch: 100,
+            depth: 0,
+            modifier: 1,
+            scale: 0.8,
+            slideShadows: false
           }}
-          pagination={{ el: '', clickable: true }}
+          breakpoints={{
+            640: {},
+            768: {},
+            1024: {}
+          }}
           navigation={{ nextEl: '.next-slide-controller', prevEl: '.back-slide-controller' }}
-          modules={[EffectCoverflow, Pagination, Navigation]}
+          modules={[EffectCoverflow, Navigation]}
         >
           {products.map((product, index) => (
             <SwiperSlide key={index} className='w-[50%] h-full'>
@@ -101,8 +108,8 @@ export default function CustomizeProduct() {
         </div>
       </div>
 
-      <div className='flex flex-col items-center justify-center bg-gray-800 customize basis-[45%] gap-2'>
-        <div className='border-solid border-red-800 w-[90%] bg-zinc-500 h-[80%] border-2 py-[2%]'>
+      <div className='flex flex-col items-center justify-center  customize basis-[45%] gap-2 my-3'>
+        <div className='border-solid border-black w-[90%]  h-[80%] border-2 py-[2%]'>
           <div className='flex flex-col w-full h-full gap-10 text-center justify-evenly item-center'>
             <div className='w-1/2 relative after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] text-4xl font-bold mx-auto after:lg:w-96 after:sm:w-40'>
               Customize
@@ -123,16 +130,16 @@ export default function CustomizeProduct() {
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Item:</label>
               <div className='flex justify-center gap-8 colorbutton'>
-                <img className='w-16 h-16 bg-white' alt='' />
-                <img className='w-16 h-16 bg-white' alt='' />
-                <img className='w-16 h-16 bg-white' alt='' />
+                <img className='w-16 h-16 bg-gray-50' alt='' />
+                <img className='w-16 h-16 bg-gray-50' alt='' />
+                <img className='w-16 h-16 bg-gray-50' alt='' />
               </div>
             </div>
             <div className='flex items-center justify-evenly'>
               <div className='flex gap-10 size'>
-                <button className='w-8 h-8 bg-white'></button>
-                <button className='w-8 h-8 bg-white'></button>
-                <button className='w-8 h-8 bg-white'></button>
+                <button className='w-8 h-8 bg-gray-300'></button>
+                <button className='w-8 h-8 bg-gray-300'></button>
+                <button className='w-8 h-8 bg-gray-500'></button>
               </div>
               <div className='text-3xl'>|</div>
 
@@ -144,7 +151,7 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
-        <button className='p-4 addtocart bg-zinc-700'>Them vao gio hàng</button>
+        <button className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>Them vao gio hàng</button>
       </div>
     </div>
   )
