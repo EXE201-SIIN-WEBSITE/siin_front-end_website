@@ -5,11 +5,11 @@ const Footer: React.FC = () => {
   return (
     <footer className='w-full p-6 text-white bg-black'>
       <div className='grid items-start justify-around grid-flow-col'>
-        <div className='md:hidden lg:block'>
+        <div className='hidden lg:block'>
           <Logo />
         </div>
 
-        <div className='flex flex-col gap-3'>
+        <div className='flex flex-col gap-3 px-5'>
           <h1>Liên hệ</h1>
           <div className='flex items-center gap-2'>
             <i className='fa-solid fa-envelope'></i>
