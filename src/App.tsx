@@ -9,6 +9,7 @@ import CustomizeProduct from './pages/CustomizeProduct'
 import IntroPoduct from './pages/product/IntroPoduct'
 import TopSeller from './components/TopSeller'
 import ProductDetail from './pages/product/ProductDetail'
+import Cart from './pages/Cart'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/buy' element={<ListItem title='buy' />} />
 
           <Route path='/customize' element={<CustomizeProduct />} />
+          <Route path='/cart' element={<Cart />} />
 
           <Route path='*' element={<div>404 Not Found</div>} />
         </Routes>
