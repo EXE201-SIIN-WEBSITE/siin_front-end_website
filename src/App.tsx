@@ -15,24 +15,22 @@ function App() {
   return (
     <>
       <Header />
-      <body>
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/products' element={<IntroPoduct />}>
-            <Route index element={<Navigate to='topSeller' />} />
-            <Route path='topSeller' element={<TopSeller />} />
-            <Route path='gift' element={<ProductGift />} />
-          </Route>
-          <Route path='/productdetail' element={<ProductDetail />} />
-          <Route path='/sell' element={<ListItem title='sell' />} />
-          <Route path='/buy' element={<ListItem title='buy' />} />
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/products' element={<IntroPoduct />}>
+          <Route index element={<Navigate to='topSeller' />} />
+          <Route path='topSeller' element={<TopSeller />} />
+          <Route path='gift' element={<ProductGift />} />
+        </Route>
+        <Route path='/productdetail' element={<ProductDetail />} />
+        <Route path='/sell' element={<ListItem title='sell' />} />
+        <Route path='/buy' element={<ListItem title='buy' />} />
 
-          <Route path='/customize' element={<CustomizeProduct />} />
-          <Route path='/cart' element={<Cart />} />
+        <Route path='/customize' element={<CustomizeProduct />} />
+        <Route path='/cart' element={<Cart />} />
 
-          <Route path='*' element={<div>404 Not Found</div>} />
-        </Routes>
-      </body>
+        <Route path='*' element={<div>404 Not Found</div>} />
+      </Routes>
 
       <Footer />
     </>

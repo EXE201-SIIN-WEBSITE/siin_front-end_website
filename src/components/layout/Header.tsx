@@ -33,10 +33,8 @@ export const Header = () => {
         </nav>
 
         <div className='flex gap-4 sm:justify-around lg:justify-evenly basis-2/12'>
-          <NavLink to={'cart'}>
-            <a href='' className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>
-              <i className='fa-solid fa-cart-shopping hover:text-gray-400 sm:text-[20px] text-[24px]'></i>
-            </a>
+          <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'cart'}>
+            <i className='fa-solid fa-cart-shopping hover:text-gray-400 sm:text-[20px] text-[24px]'></i>
           </NavLink>
           <a href='/account' className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>
             <i className='fa-solid fa-circle-user'></i>

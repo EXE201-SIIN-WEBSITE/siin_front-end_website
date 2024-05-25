@@ -4,5 +4,3 @@ export interface imageColor {
   img: string
   status?: boolean
 }
-
-
