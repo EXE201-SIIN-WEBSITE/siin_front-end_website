@@ -1,5 +1,5 @@
-import Slider from "react-slick"
-import { products } from "~/dummyData/product"
+import Slider from 'react-slick'
+import { products } from '~/dummyData/product'
 
 interface ArrowProps {
   onClick?: () => void
