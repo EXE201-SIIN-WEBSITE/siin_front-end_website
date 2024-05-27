@@ -5,7 +5,7 @@ import { products } from '~/dummyData/product'
 import useKey from '~/hooks/useKey'
 
 const Cart = () => {
-  const [formOrder, setFormOrder] = useState(false)
+  const [formOrder, setFormOrder] = useState(false);
 
   const totalPrice = products.reduce((total, product) => total + product.price, 0)
 
