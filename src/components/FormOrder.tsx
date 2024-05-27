@@ -42,20 +42,20 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
         {isThankYou ? (
           <div className='w-[600px] h-auto'>
             <div className='flex justify-between'>
-              <img className='md:w-[58px] md:h-48px]' src='./src/assets/logoform.png' alt='' />
+              <img className='md:w-[58px] md:h-48px]' src='./assets/logoform.png' alt='' />
               <div>
                 <i
-                  className='fa-solid fa-xmark flex items-center md:mt-1 px-3 py-1 rounded-md text-white bg-black custom-button custom-button:hover'
+                  className='flex items-center px-3 py-1 text-white bg-black rounded-md fa-solid fa-xmark md:mt-1 custom-button custom-button:hover'
                   onClick={toggleFormOrder}
                 ></i>
               </div>
             </div>
-            <div className='flex justify-center items-center flex-col p-4'>
-              <h2 className='text-2xl font-bold mb-4'>Hoàn thành - Cảm ơn!</h2>
+            <div className='flex flex-col items-center justify-center p-4'>
+              <h2 className='mb-4 text-2xl font-bold'>Hoàn thành - Cảm ơn!</h2>
               <p className='mb-4'>
                 Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.
               </p>
-              <div className=' p-2 bg-black text-white rounded-md  custom-button custom-button:hover m-4'>
+              <div className='p-2 m-4 text-white bg-black rounded-md custom-button custom-button:hover'>
                 <a>Xem lại đơn đặt hàng của bạn</a>
               </div>
               <button
@@ -71,16 +71,16 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
             {isOrderForm ? (
               <>
                 <div className='flex justify-between'>
-                  <img className='md:w-[58px] md:h-48px]' src='./src/assets/logoform.png' alt='' />
+                  <img className='md:w-[58px] md:h-48px]' src='./assets/logoform.png' alt='' />
                   <div>
                     <i
-                      className='fa-solid fa-xmark flex items-center md:mt-1 px-3 py-1 rounded-md text-white bg-black custom-button custom-button:hover'
+                      className='flex items-center px-3 py-1 text-white bg-black rounded-md fa-solid fa-xmark md:mt-1 custom-button custom-button:hover'
                       onClick={toggleFormOrder}
                     ></i>
                   </div>
                 </div>
                 <div>
-                  <div className='grid md:grid-cols-4 m-2 items-center mb-4'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
                     <div className='col-span-1'>
                       <label htmlFor='name' className='mb-2 font-bold text-gray-700'>
                         Họ và tên
@@ -96,7 +96,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                     </div>
                   </div>
 
-                  <div className='grid md:grid-cols-4 m-2 items-center mb-4'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
                     <div className='col-span-1'>
                       <label htmlFor='email' className='mb-2 font-bold text-gray-700'>
                         Email
@@ -112,7 +112,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                     </div>
                   </div>
 
-                  <div className='grid md:grid-cols-4 m-2 items-center mb-4'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
                     <div className='col-span-1'>
                       <label htmlFor='phone' className='mb-2 font-bold text-gray-700'>
                         Số điện thoại
@@ -129,7 +129,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                   </div>
 
                   <div className='grid md:grid-cols-3'>
-                    <div className='m-2 items-center mb-4'>
+                    <div className='items-center m-2 mb-4'>
                       <select
                         id='province'
                         name='province'
@@ -140,7 +140,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         <option value='location3'>Địa chỉ 3</option>
                       </select>
                     </div>
-                    <div className='m-2 items-center mb-4'>
+                    <div className='items-center m-2 mb-4'>
                       <select
                         id='district'
                         name='district'
@@ -151,7 +151,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         <option value='location3'>Địa chỉ 3</option>
                       </select>
                     </div>
-                    <div className='m-2 items-center mb-4'>
+                    <div className='items-center m-2 mb-4'>
                       <select
                         id='ward'
                         name='ward'
@@ -164,7 +164,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                     </div>
                   </div>
 
-                  <div className='grid md:grid-cols-4 m-2 items-center mb-4'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
                     <div className='col-span-1'>
                       <label htmlFor='address' className='mb-2 font-bold text-gray-700'>
                         Địa chỉ
@@ -180,7 +180,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                     </div>
                   </div>
 
-                  <div className='grid md:grid-cols-4 m-2 items-center mb-4'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
                     <div className='col-span-1'>
                       <label htmlFor='note' className='mb-2 font-bold text-gray-700'>
                         Ghi chú
@@ -209,17 +209,17 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
             ) : (
               <>
                 <div className='flex justify-between'>
-                  <img className='md:w-[58px] md:h-48px]' src='./src/assets/logoform.png' alt='' />
+                  <img className='md:w-[58px] md:h-48px]' src='./assets/logoform.png' alt='' />
                   <div>
                     <i
-                      className='fa-solid fa-xmark flex items-center md:mt-1 px-3 py-1 rounded-md text-white bg-black custom-button custom-button:hover'
+                      className='flex items-center px-3 py-1 text-white bg-black rounded-md fa-solid fa-xmark md:mt-1 custom-button custom-button:hover'
                       onClick={toggleFormOrder}
                     ></i>
                   </div>
                 </div>
                 <div className='m-2'>
-                  <h2 className='flex justify-center text-xl font-bolds mb-4'>Phương Thức Thanh Toán</h2>
-                  <div className='flex md:justify-evenly m-4'>
+                  <h2 className='flex justify-center mb-4 text-xl font-bolds'>Phương Thức Thanh Toán</h2>
+                  <div className='flex m-4 md:justify-evenly'>
                     <div
                       className={`border-2 px-3 ${paymentMethod === 'online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
                     >
@@ -240,7 +240,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                     <div>
                       {paymentMethod === 'online' && (
                         <div>
-                          <img src='./src/assets/qr.png' alt='QR Code' className='w-32 h-32' />
+                          <img src='/assets/qr.png' alt='QR Code' className='w-32 h-32' />
                         </div>
                       )}
                     </div>
