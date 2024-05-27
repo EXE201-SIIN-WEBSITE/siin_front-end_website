@@ -23,8 +23,8 @@ function App() {
           <Route path='gift' element={<ProductGift />} />
         </Route>
         <Route path='/productdetail' element={<ProductDetail />} />
-        <Route path='/sell' element={<ListItem title='sell' />} />
-        <Route path='/buy' element={<ListItem title='buy' />} />
+        <Route path='/products/sell' element={<ListItem title='sell' />} />
+        <Route path='/products/buy' element={<ListItem title='buy' />} />
 
         <Route path='/customize' element={<CustomizeProduct />} />
         <Route path='/cart' element={<Cart />} />
