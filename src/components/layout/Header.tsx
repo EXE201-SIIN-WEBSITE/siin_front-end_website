@@ -24,16 +24,16 @@ const Header = () => {
               onMouseEnter={() => setIsProductsHovered(true)}
               onMouseLeave={() => setIsProductsHovered(false)}
               to={'products'}
-              className='text-white hover:text-gray-400 size-7 sm:text-[20px] lg:text-[24px] text-nowrap relative'
+              className='text-white hover:text-gray-400 size-7 hover:scale-105 translate-x-1  sm:text-[20px] lg:text-[24px] text-nowrap relative'
             >
               Sản Phẩm
               {isProductsHovered && (
-                <div className='absolute left-0 z-10 py-2 text-white bg-black rounded-md min-w-fit top-full'>
-                  <Link to='/products/sell' className='block px-4 py-2 hover:bg-gray-200'>
-                    Sell
+                <div className='absolute left-0 z-10 py-2 text-white md:h-[112px]  bg-black rounded-md md:w-[105px] top-full'>
+                  <Link to='/sell' className='block px-4 py-2 hover:bg-white hover:text-black'>
+                    SELL
                   </Link>
-                  <Link to='/products/buy' className='block px-4 py-2 hover:bg-gray-200'>
-                    BUY
+                  <Link to='/buy' className='block px-4 py-2 hover:bg-white hover:text-black'>
+                    DIY
                   </Link>
                 </div>
               )}
