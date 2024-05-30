@@ -2,6 +2,12 @@ import { products } from '~/dummyData/product'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { useEffect } from 'react'
+import { getProducts } from '~/redux/actions/product.action'
+import { useSelector } from 'react-redux'
+import { product } from '~/types/product.type'
+import { Link } from 'react-router-dom'
 
 interface ArrowProps {
   onClick?: () => void
@@ -29,6 +35,28 @@ const PrevArrow: React.FC<ArrowProps> = ({ onClick, className }) => (
 )
 
 const TopSeller = () => {
+  const productData = useSelector((state: RootState) => state.product.productList)
+  const dispatch = useAppDispatch()
+  // useEffect(() => {
+  //   const promise = dispatch(getProduct)
+  // }, [dispatch])
+  // console.log('data: ', productData)
+
+  const formatPriceToVND = (price: number): string => {
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  }
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
+    dispatch(getProducts({ signal }))
+
+    return () => {
+      abortController.abort()
+    }
+  }, [dispatch])
+
   const settings = {
     dots: false,
     infinite: true,
@@ -61,16 +89,27 @@ const TopSeller = () => {
   return (
     <div className='w-full'>
       <Slider {...settings}>
-        {products.map((item) => (
+        {productData.map((item: product) => (
           <div className='md:p-1' key={item.id}>
-            {/* <div className='flex md:mt-2 shadow-lg  md:w-[200px] flex-col justify-center s '>
-              <img className='object-cover w-[180px] h-[180px]' src={item.img} alt={item.name} />
-            </div> */}
-            <div className='flex my-2 md:shadow-lg md:w-[180px] flex-col justify-center items-center'>
-              <div className='flex md:mt-2 shadow-lg  md:w-[180px] items-center justify-center'>
-                <img className='object-cover w-[180px] h-[180px]' src={item.img} alt={item.name} />
+            <div className='group flex my-2 md:shadow-lg md:w-[180px] flex-col justify-center items-center'>
+              <div className='relative overflow-hidden'>
+                <img
+                  className='object-cover w-[180px] h-[180px] transform transition-transform duration-300 group-hover:scale-110'
+                  src={item.coverImage}
+                  alt={item.name}
+                />
+                <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                  <div className='grid grid-rows-2'>
+                    <Link to={`/productdetail/${item.id}`}>
+                    <span className='flex text-white text-lg justify-center items-center'>{item.name}</span>
+                    </Link>
+                    <span className='flex text-white text-lg justify-center items-center'>
+                      {item.price !== undefined && formatPriceToVND(item.price)}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className='md:hidden'>{item.name}</div>
+              <div className='md:hidden mt-2'>{item.name}</div>
             </div>
           </div>
         ))}

@@ -1,15 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { imageType } from '~/dummyData/images'
+import { getProductDetail } from '~/redux/actions/product.action'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
 
 const ProductDetail = () => {
+  const { id } = useParams<{ id: string }>()
+  const numericId = id ? parseInt(id, 10) : NaN
   const [activeButton, setActiveButton] = useState<string | null>(null)
+  const productDetail = useSelector((state: RootState) => state.product.productDetail)
+  const dispatch = useAppDispatch()
+  console.log('detail: ', productDetail)
+  const formatPriceToVND = (price: number): string => {
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  }
+  useEffect(() => {
+   
+
+      dispatch(getProductDetail(numericId))
+
+    
+  }, [dispatch, numericId])
 
   const handleClick = (button: string) => {
     setActiveButton(button)
   }
-  
+
   return (
     <>
+      {productDetail ? (
       <div className='grid md:grid-cols-2  grid-cols-1 md:mt-9'>
         <div className='md:col-span-1 mt-6'>
           <div className='grid md:grid-cols-7 sm:grid-cols-4 grid-cols-4 md:gap-2 gap-y-2 md:w-[60%] md:h-[64%] md:ml-[220px]'>
@@ -34,17 +54,17 @@ const ProductDetail = () => {
             <div className='border-l-2 shadow-2xl border-black h-[80%] md:my-[13%]'></div>
           </div>
           <div className='md:col-span-2 md:justify-end md:items-end md:mt-[8%]'>
-            <h1 className='flex md:text-2xl md:mt-0 mt-7 md:justify-start  justify-center font-bold mb-2'>Vòng tay SUMMER NG.UESTOLIAS 020901</h1>
+            <h1 className='flex md:text-2xl md:mt-0 mt-7 md:justify-start  justify-center font-bold mb-2'>
+              {productDetail?.name}
+            </h1>
             <span className='flex md:justify-start justify-center'>Sản phẩm liên quan</span>
             <div className='border-b-[1px] shadow-2xl border-black w-[100%] md:w-[95%] my-2'></div>
             <div className='flex gap-3 sm:justify-center items-center my-[25px]'>
-
               {imageType.map((image) => (
-                <button className='md:h-20 md:w-20 mr-[1px] h-[64px] w-[64px]  ' key={image.id}>
-                    <img src={image.img} alt="Image color" />
+                <button className='md:h-20 md:w-20 mr-[1px] h-[64px] w-[64px]' key={image.id}>
+                  <img src={image.img} alt='Image color' />
                 </button>
               ))}
-
             </div>
 
             {/* SIZE ITEM */}
@@ -81,11 +101,14 @@ const ProductDetail = () => {
 
             <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
             <div className='flex justify-center mb-[40px]'>
-              <h3 className='md:text-2xl text-xl'>Thành tiền: 250.000đ</h3>
+              <h3 className='md:text-2xl text-xl'>Thành tiền: {productDetail?.price !== undefined && formatPriceToVND(productDetail?.price)}</h3>
             </div>
           </div>
         </div>
       </div>
+      ) : (
+        <h2>fail</h2>
+      )}
     </>
   )
 }

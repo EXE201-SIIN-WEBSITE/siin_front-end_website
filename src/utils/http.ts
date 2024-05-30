@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 
-const url = 'https://exe201-backend.up.railway.app/api/v1/'
+const url = 'http://172.188.64.221:8080/api/v1'
 
 class Http {
   instance: AxiosInstance
