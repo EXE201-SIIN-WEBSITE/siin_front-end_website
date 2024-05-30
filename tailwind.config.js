@@ -8,11 +8,11 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
-        'custom': 'repeat(6, minmax(0, 1fr))',
+        custom: 'repeat(6, minmax(0, 1fr))'
       },
       gridColumn: {
-        'span-1.5': 'span 3 / span 3',
-      },
+        'span-1.5': 'span 3 / span 3'
+      }
     }
   },
   plugins: []
