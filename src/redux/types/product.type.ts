@@ -1,5 +1,4 @@
-import { product } from "~/types/product.type";
-
+import { product } from '~/types/product.type'
 
 export interface ProductState {
   productList: product[]
@@ -7,8 +6,7 @@ export interface ProductState {
   // editProduct: product | null
   loading: boolean
   currentRequestId: undefined | string
-  error: any
-
+  error: unknown
 }
 
 export const initialProductState: ProductState = {

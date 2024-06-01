@@ -1,15 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react'
 import '../components/animation/formOrder.css'
+import { orderDetail } from '~/types/orderDetail.type'
+import { useAppDispatch } from '~/redux/containers/store'
+import { createOrderDetail } from '~/redux/actions/orderDetail.action'
+import { orderItem } from '~/types/orderItem.type'
+import { CartItem } from '~/types/product.type'
+import { createOrderItem } from '~/redux/actions/orderItem.action'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
+  totalPrice: number
 }
 
-const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
+const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) => {
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
   const [isThankYou, setIsThankYou] = useState(false)
+  const dispatch = useAppDispatch()
+
+  const [orderDetail, setOrderDetail] = useState<Omit<orderDetail, 'id'>>({
+    total: totalPrice,
+    orderStatus: 'Xác nhận đơn hàng',
+    status: true,
+    nameCustomer: '',
+    phone: '',
+    province: '',
+    district: '',
+    ward: '',
+    address: '',
+    email: '',
+    note: '',
+    userId: 0
+  })
+
+  const getData = (e: any) => {
+    setOrderDetail({ ...orderDetail, [e.target.name]: e.target.value })
+  }
+
+  console.log('data inserted: ', orderDetail)
 
   const handleClickOutside = (e: MouseEvent) => {
     if (elModal.current && !elModal.current.contains(e.target as Node)) {
@@ -24,10 +53,49 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsOrderForm(false)
-  }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   dispatch(createOrderDetail(orderDetail))
+  //   setIsOrderForm(false)
+  // }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const action = await dispatch(createOrderDetail(orderDetail));
+      if (createOrderDetail.fulfilled.match(action)) {
+        const createdOrderDetail = action.payload;
+        console.log('PAYLOAD: ', action.payload);
+        
+        const orderDetailId = createdOrderDetail.id;
+        console.log('IDIDIDID: ', orderDetailId);
+
+
+        // Retrieve cart items from localStorage
+        const cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+        // Create order items for each item in the cart
+        for (const item of cartItems) {
+          const orderItemData: orderItem = {
+            id: 0,
+            quantity: item.quantity,
+            price: item.price,
+            productId: item.id,
+            orderDetailId: orderDetailId,
+            status: true
+          };
+          await dispatch(createOrderItem(orderItemData));
+        }
+        
+        setIsOrderForm(false);
+      } else {
+        console.error('Failed to create order detail:', action.payload);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method)
   }
@@ -90,7 +158,8 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                       <input
                         type='text'
                         id='name'
-                        name='name'
+                        name='nameCustomer'
+                        onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA]  rounded-md'
                       />
                     </div>
@@ -107,6 +176,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         type='email'
                         id='email'
                         name='email'
+                        onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       />
                     </div>
@@ -123,6 +193,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         type='tel'
                         id='phone'
                         name='phone'
+                        onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       />
                     </div>
@@ -133,6 +204,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                       <select
                         id='province'
                         name='province'
+                        onChange={getData}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       >
                         <option value='location1'>Tỉnh/Thành</option>
@@ -144,6 +216,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                       <select
                         id='district'
                         name='district'
+                        onChange={getData}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       >
                         <option value='location1'>Quận/Huyện</option>
@@ -155,6 +228,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                       <select
                         id='ward'
                         name='ward'
+                        onChange={getData}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       >
                         <option value='location1'>Phường/Xã</option>
@@ -175,6 +249,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         type='text'
                         id='address'
                         name='address'
+                        onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300 rounded-md bg-[#AAAAAA]'
                       />
                     </div>
@@ -191,6 +266,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder }) => {
                         type='text'
                         id='note'
                         name='note'
+                        onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300  bg-[#AAAAAA] rounded-md'
                       />
                     </div>
