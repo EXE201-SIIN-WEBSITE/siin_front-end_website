@@ -101,9 +101,9 @@ const TopSeller = () => {
                 <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
                   <div className='grid grid-rows-2'>
                     <Link to={`/productdetail/${item.id}`}>
-                    <span className='flex text-white text-lg justify-center items-center'>{item.name}</span>
+                    <span className='flex text-white text-sm ml-3'>{item.name}</span>
                     </Link>
-                    <span className='flex text-white text-lg justify-center items-center'>
+                    <span className='flex text-white text-sm justify-center items-center'>
                       {item.price !== undefined && formatPriceToVND(item.price)}
                     </span>
                   </div>

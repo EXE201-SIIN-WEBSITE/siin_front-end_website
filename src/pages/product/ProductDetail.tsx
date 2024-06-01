@@ -3,25 +3,84 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { imageType } from '~/dummyData/images'
 import { getProductDetail } from '~/redux/actions/product.action'
+import { getSubImageByProId } from '~/redux/actions/subImage.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { CartItem } from '~/types/product.type'
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
   const numericId = id ? parseInt(id, 10) : NaN
   const [activeButton, setActiveButton] = useState<string | null>(null)
   const productDetail = useSelector((state: RootState) => state.product.productDetail)
+  const subImage = useSelector((state: RootState) => state.subImage.subImageList)
+  const [quantity, setQuantity] = useState(1)
+  const [totalPrice, setTotalPrice] = useState(0)
+  
+
   const dispatch = useAppDispatch()
-  console.log('detail: ', productDetail)
+  // console.log('detail: ', productDetail)
+
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
   useEffect(() => {
     dispatch(getProductDetail(numericId))
+    dispatch(getSubImageByProId(numericId))
   }, [dispatch, numericId])
+
+  useEffect(() => {
+    if (productDetail && productDetail.price !== undefined) {
+      setTotalPrice(quantity * productDetail.price)
+    }
+  }, [productDetail, quantity])
+
+  const handleIncrease = () => {
+    const newQuantity = quantity + 1
+    setQuantity(newQuantity)
+    setTotalPrice(newQuantity * (productDetail?.price || 0))
+  }
+
+  const handleDecrease = () => {
+    if (quantity > 0) {
+      const newQuantity = quantity - 1
+      setQuantity(newQuantity)
+      setTotalPrice(newQuantity * (productDetail?.price || 0))
+    }
+  }
+
+
+  const addToCart = () => {
+    if (productDetail) {
+      const productInCart: CartItem = {
+        id: productDetail.id,
+        name: productDetail.name,
+        price: productDetail.price || 0,
+        image: productDetail.coverImage,
+        quantity: quantity,
+      };
+
+      let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const existingProductIndex = cartItems.findIndex((item) => item.id === productInCart.id);
+
+      if (existingProductIndex !== -1) {
+        cartItems[existingProductIndex].quantity += productInCart.quantity;
+      } else {
+        cartItems.push(productInCart);
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      console.log('productInCart:', productInCart);
+    }
+  };
 
   const handleClick = (button: string) => {
     setActiveButton(button)
   }
+
+ const filteredSubImages = Array.isArray(subImage)
+    ? subImage.filter((image) => image.status).slice(0, 4)
+    : []
+
 
   return (
     <>
@@ -29,18 +88,26 @@ const ProductDetail = () => {
         <div className='grid md:grid-cols-2  grid-cols-1 md:mt-9'>
           <div className='md:col-span-1 mt-6'>
             <div className='grid md:grid-cols-7 sm:grid-cols-4 grid-cols-4 md:gap-2 gap-y-2 md:w-[60%] md:h-[64%] md:ml-[220px]'>
-              <div className='md:col-span-1.5 md:row-span-1 sm:col-span-1  col-span-2 flex justify-center items-center'>
-                <img className='md:h-full md:w-full h-[200px] w-[180px]' src='../src/assets/p1.png' alt='' />
-              </div>
-              <div className='md:col-span-4 md:row-span-2 col-span-2 sm:col-span-1 flex justify-center items-center'>
-                <img className='md:h-full md:w-full h-[200px] w-[180px]' src='../src/assets/p2.png' alt='' />
-              </div>
-              <div className='md:col-span-1.5 md:row-span-2 col-span-2 sm:col-span-1 flex justify-center items-center'>
-                <img className='md:h-full md:w-full h-[200px] w-[180px]' src='../src/assets/p3.png' alt='' />
-              </div>
-              <div className='md:col-span-4 md:row-span-1 col-span-2 sm:col-span-1 flex justify-center items-center'>
-                <img className='md:h-full md:w-full h-[200px] w-[180px]' src='../src/assets/p4.png' alt='' />
-              </div>
+              {filteredSubImages.map((image, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    index === 0
+                      ? 'md:col-span-1.5 md:row-span-1 sm:col-span-1 col-span-2'
+                      : index === 1
+                        ? 'md:col-span-4 md:row-span-2 col-span-2 sm:col-span-1'
+                        : index === 2
+                          ? 'md:col-span-1.5 md:row-span-2 col-span-2 sm:col-span-1'
+                          : 'md:col-span-4 md:row-span-1 col-span-2 sm:col-span-1'
+                  } flex justify-center items-center`}
+                >
+                  <img
+                    className='md:h-full md:w-full h-[200px] w-[180px]'
+                    src={image.url}
+                    alt={`Sub Image ${index + 1}`}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -62,13 +129,6 @@ const ProductDetail = () => {
                   </button>
                 ))}
               </div>
-
-              {/* SIZE ITEM */}
-              {/* <div className='flex gap-8 my-[55px]'>
-              <button className='h-9 w-9 border border-black shadow-2xl text-center text-2xl'>S</button>
-              <button className='h-9 w-9 border border-black shadow-2xl text-center text-2xl'>M</button>
-              <button className='h-9 w-9 border border-black shadow-2xl text-center text-2xl'>L</button>
-            </div> */}
               <div className='flex md:gap-8 justify-center  md:justify-start gap-2 my-[55px]'>
                 {['S', 'M', 'L'].map((size) => (
                   <button
@@ -84,21 +144,28 @@ const ProductDetail = () => {
               </div>
               <div className='flex md:justify-start justify-center md:gap-11 gap-x-[10px]'>
                 <div className='flex items-center gap-2 md:gap-[40px] md:mb-[50px]'>
-                  <button className='bg-gray-200 px-4 py-2 rounded-lg'>-</button>
+                  <button onClick={handleDecrease} className='bg-gray-200 px-4 py-2 rounded-lg'>
+                    -
+                  </button>
                   <span id='quantity' className='text-lg font-medium'>
-                    0
+                    {quantity}
                   </span>
-                  <button className='bg-gray-200 px-4 py-2 rounded-lg'>+</button>
+                  <button onClick={handleIncrease} className='bg-gray-200 px-4 py-2 rounded-lg'>+</button>
                 </div>
                 <div className='flex items-center md:mb-[50px]'>
-                  <button className='border-2 p-1.5  bg-black text-white rounded-lg'>Thêm vào giỏ hàng</button>
+                  <button  onClick={addToCart} className='border-2 p-1.5  bg-black text-white rounded-lg'>
+                    Thêm vào giỏ hàng
+                  </button>
                 </div>
               </div>
 
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
               <div className='flex justify-center mb-[40px]'>
                 <h3 className='md:text-2xl text-xl'>
-                  Thành tiền: {productDetail?.price !== undefined && formatPriceToVND(productDetail?.price)}
+                  Thành tiền:{' '}
+                  {productDetail && productDetail.price !== undefined
+                    ? formatPriceToVND(totalPrice)
+                    : 'Không có thông tin sản phẩm'}
                 </h3>
               </div>
             </div>
