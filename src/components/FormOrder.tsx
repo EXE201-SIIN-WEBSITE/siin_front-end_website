@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+
 import '../components/animation/formOrder.css'
 import { orderDetail } from '~/types/orderDetail.type'
 import { useAppDispatch } from '~/redux/containers/store'
@@ -76,19 +77,18 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
       const action = await dispatch(createOrderDetail(orderDetail))
       if (createOrderDetail.fulfilled.match(action)) {
         const createdOrderDetail = action.payload
-        console.log('PAYLOAD: ', action.payload)
+        // console.log('PAYLOAD: ', action.payload)
 
         const orderDetailId = createdOrderDetail.id
-        console.log('IDIDIDID: ', orderDetailId)
+        // console.log('IDIDIDID: ', orderDetailId)
 
         setPayment((prevPayment) => ({
           ...prevPayment,
           orderDetailId: orderDetailId
         }))
-        // Retrieve cart items from localStorage
+
         const cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]')
 
-        // Create order items for each item in the cart
         for (const item of cartItems) {
           const orderItemData: orderItem = {
             id: 0,
