@@ -4,6 +4,7 @@ import productSlice from "../slices/product.slice";
 import subImageSlice from "../slices/subImage.slice";
 import orderDetailSlice from "../slices/orderDetail.slice";
 import orderItemSlice from "../slices/orderItem.slice";
+import paymentSlice from "../slices/payment.slice";
 
 
 export const store = configureStore({
@@ -12,6 +13,7 @@ export const store = configureStore({
     subImage: subImageSlice,
     orderDetail: orderDetailSlice,
     orderItem: orderItemSlice,
+    payment: paymentSlice,
   }
 })
 
