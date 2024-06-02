@@ -52,9 +52,9 @@ const Header = () => {
           <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'cart'}>
             <i className='fa-solid fa-cart-shopping hover:text-gray-400 sm:text-[20px] text-[24px]'></i>
           </NavLink>
-          <a href='/account' className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>
+          <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
             <i className='fa-solid fa-circle-user'></i>
-          </a>
+          </NavLink>
         </div>
       </div>
     </header>
