@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+
 import '../components/animation/formOrder.css'
 import { orderDetail } from '~/types/orderDetail.type'
 import { useAppDispatch } from '~/redux/containers/store'
@@ -6,6 +7,8 @@ import { createOrderDetail } from '~/redux/actions/orderDetail.action'
 import { orderItem } from '~/types/orderItem.type'
 import { CartItem } from '~/types/product.type'
 import { createOrderItem } from '~/redux/actions/orderItem.action'
+import { payment } from '~/types/payment.type'
+import { createPayment } from '~/redux/actions/payment.action'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -15,10 +18,11 @@ interface FormOrderProps {
 const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) => {
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
-  const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
   const [isThankYou, setIsThankYou] = useState(false)
   const dispatch = useAppDispatch()
-
+  const formatPriceToVND = (price: number): string => {
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  }
   const [orderDetail, setOrderDetail] = useState<Omit<orderDetail, 'id'>>({
     total: totalPrice,
     orderStatus: 'Xác nhận đơn hàng',
@@ -34,11 +38,25 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
     userId: 0
   })
 
+  const [payment, setPayment] = useState<payment>({
+    id: 0,
+    status: true,
+    typePayment: '',
+    total: totalPrice,
+    orderDetailId: 0
+  })
+
   const getData = (e: any) => {
     setOrderDetail({ ...orderDetail, [e.target.name]: e.target.value })
   }
 
-  console.log('data inserted: ', orderDetail)
+  const getDataPayment = (value: string) => {
+    setPayment((prevPayment) => ({
+      ...prevPayment,
+      typePayment: value
+    }))
+  }
+  console.log('data inserted: ', payment)
 
   const handleClickOutside = (e: MouseEvent) => {
     if (elModal.current && !elModal.current.contains(e.target as Node)) {
@@ -53,28 +71,24 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   dispatch(createOrderDetail(orderDetail))
-  //   setIsOrderForm(false)
-  // }
-
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const action = await dispatch(createOrderDetail(orderDetail));
+      const action = await dispatch(createOrderDetail(orderDetail))
       if (createOrderDetail.fulfilled.match(action)) {
-        const createdOrderDetail = action.payload;
-        console.log('PAYLOAD: ', action.payload);
-        
-        const orderDetailId = createdOrderDetail.id;
-        console.log('IDIDIDID: ', orderDetailId);
+        const createdOrderDetail = action.payload
+        // console.log('PAYLOAD: ', action.payload)
 
+        const orderDetailId = createdOrderDetail.id
+        // console.log('IDIDIDID: ', orderDetailId)
 
-        // Retrieve cart items from localStorage
-        const cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        setPayment((prevPayment) => ({
+          ...prevPayment,
+          orderDetailId: orderDetailId
+        }))
 
-        // Create order items for each item in the cart
+        const cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]')
+
         for (const item of cartItems) {
           const orderItemData: orderItem = {
             id: 0,
@@ -83,24 +97,21 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
             productId: item.id,
             orderDetailId: orderDetailId,
             status: true
-          };
-          await dispatch(createOrderItem(orderItemData));
+          }
+          await dispatch(createOrderItem(orderItemData))
         }
-        
-        setIsOrderForm(false);
+
+        setIsOrderForm(false)
       } else {
-        console.error('Failed to create order detail:', action.payload);
+        console.error('Failed to create order detail:', action.payload)
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error submitting form:', error)
     }
-  };
-
-  const handlePaymentMethodChange = (method: string) => {
-    setPaymentMethod(method)
   }
 
   const handlePaymentSubmit = () => {
+    dispatch(createPayment(payment))
     setIsThankYou(true)
   }
 
@@ -297,16 +308,16 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
                   <h2 className='flex justify-center mb-4 text-xl font-bolds'>Phương Thức Thanh Toán</h2>
                   <div className='flex m-4 md:justify-evenly'>
                     <div
-                      className={`border-2 px-3 ${paymentMethod === 'online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
+                      className={`border-2 px-3 ${payment.typePayment === 'Thanh toán online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
                     >
-                      <button type='button' onClick={() => handlePaymentMethodChange('online')}>
+                      <button type='button' onClick={() => getDataPayment('Thanh toán online')}>
                         THANH TOÁN ONLINE
                       </button>
                     </div>
                     <div
-                      className={`border-2 px-3 ${paymentMethod === 'cod' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
+                      className={`border-2 px-3 ${payment.typePayment === 'Thanh toán khi nhận hàng' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
                     >
-                      <button type='button' onClick={() => handlePaymentMethodChange('cod')}>
+                      <button type='button' onClick={() => getDataPayment('Thanh toán khi nhận hàng')}>
                         THANH TOÁN KHI NHẬN HÀNG
                       </button>
                     </div>
@@ -314,7 +325,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
 
                   <div className='flex justify-around'>
                     <div>
-                      {paymentMethod === 'online' && (
+                      {payment.typePayment === 'Thanh toán online' && (
                         <div>
                           <img src='/assets/qr.png' alt='QR Code' className='w-32 h-32' />
                         </div>
@@ -322,8 +333,10 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
                     </div>
                     <div>
                       <h2 className='flex justify-end mb-4'>GIÁ TRỊ</h2>
-                      <h3 className='flex justify-end mb-4'>76.000 VND</h3>
-                      <h3 className='flex justify-end mb-4'>Thành tiền: 76.000 VND</h3>
+                      <h3 className='flex justify-end mb-4'>{payment.total !== undefined && formatPriceToVND(payment.total)}</h3>
+                      <h3 className='flex justify-end mb-4'>
+                        Thành tiền: {payment.total !== undefined && formatPriceToVND(payment.total)}
+                      </h3>
                     </div>
                   </div>
 

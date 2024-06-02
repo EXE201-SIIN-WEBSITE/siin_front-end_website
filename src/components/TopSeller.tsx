@@ -1,13 +1,14 @@
-import { products } from '~/dummyData/product'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+
+
 import { RootState, useAppDispatch } from '~/redux/containers/store'
-import { useEffect } from 'react'
 import { getProducts } from '~/redux/actions/product.action'
-import { useSelector } from 'react-redux'
 import { product } from '~/types/product.type'
-import { Link } from 'react-router-dom'
 
 interface ArrowProps {
   onClick?: () => void

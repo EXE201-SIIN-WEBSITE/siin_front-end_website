@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage'
 import Header from './components/layout/Header'
@@ -10,13 +10,20 @@ import IntroPoduct from './pages/product/IntroPoduct'
 import TopSeller from './components/TopSeller'
 import ProductDetail from './pages/product/ProductDetail'
 import Cart from './pages/Cart'
+import SignIn from './pages/auth/SignIn'
+
+
 
 function App() {
+  const location = useLocation();
+  const isLoginPath = location.pathname === '/login';
   return (
     <>
-      <Header />
+    {!isLoginPath && <Header />}
       <Routes>
         <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<SignIn />} />
+
         <Route path='/products' element={<IntroPoduct />}>
           <Route index element={<Navigate to='topSeller' />} />
           <Route path='topSeller' element={<TopSeller />} />
@@ -31,8 +38,9 @@ function App() {
 
         <Route path='*' element={<div>404 Not Found</div>} />
       </Routes>
+      {!isLoginPath && <Footer />}
 
-      <Footer />
+     
     </>
   )
 }

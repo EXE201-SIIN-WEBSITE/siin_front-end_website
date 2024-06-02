@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+
+
 import { imageType } from '~/dummyData/images'
 import { getProductDetail } from '~/redux/actions/product.action'
 import { getSubImageByProId } from '~/redux/actions/subImage.action'

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Swiper as SwiperCore } from 'swiper/types'
 import { EffectCoverflow, Navigation } from 'swiper/modules'
@@ -8,31 +8,55 @@ import 'swiper/css/effect-coverflow'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { products } from '~/dummyData/product'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { getAccessories } from '~/redux/actions/accessory.action'
+import { getMaterials } from '~/redux/actions/material.action'
 
 export default function CustomizeProduct() {
+  const materialData = useSelector((state: RootState) => state.material.materialList)
+  const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
+  const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
-  const colors = [
-    '#ffffff',
-    '#ff0000',
-    '#00ff00',
-    '#0000ff',
-    '#ffff00',
-    '#ffffff',
-    '#ff0000',
-    '#00ff00',
-    '#0000ff',
-    '#ffff00'
-  ] // Array of colors
-
   const [quantity, setQuantity] = useState(1)
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
 
-  const handleColorSelect = (index: number) => {
-    if (swiperRef.current) {
-      const swiper = swiperRef.current // Get Swiper instance
-      const newProgress = index / (colors.length - 1) // Calculate progress based on color index
-      //0 to 1
-      swiper.setProgress(newProgress, 500) // 500ms speed for transition
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
+    dispatch(getAccessories({ signal }))
+    dispatch(getMaterials({ signal }))
+
+    return () => {
+      abortController.abort()
     }
+  }, [dispatch])
+
+  // console.log('LIST ACCESSORIES: ', accessoryData)
+  // console.log('LIST MATERIALS: ', materialData)
+
+  // Extract unique colors from materialData
+  // const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName)))
+  // const uniqueSize = Array.from(new Set(materialData.map((item) => item.size)))
+  const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName).filter(Boolean)))
+  const uniqueSize = Array.from(new Set(materialData.map((item) => item.size).filter(Boolean)))
+
+  // const handleColorSelect = (index: number) => {
+  //   if (swiperRef.current) {
+  //     const swiper = swiperRef.current // Get Swiper instance
+  //     const newProgress = index / (uniqueColors.length - 1) // Calculate progress based on color index
+  //     swiper.setProgress(newProgress, 500) // 500ms speed for transition
+  //   }
+  // }
+
+  const handleColorSelect = (color: string) => {
+    setSelectedColor(color)
+  }
+
+  const handleSizeSelect = (size: string) => {
+    setSelectedSize(size)
   }
 
   const incrementQuantity = () => {
@@ -42,6 +66,11 @@ export default function CustomizeProduct() {
   const decrementQuantity = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
   }
+
+
+  const selectedMaterial = materialData.find((item) => item.colorName === selectedColor && item.size === selectedSize)
+
+  console.log('Selected Material ID: ', selectedMaterial ? selectedMaterial.id : 'None')
 
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
@@ -109,13 +138,15 @@ export default function CustomizeProduct() {
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Color:</label>
+              <div></div>
               <div className='flex justify-around gap-2 colorbutton'>
-                {colors.map((color, index) => (
+                {uniqueColors.map((color, index) => (
                   <button
                     key={index}
                     className='w-6 h-6 lg:w-8 lg:h-8'
                     style={{ backgroundColor: color }}
-                    onClick={() => handleColorSelect(index)}
+                    // onClick={() => handleColorSelect(index)}
+                    onClick={() => handleColorSelect(color!)}
                   ></button>
                 ))}
               </div>
@@ -130,10 +161,13 @@ export default function CustomizeProduct() {
             </div>
             <div className='flex items-center justify-evenly'>
               <div className='flex gap-10 size'>
-                <button className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8'></button>
-                <button className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8'></button>
-                <button className='w-6 h-6 bg-gray-500 lg:w-8 lg:h-8'></button>
+                {uniqueSize.map((size, index) => (
+                  <button key={index} className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8' onClick={() => handleSizeSelect(size!)}>
+                    {size!}
+                  </button>
+                ))}
               </div>
+
               <div className='text-3xl'>|</div>
 
               <div className='relative flex items-center max-w-[8rem]'>
@@ -194,17 +228,6 @@ export default function CustomizeProduct() {
                   </svg>
                 </button>
               </div>
-
-              {/* <div className='flex quantity justify-evenly gap-9'>
-                <button onClick={decrementQuantity}>-</button>
-                <input
-                  type='number'
-                  className='w-8 h-8 text-center bg-white border border-black appearance-none'
-                  value={quantity}
-                  onChange={handleQuantityChange}
-                />
-                <button onClick={incrementQuantity}>+</button>
-              </div> */}
             </div>
           </div>
         </div>
