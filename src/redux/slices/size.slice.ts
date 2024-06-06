@@ -1,26 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
-import { getMaterials, getProductMaterial } from '../actions/material.action'
-import { initialMaterialState } from '../types/material.type'
+import { initialSizeState } from '../types/size.type'
+import { getSizes } from '../actions/size.action'
 
-const materialSlice = createSlice({
-  name: 'material',
-  initialState: initialMaterialState,
+
+const sizeSlice = createSlice({
+  name: 'size',
+  initialState: initialSizeState,
   reducers: {},
 
   extraReducers(builder) {
     builder
-      .addCase(getMaterials.fulfilled, (state, action) => {
+      .addCase(getSizes.fulfilled, (state, action) => {
         state.loading = false
-        state.materialList = action.payload
+        state.sizeList = action.payload
       })
-
-      .addCase(getProductMaterial.fulfilled, (state, action) => {
-        state.loading = false
-        state.material = action.payload
-      })
-
 
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),
@@ -55,4 +50,4 @@ const materialSlice = createSlice({
   }
 })
 
-export default materialSlice.reducer
+export default sizeSlice.reducer

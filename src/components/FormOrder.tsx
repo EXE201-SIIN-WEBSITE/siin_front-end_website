@@ -1,42 +1,103 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import '../components/animation/formOrder.css'
-import { orderDetail } from '~/types/orderDetail.type'
-import { useAppDispatch } from '~/redux/containers/store'
-import { createOrderDetail } from '~/redux/actions/orderDetail.action'
-import { orderItem } from '~/types/orderItem.type'
-import { CartItem } from '~/types/product.type'
-import { createOrderItem } from '~/redux/actions/orderItem.action'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { payment } from '~/types/payment.type'
 import { createPayment } from '~/redux/actions/payment.action'
+import { useSelector } from 'react-redux'
+
+import { createOrderDetail } from '~/redux/actions/orderDetail.action'
+import { OrderDetail } from '~/types/orderDetail.type'
+import { cartItem } from '~/types/cartItem.type'
+import { clearCart } from '~/redux/actions/cartItem.action'
+import { orderItem } from '~/types/orderItem.type'
+import { createOrderItem } from '~/redux/actions/orderItem.action'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
   totalPrice: number
+  cartItemsFromProps: cartItem[]
 }
 
-const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) => {
+const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cartItemsFromProps }) => {
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
   const [isThankYou, setIsThankYou] = useState(false)
   const dispatch = useAppDispatch()
+  const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
+
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
-  const [orderDetail, setOrderDetail] = useState<Omit<orderDetail, 'id'>>({
-    total: totalPrice,
-    orderStatus: 'Xác nhận đơn hàng',
-    status: true,
-    nameCustomer: '',
-    phone: '',
-    province: '',
-    district: '',
-    ward: '',
-    address: '',
-    email: '',
-    note: '',
-    userId: 0
+
+  console.log('CÂCCAC: ', cartItemsFromProps)
+  console.log('CÂCCAC: ', cart)
+
+  const initialOrderDetail = {
+    cartItems: [],
+    orderDetailRequestDTO: {
+      nameCustomer: '',
+      phone: '',
+      province: '',
+      district: '',
+      ward: '',
+      address: '',
+      email: '',
+      note: ''
+    }
+  }
+
+  const [orderDetail, setOrderDetail] = useState<OrderDetail>(initialOrderDetail)
+
+  const [orderItem, setOrderItem] = useState<orderItem>({
+    quantity: 0,
+    price: totalPrice,
+    productMaterialId: 0,
+    orderDetailId: 0,
+    status: true
   })
+
+  console.log("O ITEM: ", orderItem);
+  
+ 
+  
+
+  useEffect(() => {
+    if (cartItemsFromProps.length > 0) {
+      const updatedCartItems = cart.map((item) => ({
+        productId: item.productId,
+        productMaterialId: item.productMaterialId,
+        sizeName: item.sizeName || '',
+        colorName: item.colorName || '',
+        accessoryName: item.accessoryName || ''
+      }))
+
+      const mergedCartItems = updatedCartItems.map((item, index) => ({
+        ...item,
+        quantity: cartItemsFromProps[index]?.quantity || 0
+      }))
+
+
+      setOrderDetail((prevState) => ({
+        ...prevState,
+        cartItems: mergedCartItems
+      }))
+    }
+  }, [cart, cartItemsFromProps])
+
+  useEffect(() => {
+    if (orderDetail.cartItems.length > 0) {
+      const firstItem = orderDetail.cartItems[0] 
+      setOrderItem((prevOrderItem) => ({
+        ...prevOrderItem,
+        quantity: firstItem.quantity,
+        productMaterialId: firstItem.productMaterialId,
+        orderDetailId: 0 
+      }))
+    }
+  }, [orderDetail])
+
+  console.log('Updated orderDetail: ', orderDetail)
 
   const [payment, setPayment] = useState<payment>({
     id: 0,
@@ -47,7 +108,14 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
   })
 
   const getData = (e: any) => {
-    setOrderDetail({ ...orderDetail, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setOrderDetail((prevOrderDetail) => ({
+      ...prevOrderDetail,
+      orderDetailRequestDTO: {
+        ...prevOrderDetail.orderDetailRequestDTO,
+        [name]: value
+      }
+    }))
   }
 
   const getDataPayment = (value: string) => {
@@ -68,47 +136,54 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+  
     try {
-      const action = await dispatch(createOrderDetail(orderDetail))
-      if (createOrderDetail.fulfilled.match(action)) {
-        const createdOrderDetail = action.payload
-        // console.log('PAYLOAD: ', action.payload)
-
-        const orderDetailId = createdOrderDetail.id
-        // console.log('IDIDIDID: ', orderDetailId)
-
+    
+      const resultAction = await dispatch(createOrderDetail(orderDetail));
+      if (createOrderDetail.fulfilled.match(resultAction)) {
+        const orderDetailId = resultAction.payload.id;
+        const updatedOrderItem = {
+          ...orderItem,
+          orderDetailId: orderDetailId,
+        
+        };
+        await dispatch(createOrderItem(updatedOrderItem));
         setPayment((prevPayment) => ({
           ...prevPayment,
-          orderDetailId: orderDetailId
-        }))
+          orderDetailId: orderDetailId,
+        }));
+  
+        setIsOrderForm(false);
 
-        const cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]')
-
-        for (const item of cartItems) {
-          const orderItemData: orderItem = {
-            id: 0,
-            quantity: item.quantity,
-            price: item.price,
-            productId: item.id,
-            orderDetailId: orderDetailId,
-            status: true
-          }
-          await dispatch(createOrderItem(orderItemData))
-        }
-
-        setIsOrderForm(false)
+        const updatedCartItems = orderDetail.cartItems.map((item) => ({
+          ...item,
+          productId: 0,
+          productMaterialId: 0,
+        }));
+  
+        setOrderDetail((prevState) => ({
+          ...prevState,
+          cartItems: updatedCartItems,
+        }));
+  
+        localStorage.removeItem('cartItems');
+        setOrderDetail(initialOrderDetail);
+  
+        dispatch(clearCart());
       } else {
-        console.error('Failed to create order detail:', action.payload)
+        console.error('Failed to create order detail:', resultAction.payload);
       }
     } catch (error) {
-      console.error('Error submitting form:', error)
+      console.error('Error occurred during order submission:', error);
     }
-  }
+  };
+  
 
   const handlePaymentSubmit = () => {
     dispatch(createPayment(payment))
@@ -333,7 +408,9 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice }) =>
                     </div>
                     <div>
                       <h2 className='flex justify-end mb-4'>GIÁ TRỊ</h2>
-                      <h3 className='flex justify-end mb-4'>{payment.total !== undefined && formatPriceToVND(payment.total)}</h3>
+                      <h3 className='flex justify-end mb-4'>
+                        {payment.total !== undefined && formatPriceToVND(payment.total)}
+                      </h3>
                       <h3 className='flex justify-end mb-4'>
                         Thành tiền: {payment.total !== undefined && formatPriceToVND(payment.total)}
                       </h3>
