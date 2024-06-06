@@ -22,4 +22,19 @@ export const getMaterials = createAsyncThunk('material/getMaterials', async ({ s
   }
 })
 
+export const getProductMaterial = createAsyncThunk('material/getProductMaterial', async (id: number, thunkAPI) => {
+  try {
+    const response = await http.get<ResponseData<material>>(`/product-material/get-by-productId/${id}`, {})
+    // console.log('dtat: ', response)
+
+    return response.data.data
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+    }
+    return thunkAPI.rejectWithValue(error.response?.data || error)
+  }
+})
+
+
 

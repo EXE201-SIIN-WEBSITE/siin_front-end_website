@@ -1,7 +1,9 @@
 export interface material {
   id: number
-  colorName?: string
-  size?: string
+  colorId: number
+  sizeId: number
+  productId?: number
+  accessoryId?: number
   quantity?: number
   image?: string
   price?: number

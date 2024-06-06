@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-
 import { imageType } from '~/dummyData/images'
+import { createCartItem } from '~/redux/actions/cartItem.action'
+
+import { getProductMaterial } from '~/redux/actions/material.action'
 import { getProductDetail } from '~/redux/actions/product.action'
 import { getSubImageByProId } from '~/redux/actions/subImage.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { addCartItem, cartItem } from '~/types/cartItem.type'
+import { material } from '~/types/material.type'
 import { CartItem } from '~/types/product.type'
 
 const ProductDetail = () => {
@@ -15,9 +19,72 @@ const ProductDetail = () => {
   const [activeButton, setActiveButton] = useState<string | null>(null)
   const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const subImage = useSelector((state: RootState) => state.subImage.subImageList)
+  const material = useSelector((state: RootState) => state.material.material)
+  const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState(0)
-  
+  const [cartItem, setCartItem] = useState<addCartItem>({
+    colorId: 0,
+    sizeId: 0,
+    quantity: quantity,
+    userId: 0
+  })
+
+  const colorMap: { [key: number]: string } = {
+    1: 'red',
+    2: 'pink',
+    3: 'black',
+    4: 'orange',
+    5: 'purple'
+  }
+
+  const sizeMap: { [key: number]: string } = {
+    1: 'M',
+    2: 'S',
+    3: 'L',
+    4: 'XL'
+  }
+
+  const uniqueColorIds = new Set<number>()
+  const uniqueSizes = new Set<number>()
+  const uniqueColors = Array.isArray(material)
+    ? material.filter((color: material) => {
+        if (uniqueColorIds.has(color.colorId)) {
+          return false
+        } else {
+          uniqueColorIds.add(color.colorId)
+          return true
+        }
+      })
+    : []
+
+  const uniqueSizesArray = Array.isArray(material)
+    ? material.filter((size: material) => {
+        if (uniqueSizes.has(size.sizeId)) {
+          return false
+        } else {
+          uniqueSizes.add(size.sizeId)
+          return true
+        }
+      })
+    : []
+
+  const [activeColor, setActiveColor] = useState<number | null>(null)
+  const [activeSize, setActiveSize] = useState<number | null>(null)
+
+  const handleColorClick = (colorId: number) => {
+    setCartItem((prevState) => ({ ...prevState, colorId }))
+    setActiveColor(colorId)
+  }
+
+  const handleSizeClick = (sizeId: number) => {
+    setCartItem((prevState) => ({ ...prevState, sizeId }))
+    setActiveSize(sizeId)
+  }
+
+  // console.log('CART ITEM: ', cartItem)
+
+  // console.log('MATERIAL NE: ', material)
 
   const dispatch = useAppDispatch()
   // console.log('detail: ', productDetail)
@@ -28,6 +95,7 @@ const ProductDetail = () => {
   useEffect(() => {
     dispatch(getProductDetail(numericId))
     dispatch(getSubImageByProId(numericId))
+    dispatch(getProductMaterial(numericId))
   }, [dispatch, numericId])
 
   useEffect(() => {
@@ -35,6 +103,13 @@ const ProductDetail = () => {
       setTotalPrice(quantity * productDetail.price)
     }
   }, [productDetail, quantity])
+
+  useEffect(() => {
+    setCartItem((prevState) => ({
+      ...prevState,
+      quantity: quantity
+    }))
+  }, [quantity])
 
   const handleIncrease = () => {
     const newQuantity = quantity + 1
@@ -50,39 +125,101 @@ const ProductDetail = () => {
     }
   }
 
+  // const addToCart = () => {
+  //   if (productDetail) {
+  //     const productInCart: CartItem = {
+  //       id: productDetail.id,
+  //       name: productDetail.name,
+  //       price: productDetail.price || 0,
+  //       image: productDetail.coverImage,
+  //       quantity: quantity
+  //     }
 
-  const addToCart = () => {
+  //     let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]')
+  //     const existingProductIndex = cartItems.findIndex((item) => item.id === productInCart.id)
+
+  //     if (existingProductIndex !== -1) {
+  //       cartItems[existingProductIndex].quantity += productInCart.quantity
+  //     } else {
+  //       cartItems.push(productInCart)
+  //     }
+
+  //     localStorage.setItem('cartItems', JSON.stringify(cartItems))
+  //     console.log('productInCart:', productInCart)
+  //   }
+  // }
+
+  const addToCart = (): Omit<CartItem, 'quantity'> | null => {
     if (productDetail) {
-      const productInCart: CartItem = {
+      const productInCart = {
         id: productDetail.id,
         name: productDetail.name,
         price: productDetail.price || 0,
         image: productDetail.coverImage,
-        quantity: quantity,
       };
-
-      let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const existingProductIndex = cartItems.findIndex((item) => item.id === productInCart.id);
-
-      if (existingProductIndex !== -1) {
-        cartItems[existingProductIndex].quantity += productInCart.quantity;
-      } else {
-        cartItems.push(productInCart);
-      }
-
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));
-      console.log('productInCart:', productInCart);
+  
+      return productInCart;
     }
-  };
-
-  const handleClick = (button: string) => {
-    setActiveButton(button)
+    return null;
   }
+  
 
- const filteredSubImages = Array.isArray(subImage)
-    ? subImage.filter((image) => image.status).slice(0, 4)
-    : []
+  // const handleClick = (button: string) => {
+  //   setActiveButton(button)
+  // }
 
+  const handleAddToCart = () => {
+    const productInCart = addToCart();
+    
+    if (!productInCart) {
+      return;
+    }
+  
+    const sizeId = cartItem.sizeId !== undefined && cartItem.sizeId !== null ? cartItem.sizeId : 0;
+    const colorId = cartItem.colorId !== undefined && cartItem.colorId !== null ? cartItem.colorId : 0;
+  
+    const newCartItem: addCartItem = {
+      quantity: cartItem.quantity,
+      sizeId: sizeId,
+      colorId: colorId,
+      userId: cartItem.userId,
+    };
+  
+    const newCartItemForStore = {
+      id: numericId,
+      cartItem: newCartItem
+    };
+  
+    dispatch(createCartItem(newCartItemForStore));
+  
+    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+  
+    const newLocalStorageCartItem = {
+      ...productInCart,
+      quantity: newCartItem.quantity,
+      sizeId: newCartItem.sizeId,
+      colorId: newCartItem.colorId,
+      sizeName: sizeMap[sizeId] || 'N/A',
+      colorName: colorMap[colorId] || 'N/A'
+    };
+  
+    const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.id);
+  
+    if (existingProductIndex !== -1) {
+      cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity;
+    } else {
+      cartItems.push(newLocalStorageCartItem);
+    }
+  
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  
+    console.log('productInCart:', newCartItemForStore);
+    // alert("Sản phẩm đã được thêm vào giỏ hàng!");
+  };
+  
+  
+
+  const filteredSubImages = Array.isArray(subImage) ? subImage.filter((image) => image.status).slice(0, 4) : []
 
   return (
     <>
@@ -124,23 +261,29 @@ const ProductDetail = () => {
               </h1>
               <span className='flex md:justify-start justify-center'>Sản phẩm liên quan</span>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%] md:w-[95%] my-2'></div>
-              <div className='flex gap-3 sm:justify-center items-center my-[25px]'>
-                {imageType.map((image) => (
-                  <button className='md:h-20 md:w-20 mr-[1px] h-[64px] w-[64px]' key={image.id}>
-                    <img src={image.img} alt='Image color' />
+              <div className='flex gap-2 my-[25px]'>
+                {uniqueColors.map((color: { id: number; colorId: number }) => (
+                  <button
+                    className={`md:h-20 md:w-20 mr-[1px] h-[44px] w-[34px] ${activeColor === color.colorId ? 'text-white' : 'text-black'}`}
+                    key={color.id}
+                    onClick={() => handleColorClick(color.colorId)}
+                    style={{ backgroundColor: colorMap[color.colorId] }}
+                  >
+                    {activeColor === color.colorId ? '✓' : ''}
                   </button>
                 ))}
               </div>
+
               <div className='flex md:gap-8 justify-center  md:justify-start gap-2 my-[55px]'>
-                {['S', 'M', 'L'].map((size) => (
+                {uniqueSizesArray?.map((size: any) => (
                   <button
-                    key={size}
-                    onClick={() => handleClick(size)}
+                    key={size.id}
+                    onClick={() => handleSizeClick(size.sizeId)}
                     className={`h-9 w-9 border border-black md:shadow-2xl text-center md:text-2xl ${
-                      activeButton === size ? 'bg-black text-white' : 'bg-white text-black'
+                      activeSize === size.sizeId ? 'bg-black text-white' : 'bg-white text-black'
                     }`}
                   >
-                    {size}
+                    {sizeMap[size.sizeId]}
                   </button>
                 ))}
               </div>
@@ -152,10 +295,12 @@ const ProductDetail = () => {
                   <span id='quantity' className='text-lg font-medium'>
                     {quantity}
                   </span>
-                  <button onClick={handleIncrease} className='bg-gray-200 px-4 py-2 rounded-lg'>+</button>
+                  <button onClick={handleIncrease} className='bg-gray-200 px-4 py-2 rounded-lg'>
+                    +
+                  </button>
                 </div>
                 <div className='flex items-center md:mb-[50px]'>
-                  <button  onClick={addToCart} className='border-2 p-1.5  bg-black text-white rounded-lg'>
+                  <button onClick={handleAddToCart} className='border-2 p-1.5  bg-black text-white rounded-lg'>
                     Thêm vào giỏ hàng
                   </button>
                 </div>

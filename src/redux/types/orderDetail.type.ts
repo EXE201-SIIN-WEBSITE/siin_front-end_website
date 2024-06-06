@@ -1,8 +1,9 @@
-import { orderDetail } from '~/types/orderDetail.type'
+import { OrderDetail } from "~/types/orderDetail.type"
+
 
 export interface OrderDetailState {
-  orderDetailList: orderDetail[]
-  orderDetail: orderDetail | null
+  orderDetailList: OrderDetail[]
+  orderDetail: OrderDetail | null
   loading: boolean
   currentRequestId: undefined | string
   error: unknown

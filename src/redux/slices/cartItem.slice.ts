@@ -1,26 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
-import { getMaterials, getProductMaterial } from '../actions/material.action'
-import { initialMaterialState } from '../types/material.type'
+import { initialCartItemState } from '../types/cartItem.type'
+import { createCartItem, createCartItem2 } from '../actions/cartItem.action'
 
-const materialSlice = createSlice({
-  name: 'material',
-  initialState: initialMaterialState,
-  reducers: {},
+const cartItemSlice = createSlice({
+  name: 'cartItem',
+  initialState: initialCartItemState,
+  reducers: {
+    clearCart: (state) => {
+      state.cartItemList = []
+    }
+  },
 
   extraReducers(builder) {
     builder
-      .addCase(getMaterials.fulfilled, (state, action) => {
+      .addCase(createCartItem.fulfilled, (state, action) => {
         state.loading = false
-        state.materialList = action.payload
+        state.cartItemList.push(action.payload)
+        // state.cartItem = action.payload
       })
 
-      .addCase(getProductMaterial.fulfilled, (state, action) => {
+      .addCase(createCartItem2.fulfilled, (state, action) => {
         state.loading = false
-        state.material = action.payload
+        state.cartItemList.push(action.payload)
+        // state.cartItem = action.payload
       })
-
 
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),
@@ -55,4 +60,4 @@ const materialSlice = createSlice({
   }
 })
 
-export default materialSlice.reducer
+export default cartItemSlice.reducer

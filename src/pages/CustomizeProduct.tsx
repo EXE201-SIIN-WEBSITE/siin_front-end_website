@@ -11,23 +11,35 @@ import { products } from '~/dummyData/product'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { getAccessories } from '~/redux/actions/accessory.action'
-import { getMaterials } from '~/redux/actions/material.action'
+import { getColors } from '~/redux/actions/color.action'
+import { getSizes } from '~/redux/actions/size.action'
+import { addCartItem, cartItem } from '~/types/cartItem.type'
+import { createCartItem2 } from '~/redux/actions/cartItem.action'
 
 export default function CustomizeProduct() {
-  const materialData = useSelector((state: RootState) => state.material.materialList)
+  const color = useSelector((state: RootState) => state.color.colorList)
+  const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
+  
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [selectedColor, setSelectedColor] = useState<string | null>(null)
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
-
+  const [selectedColor, setSelectedColor] = useState<number | null>(null)
+  const [selectedSize, setSelectedSize] = useState<number | null>(null)
+  const [selectedAccess, setSelectedAccess] = useState<number | null>(null)
+  const [cartInfo, setCartInfo] = useState<addCartItem>({
+    colorId: 0,
+    sizeId: 0,
+    accessoryId: 0,
+    quantity: 0
+  })
   useEffect(() => {
     const abortController = new AbortController()
     const signal = abortController.signal
 
     dispatch(getAccessories({ signal }))
-    dispatch(getMaterials({ signal }))
+    dispatch(getColors({ signal }))
+    dispatch(getSizes({ signal }))
 
     return () => {
       abortController.abort()
@@ -40,8 +52,8 @@ export default function CustomizeProduct() {
   // Extract unique colors from materialData
   // const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName)))
   // const uniqueSize = Array.from(new Set(materialData.map((item) => item.size)))
-  const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName).filter(Boolean)))
-  const uniqueSize = Array.from(new Set(materialData.map((item) => item.size).filter(Boolean)))
+  // const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName).filter(Boolean)))
+  // const uniqueSize = Array.from(new Set(materialData.map((item) => item.size).filter(Boolean)))
 
   // const handleColorSelect = (index: number) => {
   //   if (swiperRef.current) {
@@ -51,13 +63,20 @@ export default function CustomizeProduct() {
   //   }
   // }
 
-  const handleColorSelect = (color: string) => {
-    setSelectedColor(color)
+  const handleColorSelect = (id: number) => {
+    setSelectedColor(id)
   }
 
-  const handleSizeSelect = (size: string) => {
-    setSelectedSize(size)
+  const handleSizeSelect = (id: number) => {
+    setSelectedSize(id)
   }
+
+  const handleAccessSelect = (id: number) => {
+    setSelectedAccess(id)
+  }
+
+  console.log('Selected color: ', selectedColor)
+  console.log('Selected size: ', selectedSize)
 
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => prevQuantity + 1)
@@ -67,11 +86,51 @@ export default function CustomizeProduct() {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
   }
 
+ 
 
-  const selectedMaterial = materialData.find((item) => item.colorName === selectedColor && item.size === selectedSize)
+  useEffect(() => {
+    if (selectedColor !== null && selectedSize !== null && selectedAccess !== null) {
+      setCartInfo({
+        colorId: selectedColor,
+        sizeId: selectedSize,
+        accessoryId: selectedAccess,
+        quantity: quantity
+      })
+    }
+  }, [selectedColor, selectedSize, selectedAccess, quantity])
 
-  console.log('Selected Material ID: ', selectedMaterial ? selectedMaterial.id : 'None')
+  console.log('Access: ', accessoryData)
 
+  console.log('Cart info: ', cartInfo)
+
+  // const selectedMaterial = materialData.find((item) => item.colorName === selectedColor && item.size === selectedSize)
+
+  // console.log('Selected Material ID: ', selectedMaterial ? selectedMaterial.id : 'None')
+
+  
+  const handleAddToCart = () => {
+    dispatch(createCartItem2(cartInfo));
+    let cartItems = JSON.parse(localStorage.getItem('cartItems1') || '[]');
+  
+    const newLocalStorageCartItem = {
+      ...cartInfo,
+      quantity: cartInfo.quantity,
+      sizeId: cartInfo.sizeId,
+      colorId: cartInfo.colorId,
+      accessId: cartInfo.accessoryId
+    };
+  
+    const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.accessoryId);
+  
+    if (existingProductIndex !== -1) {
+      cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity;
+    } else {
+      cartItems.push(newLocalStorageCartItem);
+    }
+  
+    localStorage.setItem('cartItems1', JSON.stringify(cartItems));
+    
+  }
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
       <div className='slider-container basis-[55%] grid grid-rows-6 '>
@@ -140,30 +199,36 @@ export default function CustomizeProduct() {
               <label className='text-2xl text-left'>Color:</label>
               <div></div>
               <div className='flex justify-around gap-2 colorbutton'>
-                {uniqueColors.map((color, index) => (
+                {color.map((color, index) => (
                   <button
                     key={index}
                     className='w-6 h-6 lg:w-8 lg:h-8'
-                    style={{ backgroundColor: color }}
+                    style={{ backgroundColor: color.name }}
                     // onClick={() => handleColorSelect(index)}
-                    onClick={() => handleColorSelect(color!)}
+                    onClick={() => handleColorSelect(color.id!)}
                   ></button>
                 ))}
               </div>
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Item:</label>
-              <div className='flex justify-center gap-8 colorbutton'>
-                <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' alt='' />
-                <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' alt='' />
-                <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' alt='' />
+              <div className='grid grid-cols-5 gap-6 colorbutton'>
+                {accessoryData.map((item) => (
+                  <button key={item.id} onClick={() => handleAccessSelect(item.id)}>
+                    <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' alt={item.name} />
+                  </button>
+                ))}
               </div>
             </div>
-            <div className='flex items-center justify-evenly'>
-              <div className='flex gap-10 size'>
-                {uniqueSize.map((size, index) => (
-                  <button key={index} className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8' onClick={() => handleSizeSelect(size!)}>
-                    {size!}
+            <div className='flex items-center justify-evenly mt-[30px]'>
+              <div className='flex gap-4 size'>
+                {size.map((size, index) => (
+                  <button
+                    key={index}
+                    className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8'
+                    onClick={() => handleSizeSelect(size.id!)}
+                  >
+                    {size.name!}
                   </button>
                 ))}
               </div>
@@ -231,7 +296,7 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
-        <button className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>Them vao gio hàng</button>
+        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>Them vao gio hàng</button>
       </div>
     </div>
   )

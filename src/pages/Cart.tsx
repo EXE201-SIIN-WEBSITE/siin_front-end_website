@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import FormOrder from '~/components/FormOrder'
 import ItemCart from '~/components/ItemCart'
 import useKey from '~/hooks/useKey'
+import { RootState } from '~/redux/containers/store'
 import { CartItem } from '~/types/product.type'
 
 const Cart = () => {
@@ -10,7 +12,11 @@ const Cart = () => {
   const [orderTotal, setOrderTotal] = useState(0);
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
 
-
+  const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
+  console.log("DACCAACC: ", cart);
+  
+  // console.log("DAAAAAAAAAAAAAAAA", cartItems);
+  
   const toggleFormOrder = () => {
     setFormOrder(!formOrder)
   }
@@ -44,7 +50,7 @@ const Cart = () => {
     <div className='flex flex-col gap-4 my-11 cart-container'>
       <div>
         <div className='flex flex-col justify-start gap-4 overflow-y-auto max-h-96'>
-          {formOrder && <FormOrder toggleFormOrder={toggleFormOrder} totalPrice={orderTotal}  />}
+          {formOrder && <FormOrder toggleFormOrder={toggleFormOrder} totalPrice={orderTotal} cartItemsFromProps={cartItems}  />}
           {cartItems.map((product, index) => (
             <ItemCart
               key={index}
@@ -54,6 +60,11 @@ const Cart = () => {
               onRemove={() => removeItem(index)}
             />
           ))}
+        </div>
+        <div>
+            {cart.map((product) => (
+              <h1 key={product.productMaterialId}>{product.colorName}</h1>
+            ))}
         </div>
         <div className='flex justify-end gap-6 mt-4 mr-5'>
         <h1 className='text-xl font-bold'>Tổng cộng: {totalPrice.toLocaleString()} ₫</h1>
