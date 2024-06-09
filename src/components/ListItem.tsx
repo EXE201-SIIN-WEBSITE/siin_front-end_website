@@ -1,4 +1,3 @@
-import { products } from '~/dummyData/product'
 import Item from './Item'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '~/redux/containers/store'

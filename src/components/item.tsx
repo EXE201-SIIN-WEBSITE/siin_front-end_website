@@ -1,5 +1,4 @@
-import { product } from "~/types/product.type";
-
+import { product } from '~/types/product.type'
 
 export default function Item({ item }: { item: product }) {
   return (
