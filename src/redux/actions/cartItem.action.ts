@@ -44,4 +44,5 @@ export const createCartItem2 = createAsyncThunk(
 );
 
 export const clearCart = createAction('cartItem/clearCart');
+export const removeItemFromCart = createAction<number>('cartItem/removeItemFromCart');
 

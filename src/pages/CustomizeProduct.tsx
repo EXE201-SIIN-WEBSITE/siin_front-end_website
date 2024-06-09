@@ -13,8 +13,9 @@ import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { getAccessories } from '~/redux/actions/accessory.action'
 import { getColors } from '~/redux/actions/color.action'
 import { getSizes } from '~/redux/actions/size.action'
-import { addCartItem, cartItem } from '~/types/cartItem.type'
+import { addCartItem } from '~/types/cartItem.type'
 import { createCartItem2 } from '~/redux/actions/cartItem.action'
+import { CartItem } from '~/types/product.type'
 
 export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
@@ -27,6 +28,12 @@ export default function CustomizeProduct() {
   const [selectedColor, setSelectedColor] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<number | null>(null)
   const [selectedAccess, setSelectedAccess] = useState<number | null>(null)
+  const [product, setProduct] = useState({
+    id: 0,
+    name: 'Custom product',
+    price: 0,
+    coverImage: '',
+  })
   const [cartInfo, setCartInfo] = useState<addCartItem>({
     colorId: 0,
     sizeId: 0,
@@ -46,22 +53,24 @@ export default function CustomizeProduct() {
     }
   }, [dispatch])
 
-  // console.log('LIST ACCESSORIES: ', accessoryData)
-  // console.log('LIST MATERIALS: ', materialData)
 
-  // Extract unique colors from materialData
-  // const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName)))
-  // const uniqueSize = Array.from(new Set(materialData.map((item) => item.size)))
-  // const uniqueColors = Array.from(new Set(materialData.map((item) => item.colorName).filter(Boolean)))
-  // const uniqueSize = Array.from(new Set(materialData.map((item) => item.size).filter(Boolean)))
+  // const generateUniqueId = (product: any, cartInfo: addCartItem): string => {
+  //   return `${product.id}-${cartInfo.colorId}-${cartInfo.sizeId}-${cartInfo.accessoryId}`;
+  // };
 
-  // const handleColorSelect = (index: number) => {
-  //   if (swiperRef.current) {
-  //     const swiper = swiperRef.current // Get Swiper instance
-  //     const newProgress = index / (uniqueColors.length - 1) // Calculate progress based on color index
-  //     swiper.setProgress(newProgress, 500) // 500ms speed for transition
-  //   }
-  // }
+  const addToCart = (): Omit<CartItem, 'quantity'> | null => {
+    if (product) {
+      const productInCart = {
+        id: product.id,
+        name: product.name,
+        price: product.price || 0,
+        image: product.coverImage,
+      };
+  
+      return productInCart;
+    }
+    return null;
+  }
 
   const handleColorSelect = (id: number) => {
     setSelectedColor(id)
@@ -103,33 +112,44 @@ export default function CustomizeProduct() {
 
   console.log('Cart info: ', cartInfo)
 
-  // const selectedMaterial = materialData.find((item) => item.colorName === selectedColor && item.size === selectedSize)
 
-  // console.log('Selected Material ID: ', selectedMaterial ? selectedMaterial.id : 'None')
-
-  
   const handleAddToCart = () => {
+    const productInCart = addToCart();
+    if (!productInCart) {
+      return;
+    }
+    // const uniqueId = generateUniqueId(product, cartInfo);
     dispatch(createCartItem2(cartInfo));
-    let cartItems = JSON.parse(localStorage.getItem('cartItems1') || '[]');
-  
+    
+    
+    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+ 
     const newLocalStorageCartItem = {
-      ...cartInfo,
+      ...productInCart, 
       quantity: cartInfo.quantity,
       sizeId: cartInfo.sizeId,
       colorId: cartInfo.colorId,
-      accessId: cartInfo.accessoryId
+      accessId: cartInfo.accessoryId,
+      // uniqueId: uniqueId
     };
   
-    const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.accessoryId);
+    const existingProductIndex = cartItems.findIndex((item: addCartItem) => 
+      // item.productId === newLocalStorageCartItem.id && 
+      item.sizeId === newLocalStorageCartItem.sizeId && 
+      item.colorId === newLocalStorageCartItem.colorId && 
+      item.accessoryId === newLocalStorageCartItem.accessId
+    );
+  
+    // const existingProductIndex = cartItems.findIndex((item: CartItem) => item.id === newLocalStorageCartItem.id);
   
     if (existingProductIndex !== -1) {
+     
       cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity;
     } else {
       cartItems.push(newLocalStorageCartItem);
     }
   
-    localStorage.setItem('cartItems1', JSON.stringify(cartItems));
-    
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
