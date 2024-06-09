@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react'
 
 import '../components/animation/formOrder.css'
@@ -11,7 +12,12 @@ import { OrderDetail } from '~/types/orderDetail.type'
 import { cartItem } from '~/types/cartItem.type'
 import { clearCart } from '~/redux/actions/cartItem.action'
 import { orderItem } from '~/types/orderItem.type'
-
+import { province } from '~/types/province.type'
+import { district } from '~/types/district.type'
+import { ward } from '~/types/ward.type'
+import { ResponseData } from '~/types/respone.type'
+import { ghnApi } from '~/utils/http'
+import { current } from '@reduxjs/toolkit'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -25,6 +31,81 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   const [isThankYou, setIsThankYou] = useState(false)
   const dispatch = useAppDispatch()
   const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
+  const [provinces, setProvinces] = useState<province[]>([])
+  const [districts, setDistricts] = useState<district[]>([])
+  const [wards, setWards] = useState<ward[]>([])
+  const [selectedProvince, setSelectedProvince] = useState('')
+  const [selectedDistrict, setSelectedDistrict] = useState('')
+  const [, setSelectedWard] = useState('')
+
+  useEffect(() => {
+    // get tinh dau tien
+    const fetchProvinces = async () => {
+      try {
+        const response = await ghnApi.get<ResponseData<province[]>>('/province')
+        setProvinces(response.data.data)
+      } catch (error) {
+        console.error('Error fetching provinces:', error)
+      }
+    }
+    fetchProvinces()
+  }, [])
+
+  useEffect(() => {
+    if (selectedProvince) {
+      // get tiep district khi co tinh
+      const fetchDistricts = async () => {
+        try {
+          const response = await ghnApi.get<ResponseData<district[]>>(`/district`, {
+            params: { province_id: selectedProvince }
+          })
+          setDistricts(response.data.data)
+          setWards([]) // xoa ward khi chon tinh khac con district thi duoc thay boi cai moi
+        } catch (error) {
+          console.error('Error fetching districts:', error)
+        }
+      }
+
+      fetchDistricts()
+    }
+  }, [selectedProvince])
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      setWards(() => [])
+      // get ward khi co district
+      const fetchWards = async () => {
+        try {
+          const response = await ghnApi.get<ResponseData<ward[]>>(`/ward`, {
+            params: { district_id: selectedDistrict }
+          })
+
+          setWards(response.data.data)
+        } catch (error) {
+          console.error('Error fetching wards:', error)
+        }
+      }
+
+      fetchWards()
+    }
+  }, [selectedDistrict, selectedProvince])
+
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = e.target.options[e.target.selectedIndex]
+    const provinceId = selectedOption.getAttribute('data-id')
+    setSelectedProvince(provinceId || '')
+    setSelectedDistrict('')
+    setSelectedWard('')
+    setWards([])
+    getData(e)
+  }
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = e.target.options[e.target.selectedIndex]
+    const districtId = selectedOption.getAttribute('district-id')
+    setSelectedDistrict(districtId || '')
+    getData(e)
+  }
 
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
@@ -69,10 +150,12 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
         accessoryName: item.accessoryName || ''
       }))
 
-      const mergedCartItems = updatedCartItems.map((item, index) => ({
-        ...item,
-        quantity: cartItemsFromProps[index]?.quantity || 0
-      })).filter(item => item.quantity > 0)
+      const mergedCartItems = updatedCartItems
+        .map((item, index) => ({
+          ...item,
+          quantity: cartItemsFromProps[index]?.quantity || 0
+        }))
+        .filter((item) => item.quantity > 0)
 
       setOrderDetail((prevState) => ({
         ...prevState,
@@ -82,28 +165,26 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   }, [cart, cartItemsFromProps])
 
   useEffect(() => {
-    const filteredCartItems = orderDetail.cartItems.filter(item => item.quantity > 0);
-  
+    const filteredCartItems = orderDetail.cartItems.filter((item) => item.quantity > 0)
+
     if (filteredCartItems.length > 0) {
-      const firstItem = filteredCartItems[0];
-      setOrderItem(prevOrderItem => ({
+      const firstItem = filteredCartItems[0]
+      setOrderItem((prevOrderItem) => ({
         ...prevOrderItem,
         quantity: firstItem.quantity,
         productMaterialId: firstItem.productMaterialId,
         orderDetailId: 0
-      }));
+      }))
     } else {
-  
       setOrderItem({
         quantity: 0,
         price: totalPrice,
         productMaterialId: 0,
         orderDetailId: 0,
         status: true
-      });
+      })
     }
-  }, [orderDetail.cartItems, totalPrice]);
-  
+  }, [orderDetail.cartItems, totalPrice])
 
   console.log('Updated orderDetail: ', orderDetail)
 
@@ -150,55 +231,54 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     e.preventDefault()
     const filteredOrderDetail = {
       ...orderDetail,
-      cartItems: orderDetail.cartItems.filter(item => item.quantity > 0)
+      cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
     }
     dispatch(createOrderDetail(filteredOrderDetail))
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
     dispatch(clearCart())
-    setIsOrderForm(false);
+    setIsOrderForm(false)
   }
-    // try {
+  // try {
 
-    //   const resultAction = await dispatch(createOrderDetail(orderDetail));
-    //   if (createOrderDetail.fulfilled.match(resultAction)) {
-    //     const orderDetailId = resultAction.payload.id;
+  //   const resultAction = await dispatch(createOrderDetail(orderDetail));
+  //   if (createOrderDetail.fulfilled.match(resultAction)) {
+  //     const orderDetailId = resultAction.payload.id;
 
-    //     const updatedOrderItem = {
-    //       ...orderItem,
-    //       orderDetailId: orderDetailId,
-    //     };
+  //     const updatedOrderItem = {
+  //       ...orderItem,
+  //       orderDetailId: orderDetailId,
+  //     };
 
-    //     await dispatch(createOrderItem(updatedOrderItem));
-    //     setPayment((prevPayment) => ({
-    //       ...prevPayment,
-    //       orderDetailId: orderDetailId,
-    //     }));
+  //     await dispatch(createOrderItem(updatedOrderItem));
+  //     setPayment((prevPayment) => ({
+  //       ...prevPayment,
+  //       orderDetailId: orderDetailId,
+  //     }));
 
-    //     setIsOrderForm(false);
+  //     setIsOrderForm(false);
 
-    //     const updatedCartItems = orderDetail.cartItems.map((item) => ({
-    //       ...item,
-    //       productId: 0,
-    //       productMaterialId: 0,
-    //     }));
+  //     const updatedCartItems = orderDetail.cartItems.map((item) => ({
+  //       ...item,
+  //       productId: 0,
+  //       productMaterialId: 0,
+  //     }));
 
-    //     setOrderDetail((prevState) => ({
-    //       ...prevState,
-    //       cartItems: updatedCartItems,
-    //     }));
+  //     setOrderDetail((prevState) => ({
+  //       ...prevState,
+  //       cartItems: updatedCartItems,
+  //     }));
 
-    //     localStorage.removeItem('cartItems');
-    //     setOrderDetail(initialOrderDetail);
+  //     localStorage.removeItem('cartItems');
+  //     setOrderDetail(initialOrderDetail);
 
-    //     dispatch(clearCart());
-    //   } else {
-    //     console.error('Failed to create order detail:', resultAction.payload);
-    //   }
-    // } catch (error) {
-    //   console.error('Error occurred during order submission:', error);
-    // }
-  
+  //     dispatch(clearCart());
+  //   } else {
+  //     console.error('Failed to create order detail:', resultAction.payload);
+  //   }
+  // } catch (error) {
+  //   console.error('Error occurred during order submission:', error);
+  // }
 
   const handlePaymentSubmit = () => {
     dispatch(createPayment(payment))
@@ -305,24 +385,35 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       <select
                         id='province'
                         name='province'
-                        onChange={getData}
+                        onChange={handleProvinceChange}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                       >
-                        <option value='location1'>Tỉnh/Thành</option>
-                        <option value='location2'>Địa chỉ 2</option>
-                        <option value='location3'>Địa chỉ 3</option>
+                        <option value=''>Tỉnh/Thành</option>
+                        {provinces.map((province) => (
+                          <option key={province.ProvinceID} value={province.ProvinceName} data-id={province.ProvinceID}>
+                            {province.ProvinceName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className='items-center m-2 mb-4'>
                       <select
                         id='district'
                         name='district'
-                        onChange={getData}
+                        onChange={handleDistrictChange}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                        disabled={!selectedProvince}
                       >
-                        <option value='location1'>Quận/Huyện</option>
-                        <option value='location2'>Địa chỉ 2</option>
-                        <option value='location3'>Địa chỉ 3</option>
+                        <option value=''>Quận/Huyện</option>
+                        {districts.map((district) => (
+                          <option
+                            key={district.DistrictID}
+                            value={district.DistrictName}
+                            district-id={district.DistrictID}
+                          >
+                            {district.DistrictName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className='items-center m-2 mb-4'>
@@ -331,10 +422,14 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                         name='ward'
                         onChange={getData}
                         className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                        disabled={!selectedDistrict}
                       >
-                        <option value='location1'>Phường/Xã</option>
-                        <option value='location2'>Địa chỉ 2</option>
-                        <option value='location3'>Địa chỉ 3</option>
+                        <option value=''>Phường/Xã</option>
+                        {wards.map((ward) => (
+                          <option key={ward.DistrictID} value={ward.WardName}>
+                            {ward.WardName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
