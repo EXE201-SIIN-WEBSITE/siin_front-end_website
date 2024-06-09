@@ -113,7 +113,7 @@ const ProductDetail = () => {
 
 
 
-    console.log("PRODUCT MATERIAL ID: ", material);
+
 
   useEffect(() => {
     if (productDetail && productDetail.price !== undefined) {

@@ -16,23 +16,28 @@ import { getSizes } from '~/redux/actions/size.action'
 import { addCartItem } from '~/types/cartItem.type'
 import { createCartItem2 } from '~/redux/actions/cartItem.action'
 import { CartItem } from '~/types/product.type'
+import { getMaterials, getProductMaterial, getProductMaterialDetail } from '~/redux/actions/material.action'
+import { material } from '~/types/material.type'
 
 export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
-  
+  const material = useSelector((state: RootState) => state.material.material)
+
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [selectedColor, setSelectedColor] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<number | null>(null)
   const [selectedAccess, setSelectedAccess] = useState<number | null>(null)
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
+  const [totalPrice, setTotalPrice] = useState(0)
   const [product, setProduct] = useState({
     id: 0,
     name: 'Custom product',
     price: 0,
-    coverImage: '',
+    coverImage: ''
   })
   const [cartInfo, setCartInfo] = useState<addCartItem>({
     colorId: 0,
@@ -47,55 +52,158 @@ export default function CustomizeProduct() {
     dispatch(getAccessories({ signal }))
     dispatch(getColors({ signal }))
     dispatch(getSizes({ signal }))
+    // dispatch(getMaterials({ signal }))
+    dispatch(getProductMaterial(11))
 
     return () => {
       abortController.abort()
     }
   }, [dispatch])
 
+  const updateMaterialId = () => {
+    if (selectedColor !== null && selectedSize !== null && selectedAccess !== null && Array.isArray(material)) {
+      const foundMaterial = material.find(
+        (material: material) =>
+          material.colorId === selectedColor &&
+          material.sizeId === selectedSize &&
+          material.accessoryId === selectedAccess
+      )
+
+      if (foundMaterial) {
+        setSelectedMaterialId(foundMaterial.id)
+        setProduct((prevProduct) => ({
+          ...prevProduct,
+          price: totalPrice
+        }))
+
+        dispatch(getProductMaterialDetail(foundMaterial.id))
+      }
+    }
+  }
+
+  useEffect(() => {
+    updateMaterialId()
+  }, [selectedColor, selectedSize, selectedAccess])
 
   // const generateUniqueId = (product: any, cartInfo: addCartItem): string => {
   //   return `${product.id}-${cartInfo.colorId}-${cartInfo.sizeId}-${cartInfo.accessoryId}`;
   // };
 
+  // const addToCart = (): Omit<CartItem, 'quantity'> | null => {
+  //   if (product) {
+  //     const productInCart = {
+  //       id: product.id,
+  //       name: product.name,
+  //       price: product.price || 0,
+  //       image: product.coverImage
+  //     }
+
+  //     return productInCart
+  //   }
+  //   return null
+  // }
+
   const addToCart = (): Omit<CartItem, 'quantity'> | null => {
-    if (product) {
-      const productInCart = {
-        id: product.id,
-        name: product.name,
-        price: product.price || 0,
-        image: product.coverImage,
-      };
-  
-      return productInCart;
+    if (product && selectedMaterialId !== null && Array.isArray(material)) {
+      const selectedMaterial = material.find((material) => material.id === selectedMaterialId);
+      if (selectedMaterial) {
+        const productInCart = {
+          id: product.id,
+          name: product.name,
+          price: selectedMaterial.price || 0,
+          image: product.coverImage
+        }
+        return productInCart;
+      }
     }
     return null;
+  };
+  
+
+  const [activeColor, setActiveColor] = useState<number | null>(null)
+  const [activeSize, setActiveSize] = useState<number | null>(null)
+  const handleColorSelect = (colorId: number) => {
+    setSelectedColor(colorId)
+    setActiveColor(colorId)
+    updateSelectedMaterialId(colorId, activeSize)
   }
 
-  const handleColorSelect = (id: number) => {
-    setSelectedColor(id)
+  const handleSizeSelect = (sizeId: number) => {
+    setSelectedSize(sizeId)
+    setActiveSize(sizeId)
+    updateSelectedMaterialId(activeColor, sizeId)
   }
 
-  const handleSizeSelect = (id: number) => {
-    setSelectedSize(id)
-  }
-
-  const handleAccessSelect = (id: number) => {
+  const handleAccessSelect = (id: number, index: number) => {
     setSelectedAccess(id)
+    swiperRef.current?.slideTo(index)
   }
 
-  console.log('Selected color: ', selectedColor)
-  console.log('Selected size: ', selectedSize)
+  // const updateSelectedMaterialId = (colorId: number | null, sizeId: number | null) => {
+  //   if (colorId !== null && sizeId !== null && Array.isArray(material)) {
+  //     const selectedMaterial = material.find(
+  //       (material: material) => material.colorId === colorId && material.sizeId === sizeId
+  //     )
+  //     if (selectedMaterial) {
+  //       setSelectedMaterialId(selectedMaterial.id)
+  //       setTotalPrice(quantity * selectedMaterial.price)
+  //     }
+  //   }
+  // }
+  const updateSelectedMaterialId = (colorId: number | null, sizeId: number | null) => {
+    if (colorId !== null && sizeId !== null && Array.isArray(material)) {
+      const selectedMaterial = material.find(
+        (material: material) => material.colorId === colorId && material.sizeId === sizeId
+      )
+      if (selectedMaterial) {
+        console.log('Found selected material:', selectedMaterial);
+        setSelectedMaterialId(selectedMaterial.id);
+        setTotalPrice(quantity * selectedMaterial.price);
+      } else {
+        console.log('No selected material found');
+      }
+    }
+  }
+  
+  const formatPriceToVND = (price: number): string => {
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  }
+
+  console.log('MATE: ', material)
+
+  // const incrementQuantity = () => {
+  //   setQuantity((prevQuantity) => prevQuantity + 1)
+  // }
 
   const incrementQuantity = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1)
+    const newQuantity = quantity + 1
+    setQuantity(newQuantity)
+
+    if (selectedMaterialId !== null && Array.isArray(material)) {
+      const selectedMaterial = material.find((material) => material.id === selectedMaterialId)
+      if (selectedMaterial) {
+        setTotalPrice(newQuantity * selectedMaterial.price)
+      }
+    }
   }
+
+  // const decrementQuantity = () => {
+  //   setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
+  // }
 
   const decrementQuantity = () => {
-    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
-  }
+    if (quantity > 0) {
+      const newQuantity = quantity - 1
+      setQuantity(newQuantity)
 
- 
+      if (selectedMaterialId !== null && Array.isArray(material)) {
+        const selectedMaterial = material.find((material) => material.id === selectedMaterialId)
+        if (selectedMaterial) {
+          setTotalPrice(newQuantity * selectedMaterial.price)
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     if (selectedColor !== null && selectedSize !== null && selectedAccess !== null) {
@@ -108,48 +216,45 @@ export default function CustomizeProduct() {
     }
   }, [selectedColor, selectedSize, selectedAccess, quantity])
 
-  console.log('Access: ', accessoryData)
+  // console.log('Access: ', accessoryData)
 
   console.log('Cart info: ', cartInfo)
 
-
   const handleAddToCart = () => {
-    const productInCart = addToCart();
+    const productInCart = addToCart()
     if (!productInCart) {
-      return;
+      return
     }
     // const uniqueId = generateUniqueId(product, cartInfo);
-    dispatch(createCartItem2(cartInfo));
-    
-    
-    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
- 
+    dispatch(createCartItem2(cartInfo))
+
+    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+
     const newLocalStorageCartItem = {
-      ...productInCart, 
+      ...productInCart,
       quantity: cartInfo.quantity,
       sizeId: cartInfo.sizeId,
       colorId: cartInfo.colorId,
-      accessId: cartInfo.accessoryId,
-      // uniqueId: uniqueId
-    };
-  
-    const existingProductIndex = cartItems.findIndex((item: addCartItem) => 
-      // item.productId === newLocalStorageCartItem.id && 
-      item.sizeId === newLocalStorageCartItem.sizeId && 
-      item.colorId === newLocalStorageCartItem.colorId && 
-      item.accessoryId === newLocalStorageCartItem.accessId
-    );
-  
-    // const existingProductIndex = cartItems.findIndex((item: CartItem) => item.id === newLocalStorageCartItem.id);
-  
-    if (existingProductIndex !== -1) {
-     
-      cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity;
-    } else {
-      cartItems.push(newLocalStorageCartItem);
+      accessId: cartInfo.accessoryId
     }
-  
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+    const existingProductIndex = cartItems.findIndex(
+      (item: addCartItem) =>
+        // item.productId === newLocalStorageCartItem.id &&
+        item.sizeId === newLocalStorageCartItem.sizeId &&
+        item.colorId === newLocalStorageCartItem.colorId &&
+        item.accessoryId === newLocalStorageCartItem.accessId
+    )
+
+    // const existingProductIndex = cartItems.findIndex((item: CartItem) => item.id === newLocalStorageCartItem.id);
+
+    if (existingProductIndex !== -1) {
+      cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity
+    } else {
+      cartItems.push(newLocalStorageCartItem)
+    }
+
+    localStorage.setItem('cartItems', JSON.stringify(cartItems))
   }
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
@@ -179,9 +284,9 @@ export default function CustomizeProduct() {
           navigation={{ nextEl: '.next-slide-controller', prevEl: '.back-slide-controller' }}
           modules={[EffectCoverflow, Navigation]}
         >
-          {products.map((product, index) => (
+          {accessoryData.map((accessories, index) => (
             <SwiperSlide key={index} className='w-[50%] h-full'>
-              <img className='object-contain w-full h-full' src={product.img} alt={product.name} />
+              <img className='object-contain w-full h-full' src={accessories.image} alt={accessories.name} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -233,9 +338,9 @@ export default function CustomizeProduct() {
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Item:</label>
               <div className='grid grid-cols-5 gap-6 colorbutton'>
-                {accessoryData.map((item) => (
-                  <button key={item.id} onClick={() => handleAccessSelect(item.id)}>
-                    <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' alt={item.name} />
+                {accessoryData.map((item, index) => (
+                  <button key={item.id} onClick={() => handleAccessSelect(item.id, index)}>
+                    <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' src={item.image} alt={item.name} />
                   </button>
                 ))}
               </div>
@@ -316,7 +421,12 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
-        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>Them vao gio hàng</button>
+        <h3 className='md:text-2xl text-xl'>
+          Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
+        </h3>
+        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
+          Them vao gio hàng
+        </button>
       </div>
     </div>
   )

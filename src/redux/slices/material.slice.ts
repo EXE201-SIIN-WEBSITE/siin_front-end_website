@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
-import { getMaterials, getProductMaterial } from '../actions/material.action'
+import { getMaterials, getProductMaterial, getProductMaterialDetail } from '../actions/material.action'
 import { initialMaterialState } from '../types/material.type'
 
 const materialSlice = createSlice({
@@ -17,6 +17,11 @@ const materialSlice = createSlice({
       })
 
       .addCase(getProductMaterial.fulfilled, (state, action) => {
+        state.loading = false
+        state.material = action.payload
+      })
+
+      .addCase(getProductMaterialDetail.fulfilled, (state, action) => {
         state.loading = false
         state.material = action.payload
       })
