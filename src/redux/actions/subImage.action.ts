@@ -3,9 +3,9 @@ import { ResponseData } from '~/types/respone.type'
 import { subImage } from '~/types/subImage.type'
 import { http } from '~/utils/http'
 
-export const getSubImageByProId = createAsyncThunk('product/getSubImageByProId', async (id: number, thunkAPI) => {
+export const getImageByProMaterialId = createAsyncThunk('product/getImageByProMaterialId', async (id: number, thunkAPI) => {
   try {
-    const response = await http.get<ResponseData<subImage[]>>(`/product-sub-image/productId?productId=${id}`, {
+    const response = await http.get<ResponseData<subImage[]>>(`/product-sub-image/productMaterialId?productMaterialId=${id}`, {
     })
     return response.data.data
   } catch (error: any) {

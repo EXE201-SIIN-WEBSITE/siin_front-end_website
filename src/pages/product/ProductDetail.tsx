@@ -7,9 +7,9 @@ import { createCartItem } from '~/redux/actions/cartItem.action'
 
 import { getProductMaterial } from '~/redux/actions/material.action'
 import { getProductDetail } from '~/redux/actions/product.action'
-import { getSubImageByProId } from '~/redux/actions/subImage.action'
+import { getImageByProMaterialId } from '~/redux/actions/subImage.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
-import { addCartItem, cartItem } from '~/types/cartItem.type'
+import { addCartItem } from '~/types/cartItem.type'
 import { material } from '~/types/material.type'
 import { CartItem } from '~/types/product.type'
 
@@ -30,14 +30,18 @@ const ProductDetail = () => {
     userId: 0
   })
 
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
+  
+
   const colorMap: { [key: number]: string } = {
-    1: 'red',
-    2: 'pink',
-    3: 'black',
-    4: 'orange',
-    5: 'purple'
+    1: 'Red',
+    2: 'Pink',
+    3: 'Black',
+    4: 'Orange',
+    5: 'Purple'
   }
 
+  
   const sizeMap: { [key: number]: string } = {
     1: 'M',
     2: 'S',
@@ -75,28 +79,41 @@ const ProductDetail = () => {
   const handleColorClick = (colorId: number) => {
     setCartItem((prevState) => ({ ...prevState, colorId }))
     setActiveColor(colorId)
+    updateSelectedMaterialId(colorId, activeSize);
   }
 
   const handleSizeClick = (sizeId: number) => {
     setCartItem((prevState) => ({ ...prevState, sizeId }))
     setActiveSize(sizeId)
+    updateSelectedMaterialId(activeColor, sizeId);
   }
 
-  // console.log('CART ITEM: ', cartItem)
 
-  // console.log('MATERIAL NE: ', material)
+  const updateSelectedMaterialId = (colorId: number | null, sizeId: number | null) => {
+    if (colorId !== null && sizeId !== null && Array.isArray(material)) {
+      const selectedMaterial = material.find((material: material) => material.colorId === colorId && material.sizeId === sizeId);
+      if (selectedMaterial) {
+        setSelectedMaterialId(selectedMaterial.id);
+        setTotalPrice(quantity * selectedMaterial.price)
+      }
+    }
+  }
+
 
   const dispatch = useAppDispatch()
-  // console.log('detail: ', productDetail)
-
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
   useEffect(() => {
     dispatch(getProductDetail(numericId))
-    dispatch(getSubImageByProId(numericId))
     dispatch(getProductMaterial(numericId))
+    // dispatch(getImageByProMaterialId(numericId))
+
   }, [dispatch, numericId])
+
+
+
+    console.log("PRODUCT MATERIAL ID: ", material);
 
   useEffect(() => {
     if (productDetail && productDetail.price !== undefined) {
@@ -111,43 +128,56 @@ const ProductDetail = () => {
     }))
   }, [quantity])
 
-  const handleIncrease = () => {
-    const newQuantity = quantity + 1
-    setQuantity(newQuantity)
-    setTotalPrice(newQuantity * (productDetail?.price || 0))
-  }
-
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      const newQuantity = quantity - 1
-      setQuantity(newQuantity)
-      setTotalPrice(newQuantity * (productDetail?.price || 0))
+  useEffect(() => {
+    if (selectedMaterialId !== null) {
+      dispatch(getImageByProMaterialId(selectedMaterialId));
     }
-  }
+  }, [selectedMaterialId, dispatch]);
 
-  // const addToCart = () => {
-  //   if (productDetail) {
-  //     const productInCart: CartItem = {
-  //       id: productDetail.id,
-  //       name: productDetail.name,
-  //       price: productDetail.price || 0,
-  //       image: productDetail.coverImage,
-  //       quantity: quantity
-  //     }
+  // const handleIncrease = () => {
+  //   const newQuantity = quantity + 1
+  //   setQuantity(newQuantity)
+  //   setTotalPrice(newQuantity * (productDetail?.price || 0))
+  // }
 
-  //     let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]')
-  //     const existingProductIndex = cartItems.findIndex((item) => item.id === productInCart.id)
-
-  //     if (existingProductIndex !== -1) {
-  //       cartItems[existingProductIndex].quantity += productInCart.quantity
-  //     } else {
-  //       cartItems.push(productInCart)
-  //     }
-
-  //     localStorage.setItem('cartItems', JSON.stringify(cartItems))
-  //     console.log('productInCart:', productInCart)
+  // const handleDecrease = () => {
+  //   if (quantity > 0) {
+  //     const newQuantity = quantity - 1
+  //     setQuantity(newQuantity)
+  //     setTotalPrice(newQuantity * (productDetail?.price || 0))
   //   }
   // }
+
+  const handleIncrease = () => {
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+  
+    if (selectedMaterialId !== null && Array.isArray(material)) {
+      const selectedMaterial = material.find(
+        (material) => material.id === selectedMaterialId
+      );
+      if (selectedMaterial) {
+        setTotalPrice(newQuantity * selectedMaterial.price);
+      }
+    }
+  };
+  
+  const handleDecrease = () => {
+    if (quantity > 0) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+  
+      if (selectedMaterialId !== null && Array.isArray(material)) {
+        const selectedMaterial = material.find(
+          (material) => material.id === selectedMaterialId
+        );
+        if (selectedMaterial) {
+          setTotalPrice(newQuantity * selectedMaterial.price);
+        }
+      }
+    }
+  };
+  
 
   const addToCart = (): Omit<CartItem, 'quantity'> | null => {
     if (productDetail) {
@@ -225,9 +255,18 @@ const ProductDetail = () => {
     <>
       {productDetail ? (
         <div className='grid md:grid-cols-2  grid-cols-1 md:mt-9'>
-          <div className='md:col-span-1 mt-6'>
-            <div className='grid md:grid-cols-7 sm:grid-cols-4 grid-cols-4 md:gap-2 gap-y-2 md:w-[60%] md:h-[64%] md:ml-[220px]'>
-              {filteredSubImages.map((image, index) => (
+            <div className='md:col-span-1 mt-6'>
+          <div className='grid md:grid-cols-7 sm:grid-cols-4 grid-cols-4 md:gap-2 gap-y-2 md:w-[60%] md:h-[64%] md:ml-[220px]'>
+            {(activeColor === null && activeSize === null) ? (
+              <div className='col-span-12 flex justify-center items-center'>
+                <img
+                  className='md:h-full md:w-full h-[200px] w-[180px]'
+                  src={productDetail.coverImage}
+                  alt='Product Cover Image'
+                />
+              </div>
+            ) : (
+              filteredSubImages.map((image, index) => (
                 <div
                   key={index}
                   className={`${
@@ -246,9 +285,10 @@ const ProductDetail = () => {
                     alt={`Sub Image ${index + 1}`}
                   />
                 </div>
-              ))}
-            </div>
+              ))
+            )}
           </div>
+        </div>
 
           {/* RIGHT SECTION */}
           <div className='grid md:grid-cols-3 grid-cols-1'>
@@ -308,11 +348,8 @@ const ProductDetail = () => {
 
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
               <div className='flex justify-center mb-[40px]'>
-                <h3 className='md:text-2xl text-xl'>
-                  Thành tiền:{' '}
-                  {productDetail && productDetail.price !== undefined
-                    ? formatPriceToVND(totalPrice)
-                    : 'Không có thông tin sản phẩm'}
+              <h3 className='md:text-2xl text-xl'>
+                  Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
                 </h3>
               </div>
             </div>

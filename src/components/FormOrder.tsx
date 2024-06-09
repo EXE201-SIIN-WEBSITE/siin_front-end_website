@@ -11,7 +11,7 @@ import { OrderDetail } from '~/types/orderDetail.type'
 import { cartItem } from '~/types/cartItem.type'
 import { clearCart } from '~/redux/actions/cartItem.action'
 import { orderItem } from '~/types/orderItem.type'
-import { createOrderItem } from '~/redux/actions/orderItem.action'
+
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -30,8 +30,8 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
 
-  console.log('CÂCCAC: ', cartItemsFromProps)
-  console.log('CÂCCAC: ', cart)
+  // console.log('ITEM PASS: ', cartItemsFromProps)
+  // console.log('CÂCCAC: ', cart)
 
   const initialOrderDetail = {
     cartItems: [],
@@ -57,10 +57,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     status: true
   })
 
-  console.log("O ITEM: ", orderItem);
-  
- 
-  
+  // console.log('O ITEM: ', orderItem)
 
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
@@ -75,8 +72,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
       const mergedCartItems = updatedCartItems.map((item, index) => ({
         ...item,
         quantity: cartItemsFromProps[index]?.quantity || 0
-      }))
-
+      })).filter(item => item.quantity > 0)
 
       setOrderDetail((prevState) => ({
         ...prevState,
@@ -86,16 +82,28 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   }, [cart, cartItemsFromProps])
 
   useEffect(() => {
-    if (orderDetail.cartItems.length > 0) {
-      const firstItem = orderDetail.cartItems[0] 
-      setOrderItem((prevOrderItem) => ({
+    const filteredCartItems = orderDetail.cartItems.filter(item => item.quantity > 0);
+  
+    if (filteredCartItems.length > 0) {
+      const firstItem = filteredCartItems[0];
+      setOrderItem(prevOrderItem => ({
         ...prevOrderItem,
         quantity: firstItem.quantity,
         productMaterialId: firstItem.productMaterialId,
-        orderDetailId: 0 
-      }))
+        orderDetailId: 0
+      }));
+    } else {
+  
+      setOrderItem({
+        quantity: 0,
+        price: totalPrice,
+        productMaterialId: 0,
+        orderDetailId: 0,
+        status: true
+      });
     }
-  }, [orderDetail])
+  }, [orderDetail.cartItems, totalPrice]);
+  
 
   console.log('Updated orderDetail: ', orderDetail)
 
@@ -138,51 +146,58 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     }
   }, [])
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    try {
-    
-      const resultAction = await dispatch(createOrderDetail(orderDetail));
-      if (createOrderDetail.fulfilled.match(resultAction)) {
-        const orderDetailId = resultAction.payload.id;
-        const updatedOrderItem = {
-          ...orderItem,
-          orderDetailId: orderDetailId,
-        
-        };
-        await dispatch(createOrderItem(updatedOrderItem));
-        setPayment((prevPayment) => ({
-          ...prevPayment,
-          orderDetailId: orderDetailId,
-        }));
-  
-        setIsOrderForm(false);
-
-        const updatedCartItems = orderDetail.cartItems.map((item) => ({
-          ...item,
-          productId: 0,
-          productMaterialId: 0,
-        }));
-  
-        setOrderDetail((prevState) => ({
-          ...prevState,
-          cartItems: updatedCartItems,
-        }));
-  
-        localStorage.removeItem('cartItems');
-        setOrderDetail(initialOrderDetail);
-  
-        dispatch(clearCart());
-      } else {
-        console.error('Failed to create order detail:', resultAction.payload);
-      }
-    } catch (error) {
-      console.error('Error occurred during order submission:', error);
+    e.preventDefault()
+    const filteredOrderDetail = {
+      ...orderDetail,
+      cartItems: orderDetail.cartItems.filter(item => item.quantity > 0)
     }
-  };
+    dispatch(createOrderDetail(filteredOrderDetail))
+    localStorage.removeItem('cartItems')
+    setOrderDetail(initialOrderDetail)
+    dispatch(clearCart())
+    setIsOrderForm(false);
+  }
+    // try {
+
+    //   const resultAction = await dispatch(createOrderDetail(orderDetail));
+    //   if (createOrderDetail.fulfilled.match(resultAction)) {
+    //     const orderDetailId = resultAction.payload.id;
+
+    //     const updatedOrderItem = {
+    //       ...orderItem,
+    //       orderDetailId: orderDetailId,
+    //     };
+
+    //     await dispatch(createOrderItem(updatedOrderItem));
+    //     setPayment((prevPayment) => ({
+    //       ...prevPayment,
+    //       orderDetailId: orderDetailId,
+    //     }));
+
+    //     setIsOrderForm(false);
+
+    //     const updatedCartItems = orderDetail.cartItems.map((item) => ({
+    //       ...item,
+    //       productId: 0,
+    //       productMaterialId: 0,
+    //     }));
+
+    //     setOrderDetail((prevState) => ({
+    //       ...prevState,
+    //       cartItems: updatedCartItems,
+    //     }));
+
+    //     localStorage.removeItem('cartItems');
+    //     setOrderDetail(initialOrderDetail);
+
+    //     dispatch(clearCart());
+    //   } else {
+    //     console.error('Failed to create order detail:', resultAction.payload);
+    //   }
+    // } catch (error) {
+    //   console.error('Error occurred during order submission:', error);
+    // }
   
 
   const handlePaymentSubmit = () => {

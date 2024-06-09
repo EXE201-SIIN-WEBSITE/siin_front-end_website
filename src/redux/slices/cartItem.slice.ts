@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 import { initialCartItemState } from '../types/cartItem.type'
@@ -10,6 +10,9 @@ const cartItemSlice = createSlice({
   reducers: {
     clearCart: (state) => {
       state.cartItemList = []
+    },
+    removeItemFromCart: (state, action: PayloadAction<number>) => {
+      state.cartItemList = state.cartItemList.filter((_, index) => index !== action.payload)
     }
   },
 
@@ -60,4 +63,6 @@ const cartItemSlice = createSlice({
   }
 })
 
+
+// export const { clearCart, removeItemFromCart } = cartItemSlice.actions
 export default cartItemSlice.reducer
