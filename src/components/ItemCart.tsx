@@ -36,8 +36,8 @@ const ItemCart: React.FC<ItemCartProps> = ({ item, onIncrease, onDecrease, onRem
         </div>
       </div>
       <div className='col-span-1 gap-2 price mt-2'>
-        <h1 className='text-nowrap text-xl'>Giá Tiền</h1>
-        <p className='mt-3'>{formatPriceToVND(item.price * item.quantity)}</p>
+        <h1 className='text-nowrap text-xl'>Đơn giá</h1>
+        <p className='mt-3'>{formatPriceToVND(item.price)}</p>
         <button onClick={onRemove} className='px-3 py-2 bg-red-500 text-white rounded mt-4'>
           Xóa
         </button>
