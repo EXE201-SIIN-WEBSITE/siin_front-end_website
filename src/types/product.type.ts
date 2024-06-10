@@ -21,6 +21,10 @@ export interface CartItem {
   sizeName?: string
   colorName?: string
   accessoryName?:string
+  accessoryId?: number
+  sizeId?: number
+  colorId?: number
+  accessId?: number
   
 
 }

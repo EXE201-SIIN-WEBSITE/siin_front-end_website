@@ -22,4 +22,16 @@ export const getAccessories = createAsyncThunk('accessory/getAccessories', async
   }
 })
 
+export const getAccessoryDetail = createAsyncThunk('accessory/getAccessoryDetail', async (id: number, thunkAPI) => {
+  try {
+    const response = await http.get<ResponseData<accessory>>(`/accessory/${id}`, {})
+    return response.data.data
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+    }
+    return thunkAPI.rejectWithValue(error.response?.data || error)
+  }
+})
+
 
