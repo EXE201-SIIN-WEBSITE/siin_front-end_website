@@ -1,9 +1,7 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { orderItem } from "~/types/orderItem.type";
-import { ResponseData } from "~/types/respone.type";
-import { http } from "~/utils/http";
-
-
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { orderItem } from '~/types/orderItem.type'
+import { ResponseData } from '~/types/respone.type'
+import { http } from '~/utils/http'
 
 export const createOrderItem = createAsyncThunk('orderItem/createOrderItem', async (data: orderItem, thunkAPI) => {
   try {

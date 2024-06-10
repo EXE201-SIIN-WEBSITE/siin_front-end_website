@@ -3,8 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import '../components/animation/formOrder.css'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
-import { payment } from '~/types/payment.type'
-import { createPayment } from '~/redux/actions/payment.action'
+import { payment, paymentCreate } from '~/types/payment.type'
 import { useSelector } from 'react-redux'
 
 import { createOrderDetail } from '~/redux/actions/orderDetail.action'
@@ -16,8 +15,7 @@ import { province } from '~/types/province.type'
 import { district } from '~/types/district.type'
 import { ward } from '~/types/ward.type'
 import { ResponseData } from '~/types/respone.type'
-import { ghnApi } from '~/utils/http'
-import { current } from '@reduxjs/toolkit'
+import { ghnApi, paymentApi } from '~/utils/http'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -37,6 +35,8 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   const [selectedProvince, setSelectedProvince] = useState('')
   const [selectedDistrict, setSelectedDistrict] = useState('')
   const [, setSelectedWard] = useState('')
+
+  const orderDetailProps = useSelector((state: RootState) => state.orderDetail)
 
   useEffect(() => {
     // get tinh dau tien
@@ -186,8 +186,6 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     }
   }, [orderDetail.cartItems, totalPrice])
 
-  console.log('Updated orderDetail: ', orderDetail)
-
   const [payment, setPayment] = useState<payment>({
     id: 0,
     status: true,
@@ -280,9 +278,19 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   //   console.error('Error occurred during order submission:', error);
   // }
 
-  const handlePaymentSubmit = () => {
-    dispatch(createPayment(payment))
-    setIsThankYou(true)
+  const handlePaymentSubmit = async () => {
+    try {
+      const response = await paymentApi.post<ResponseData<paymentCreate>>(`${orderDetailProps.orderDetail?.id}`)
+
+      if (response.data.data.checkoutUrl) {
+        window.open(response.data.data.checkoutUrl, '_blank')
+        setIsThankYou(true)
+      } else {
+        console.error('No checkoutUrl found in response')
+      }
+    } catch (error) {
+      console.error('Error processing payment:', error)
+    }
   }
 
   return (

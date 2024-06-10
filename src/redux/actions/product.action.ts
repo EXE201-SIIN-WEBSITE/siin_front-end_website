@@ -7,8 +7,6 @@ interface GetProductsParams {
   signal: AbortSignal
 }
 
-
-
 // export const getProduct = createAsyncThunk('product/getProduct', async (_, thunkAPI) => {
 //   const respone = await http.get<ResponseSuccessful<product[]>>('product/get-all/-1', {
 //     signal: thunkAPI.signal

@@ -18,5 +18,11 @@ const ghn = axios.create({
   headers: { token: '3270f806-2693-11ef-ad6a-e6aec6d1ae72' }
 })
 
+const payment = axios.create({
+  baseURL: 'http://172.171.207.227:3000/payments/create-link/',
+  timeout: 10000000
+})
+
 export const http = new Http().instance
 export const ghnApi = ghn
+export const paymentApi = payment

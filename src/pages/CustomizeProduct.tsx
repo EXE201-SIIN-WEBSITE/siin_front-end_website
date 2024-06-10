@@ -66,17 +66,13 @@ export default function CustomizeProduct() {
     }
   }, [dispatch])
 
+  console.log('Accessories List: ', accessoryData)
+  console.log('Colors List: ', color)
+  console.log('Sizes List: ', size)
+  console.log('Product price: ', productDetail)
 
-
-
-  console.log("Accessories List: ", accessoryData);
-  console.log("Colors List: ", color);
-  console.log("Sizes List: ", size);
-  console.log("Product price: ", productDetail);
-  
   const handleColorSelect = (colorId: number) => {
     setSelectedColor(colorId)
-
   }
 
   const handleSizeSelect = (sizeId: number) => {
@@ -88,7 +84,6 @@ export default function CustomizeProduct() {
     swiperRef.current?.slideTo(index)
   }
 
-  
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
@@ -116,8 +111,6 @@ export default function CustomizeProduct() {
     }
   }, [selectedColor, selectedSize, selectedAccess, accessoryData, color, size, quantity])
 
-
-
   useEffect(() => {
     const productPrice = productDetail?.price || 0
     const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
@@ -125,31 +118,18 @@ export default function CustomizeProduct() {
     setTotalPrice(calculatedTotalPrice)
   }, [productDetail, colorPrice, sizePrice, accessoryPrice])
 
-  
-
-
-
-
-
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => prevQuantity + 1)
-
   }
-
-
 
   const decrementQuantity = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
-
   }
 
   useEffect(() => {
-    const newTotalPrice = quantity * priceSum;
-    setTotalPrice(newTotalPrice);
-  }, [quantity, priceSum]);
-  
-  
-
+    const newTotalPrice = quantity * priceSum
+    setTotalPrice(newTotalPrice)
+  }, [quantity, priceSum])
 
   useEffect(() => {
     if (selectedColor !== null && selectedSize !== null && selectedAccess !== null) {
@@ -161,7 +141,6 @@ export default function CustomizeProduct() {
       })
     }
   }, [selectedColor, selectedSize, selectedAccess, quantity])
-
 
   const addToCart = (): Omit<CartItem, 'quantity'> | null => {
     if (product) {
@@ -176,9 +155,6 @@ export default function CustomizeProduct() {
     }
     return null
   }
-
-
-
 
   console.log('Cart info: ', cartInfo)
 
@@ -219,10 +195,8 @@ export default function CustomizeProduct() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
   }
 
-  
+  console.log('PRICE: ', totalPrice)
 
-  console.log("PRICE: ", totalPrice);
-  
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
       <div className='slider-container basis-[55%] grid grid-rows-6 '>
@@ -304,7 +278,7 @@ export default function CustomizeProduct() {
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Item:</label>
-              <div className='grid grid-cols-5 gap-6 colorbutton'>
+              <div className='grid grid-cols-6 gap-6 colorbutton'>
                 {accessoryData.map((item, index) => (
                   <button key={item.id} onClick={() => handleAccessSelect(item.id, index)}>
                     <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' src={item.image} alt={item.name} />
@@ -388,9 +362,7 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
-        <h3 className='md:text-2xl text-xl'>
-          Thành tiền: {formatPriceToVND(totalPrice)}
-        </h3>
+        <h3 className='text-xl md:text-2xl'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
         <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
           Them vao gio hàng
         </button>

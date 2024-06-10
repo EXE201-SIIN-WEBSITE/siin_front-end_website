@@ -11,7 +11,7 @@ interface GetColorsParams {
 export const getColors = createAsyncThunk('color/getColors', async ({ signal }: GetColorsParams, thunkAPI) => {
   try {
     const response = await http.get<ResponseData<color[]>>(`/color/get-all/-1?pageSize=5&field=id`, {
-      signal 
+      signal
     })
     return response.data.data
   } catch (error: any) {
@@ -21,5 +21,3 @@ export const getColors = createAsyncThunk('color/getColors', async ({ signal }: 
     return thunkAPI.rejectWithValue(error.response?.data || error)
   }
 })
-
-
