@@ -18,8 +18,6 @@ const Cart = () => {
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
 
-
-
   console.log('access in CART', cart)
 
   const toggleFormOrder = () => {
@@ -63,75 +61,82 @@ const Cart = () => {
   //     dispatch(getAccessoryDetail(product.accessId));
   //     // console.log("VIEW: ", product.accessId);
   //   }
-    
+
   // };
-  
+
   const showProductDetail = (product: CartItem) => {
-    setSelectedProduct(product);
+    setSelectedProduct(product)
     if (product.accessId !== undefined && product.accessId !== null) {
-      dispatch(getAccessoryDetail(product.accessId));
+      dispatch(getAccessoryDetail(product.accessId))
     }
-  };
+  }
 
   useEffect(() => {
     if (selectedProduct && selectedProduct.accessId !== undefined && selectedProduct.accessId !== null) {
-      dispatch(getAccessoryDetail(selectedProduct.accessId));
+      dispatch(getAccessoryDetail(selectedProduct.accessId))
     }
-  }, [selectedProduct]);
-  
-  
-console.log("ACC: ", accessory);
+  }, [selectedProduct])
+
+  console.log('ACC: ', accessory)
 
   return (
-    <div className='flex flex-col gap-4 my-11 cart-container'>
-      <div>
-        <div className='flex flex-col justify-start gap-4 overflow-y-auto max-h-96'>
-          {formOrder && (
-            <FormOrder toggleFormOrder={toggleFormOrder} totalPrice={orderTotal} cartItemsFromProps={cartItems} />
-          )}
-          {cartItems.map((product, index) => (
-            <div key={index}>
-              <ItemCart
-                item={product}
-                onIncrease={() => updateQuantity(index, 1)}
-                onDecrease={() => updateQuantity(index, -1)}
-                onRemove={() => removeItem(index)}
-              />
-              <button onClick={() => showProductDetail(product)}>Chi tiết</button>
-            </div>
+    <div className='flex flex-col gap-4 my-11 cart-container h-[60vh]'>
+      {cartItems.length > 0 ? (
+        <div>
+          <div className='flex flex-col justify-start gap-4 overflow-y-auto max-h-96'>
+            {formOrder && (
+              <FormOrder toggleFormOrder={toggleFormOrder} totalPrice={orderTotal} cartItemsFromProps={cartItems} />
+            )}
+            {cartItems.map((product, index) => (
+              <div key={index}>
+                <ItemCart
+                  item={product}
+                  onIncrease={() => updateQuantity(index, 1)}
+                  onDecrease={() => updateQuantity(index, -1)}
+                  onRemove={() => removeItem(index)}
+                />
+                <div className='flex justify-start md:ml-[210px]'>
+                  <button className='bg-black text-white px-2 py-1 rounded-md' onClick={() => showProductDetail(product)}>
+                    Chi tiết
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
 
-          ))}
+          <div className='flex justify-end gap-6 mt-4 mr-5'>
+            <h1 className='text-xl font-bold'>Tổng cộng: {totalPrice.toLocaleString()} ₫</h1>
+            <button
+              className='px-2 py-1 bg-black text-white rounded-md md:w-[16%]'
+              onClick={() => handleOrderForm(totalPrice)}
+            >
+              Đặt hàng
+            </button>
+          </div>
         </div>
-        <div className='flex justify-end gap-6 mt-4 mr-5'>
-          <h1 className='text-xl font-bold'>Tổng cộng: {totalPrice.toLocaleString()} ₫</h1>
-          <button
-            className='px-2 py-1 bg-black text-white rounded-md md:w-[16%]'
-            onClick={() => handleOrderForm(totalPrice)}
-          >
-            Đặt hàng
-          </button>
+      ) : (
+        <div className='flex justify-center'>
+          <h1 className='text-xl'>Chưa sản phẩm trong giỏ hàng</h1>
         </div>
-      </div>
+      )}
 
       {selectedProduct && (
-  <div className='fixed top-0 left-0 z-50 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50'>
-    <div className='bg-white p-8 rounded-md'>
-      {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
-      {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt="" />}
-      <p>Color: {selectedProduct.colorId}</p>
-      <p>Size: {selectedProduct.sizeId}</p>
-      <p>Quantity: {selectedProduct.quantity}</p>
-      {/* Thêm các thông tin khác tại đây */}
-      <button
-        className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-md'
-        onClick={() => setSelectedProduct(null)}
-      >
-        Đóng
-      </button>
-    </div>
-  </div>
-)}
-
+        <div className='fixed top-0 left-0 z-50 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50'>
+          <div className='bg-white p-8 rounded-md'>
+            {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
+            {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt='' />}
+            <p>Color: {selectedProduct.colorId}</p>
+            <p>Size: {selectedProduct.sizeId}</p>
+            <p>Quantity: {selectedProduct.quantity}</p>
+            <button
+              className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-md'
+              onClick={() => setSelectedProduct(null)}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

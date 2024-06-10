@@ -20,6 +20,9 @@ import { getMaterials, getProductMaterial, getProductMaterialDetail } from '~/re
 import { material } from '~/types/material.type'
 import { getProductDetail } from '~/redux/actions/product.action'
 
+
+import image from '../../public/assets/cusdefault.jpg'
+
 export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
@@ -32,17 +35,18 @@ export default function CustomizeProduct() {
   const [selectedColor, setSelectedColor] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<number | null>(null)
   const [selectedAccess, setSelectedAccess] = useState<number | null>(null)
-  // const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
   const [colorPrice, setColorPrice] = useState(0)
   const [priceSum, setPriceSum] = useState(0)
   const [sizePrice, setSizePrice] = useState(0)
   const [accessoryPrice, setAccessoryPrice] = useState(0)
+  const [activeSize, setActiveSize] = useState<number | null>(null)
+  const [activeColor, setActiveColor] = useState<number | null>(null)
   const [product, setProduct] = useState({
     id: 0,
     name: 'Custom product',
     price: 0,
-    coverImage: ''
+    coverImage: image
   })
   const [cartInfo, setCartInfo] = useState<addCartItem>({
     colorId: 0,
@@ -58,25 +62,25 @@ export default function CustomizeProduct() {
     dispatch(getColors({ signal }))
     dispatch(getSizes({ signal }))
     dispatch(getProductDetail(11))
-    // dispatch(getMaterials({ signal }))
-    // dispatch(getProductMaterial(11))
 
     return () => {
       abortController.abort()
     }
   }, [dispatch])
 
-  console.log('Accessories List: ', accessoryData)
-  console.log('Colors List: ', color)
-  console.log('Sizes List: ', size)
-  console.log('Product price: ', productDetail)
+  // console.log('Accessories List: ', accessoryData)
+  // console.log('Colors List: ', color)
+  // console.log('Sizes List: ', size)
+  // console.log('Product price: ', productDetail)
 
   const handleColorSelect = (colorId: number) => {
     setSelectedColor(colorId)
+    setActiveColor(colorId)
   }
 
   const handleSizeSelect = (sizeId: number) => {
     setSelectedSize(sizeId)
+    setActiveSize(sizeId)
   }
 
   const handleAccessSelect = (id: number, index: number) => {
@@ -148,13 +152,16 @@ export default function CustomizeProduct() {
         id: product.id,
         name: product.name,
         price: priceSum || 0,
-        image: product.coverImage
+        image: image
       }
 
       return productInCart
     }
     return null
   }
+
+
+  
 
   console.log('Cart info: ', cartInfo)
 
@@ -268,11 +275,13 @@ export default function CustomizeProduct() {
                 {color.map((color, index) => (
                   <button
                     key={index}
-                    className='w-6 h-6 lg:w-8 lg:h-8'
+                    className={`w-6 h-6 lg:w-8 lg:h-8  ${activeColor === color.id ? 'text-white' : 'text-black'}`}
                     style={{ backgroundColor: color.name }}
                     // onClick={() => handleColorSelect(index)}
                     onClick={() => handleColorSelect(color.id!)}
-                  ></button>
+                  >
+                    {activeColor === color.id ? '✓' : ''}
+                  </button>
                 ))}
               </div>
             </div>
@@ -287,11 +296,12 @@ export default function CustomizeProduct() {
               </div>
             </div>
             <div className='flex items-center justify-evenly mt-[30px]'>
-              <div className='flex gap-4 size'>
+              <div className='flex gap-4 size '>
                 {size.map((size, index) => (
                   <button
                     key={index}
-                    className='w-6 h-6 bg-gray-300 lg:w-8 lg:h-8'
+                    className={`border-black md:shadow-2xl w-6 h-6 bg-black-300 lg:w-8 lg:h-8 ${
+                      activeSize === size.id ? 'bg-black text-white' : ' bg-white text-black'} `}
                     onClick={() => handleSizeSelect(size.id!)}
                   >
                     {size.name!}
