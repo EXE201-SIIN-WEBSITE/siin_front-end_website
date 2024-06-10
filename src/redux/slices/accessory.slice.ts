@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 import { initialAccessoryState } from '../types/accessory.type'
-import { getAccessories } from '../actions/accessory.action'
+import { getAccessories, getAccessoryDetail } from '../actions/accessory.action'
 
 
 const accessorySlice = createSlice({
@@ -15,6 +15,11 @@ const accessorySlice = createSlice({
       .addCase(getAccessories.fulfilled, (state, action) => {
         state.loading = false
         state.accessoryList = action.payload
+      })
+
+      .addCase(getAccessoryDetail.fulfilled, (state, action) => {
+        state.loading = false
+        state.accessory = action.payload
       })
 
 

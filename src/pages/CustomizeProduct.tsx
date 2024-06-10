@@ -18,21 +18,26 @@ import { createCartItem2 } from '~/redux/actions/cartItem.action'
 import { CartItem } from '~/types/product.type'
 import { getMaterials, getProductMaterial, getProductMaterialDetail } from '~/redux/actions/material.action'
 import { material } from '~/types/material.type'
+import { getProductDetail } from '~/redux/actions/product.action'
 
 export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
   const material = useSelector((state: RootState) => state.material.material)
-
+  const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [selectedColor, setSelectedColor] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<number | null>(null)
   const [selectedAccess, setSelectedAccess] = useState<number | null>(null)
-  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
+  // const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
   const [totalPrice, setTotalPrice] = useState(0)
+  const [colorPrice, setColorPrice] = useState(0)
+  const [priceSum, setPriceSum] = useState(0)
+  const [sizePrice, setSizePrice] = useState(0)
+  const [accessoryPrice, setAccessoryPrice] = useState(0)
   const [product, setProduct] = useState({
     id: 0,
     name: 'Custom product',
@@ -52,86 +57,30 @@ export default function CustomizeProduct() {
     dispatch(getAccessories({ signal }))
     dispatch(getColors({ signal }))
     dispatch(getSizes({ signal }))
+    dispatch(getProductDetail(11))
     // dispatch(getMaterials({ signal }))
-    dispatch(getProductMaterial(11))
+    // dispatch(getProductMaterial(11))
 
     return () => {
       abortController.abort()
     }
   }, [dispatch])
 
-  const updateMaterialId = () => {
-    if (selectedColor !== null && selectedSize !== null && selectedAccess !== null && Array.isArray(material)) {
-      const foundMaterial = material.find(
-        (material: material) =>
-          material.colorId === selectedColor &&
-          material.sizeId === selectedSize &&
-          material.accessoryId === selectedAccess
-      )
 
-      if (foundMaterial) {
-        setSelectedMaterialId(foundMaterial.id)
-        setProduct((prevProduct) => ({
-          ...prevProduct,
-          price: totalPrice
-        }))
 
-        dispatch(getProductMaterialDetail(foundMaterial.id))
-      }
-    }
-  }
 
-  useEffect(() => {
-    updateMaterialId()
-  }, [selectedColor, selectedSize, selectedAccess])
-
-  // const generateUniqueId = (product: any, cartInfo: addCartItem): string => {
-  //   return `${product.id}-${cartInfo.colorId}-${cartInfo.sizeId}-${cartInfo.accessoryId}`;
-  // };
-
-  // const addToCart = (): Omit<CartItem, 'quantity'> | null => {
-  //   if (product) {
-  //     const productInCart = {
-  //       id: product.id,
-  //       name: product.name,
-  //       price: product.price || 0,
-  //       image: product.coverImage
-  //     }
-
-  //     return productInCart
-  //   }
-  //   return null
-  // }
-
-  const addToCart = (): Omit<CartItem, 'quantity'> | null => {
-    if (product && selectedMaterialId !== null && Array.isArray(material)) {
-      const selectedMaterial = material.find((material) => material.id === selectedMaterialId);
-      if (selectedMaterial) {
-        const productInCart = {
-          id: product.id,
-          name: product.name,
-          price: selectedMaterial.price || 0,
-          image: product.coverImage
-        }
-        return productInCart;
-      }
-    }
-    return null;
-  };
+  console.log("Accessories List: ", accessoryData);
+  console.log("Colors List: ", color);
+  console.log("Sizes List: ", size);
+  console.log("Product price: ", productDetail);
   
-
-  const [activeColor, setActiveColor] = useState<number | null>(null)
-  const [activeSize, setActiveSize] = useState<number | null>(null)
   const handleColorSelect = (colorId: number) => {
     setSelectedColor(colorId)
-    setActiveColor(colorId)
-    updateSelectedMaterialId(colorId, activeSize)
+
   }
 
   const handleSizeSelect = (sizeId: number) => {
     setSelectedSize(sizeId)
-    setActiveSize(sizeId)
-    updateSelectedMaterialId(activeColor, sizeId)
   }
 
   const handleAccessSelect = (id: number, index: number) => {
@@ -139,71 +88,68 @@ export default function CustomizeProduct() {
     swiperRef.current?.slideTo(index)
   }
 
-  // const updateSelectedMaterialId = (colorId: number | null, sizeId: number | null) => {
-  //   if (colorId !== null && sizeId !== null && Array.isArray(material)) {
-  //     const selectedMaterial = material.find(
-  //       (material: material) => material.colorId === colorId && material.sizeId === sizeId
-  //     )
-  //     if (selectedMaterial) {
-  //       setSelectedMaterialId(selectedMaterial.id)
-  //       setTotalPrice(quantity * selectedMaterial.price)
-  //     }
-  //   }
-  // }
-  const updateSelectedMaterialId = (colorId: number | null, sizeId: number | null) => {
-    if (colorId !== null && sizeId !== null && Array.isArray(material)) {
-      const selectedMaterial = material.find(
-        (material: material) => material.colorId === colorId && material.sizeId === sizeId
-      )
-      if (selectedMaterial) {
-        console.log('Found selected material:', selectedMaterial);
-        setSelectedMaterialId(selectedMaterial.id);
-        setTotalPrice(quantity * selectedMaterial.price);
-      } else {
-        console.log('No selected material found');
-      }
-    }
-  }
   
   const formatPriceToVND = (price: number): string => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
 
-  console.log('MATE: ', material)
+  useEffect(() => {
+    if (selectedColor !== null && selectedSize !== null && selectedAccess !== null) {
+      setCartInfo({
+        colorId: selectedColor,
+        sizeId: selectedSize,
+        accessoryId: selectedAccess,
+        quantity: quantity
+      })
 
-  // const incrementQuantity = () => {
-  //   setQuantity((prevQuantity) => prevQuantity + 1)
-  // }
+      const selectedAccessory = accessoryData.find((accesspry) => accesspry.id === selectedAccess)
+      const selectedColorData = color.find((color) => color.id === selectedColor)
+      const selectedSizeData = size.find((size) => size.id === selectedSize)
+
+      const accessoryPrice = selectedAccessory ? selectedAccessory.price : 0
+      const colorPrice = selectedColorData ? selectedColorData.price : 0
+      const sizePrice = selectedSizeData ? selectedSizeData.price : 0
+
+      setAccessoryPrice(accessoryPrice ?? 0)
+      setColorPrice(colorPrice ?? 0)
+      setSizePrice(sizePrice ?? 0)
+    }
+  }, [selectedColor, selectedSize, selectedAccess, accessoryData, color, size, quantity])
+
+
+
+  useEffect(() => {
+    const productPrice = productDetail?.price || 0
+    const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
+    setPriceSum(calculatedTotalPrice)
+    setTotalPrice(calculatedTotalPrice)
+  }, [productDetail, colorPrice, sizePrice, accessoryPrice])
+
+  
+
+
+
+
 
   const incrementQuantity = () => {
-    const newQuantity = quantity + 1
-    setQuantity(newQuantity)
+    setQuantity((prevQuantity) => prevQuantity + 1)
 
-    if (selectedMaterialId !== null && Array.isArray(material)) {
-      const selectedMaterial = material.find((material) => material.id === selectedMaterialId)
-      if (selectedMaterial) {
-        setTotalPrice(newQuantity * selectedMaterial.price)
-      }
-    }
   }
 
-  // const decrementQuantity = () => {
-  //   setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
-  // }
+
 
   const decrementQuantity = () => {
-    if (quantity > 0) {
-      const newQuantity = quantity - 1
-      setQuantity(newQuantity)
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1))
 
-      if (selectedMaterialId !== null && Array.isArray(material)) {
-        const selectedMaterial = material.find((material) => material.id === selectedMaterialId)
-        if (selectedMaterial) {
-          setTotalPrice(newQuantity * selectedMaterial.price)
-        }
-      }
-    }
   }
+
+  useEffect(() => {
+    const newTotalPrice = quantity * priceSum;
+    setTotalPrice(newTotalPrice);
+  }, [quantity, priceSum]);
+  
+  
+
 
   useEffect(() => {
     if (selectedColor !== null && selectedSize !== null && selectedAccess !== null) {
@@ -216,7 +162,23 @@ export default function CustomizeProduct() {
     }
   }, [selectedColor, selectedSize, selectedAccess, quantity])
 
-  // console.log('Access: ', accessoryData)
+
+  const addToCart = (): Omit<CartItem, 'quantity'> | null => {
+    if (product) {
+      const productInCart = {
+        id: product.id,
+        name: product.name,
+        price: priceSum || 0,
+        image: product.coverImage
+      }
+
+      return productInCart
+    }
+    return null
+  }
+
+
+
 
   console.log('Cart info: ', cartInfo)
 
@@ -256,6 +218,11 @@ export default function CustomizeProduct() {
 
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
   }
+
+  
+
+  console.log("PRICE: ", totalPrice);
+  
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>
       <div className='slider-container basis-[55%] grid grid-rows-6 '>
@@ -422,7 +389,7 @@ export default function CustomizeProduct() {
           </div>
         </div>
         <h3 className='md:text-2xl text-xl'>
-          Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
+          Thành tiền: {formatPriceToVND(totalPrice)}
         </h3>
         <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
           Them vao gio hàng

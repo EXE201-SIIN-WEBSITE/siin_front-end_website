@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import FormOrder from '~/components/FormOrder'
 import ItemCart from '~/components/ItemCart'
 import useKey from '~/hooks/useKey'
+import { getAccessoryDetail } from '~/redux/actions/accessory.action'
 import { clearCart, removeItemFromCart } from '~/redux/actions/cartItem.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { CartItem } from '~/types/product.type'
@@ -13,7 +14,12 @@ const Cart = () => {
   const [orderTotal, setOrderTotal] = useState(0)
   const dispatch = useAppDispatch()
   const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
+  const accessory = useSelector((state: RootState) => state.accessory.accessory)
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
+
+
+
   console.log('access in CART', cart)
 
   const toggleFormOrder = () => {
@@ -51,6 +57,31 @@ const Cart = () => {
     dispatch(removeItemFromCart(index))
   }
 
+  // const showProductDetail = (product: CartItem) => {
+  //   setSelectedProduct(product);
+  //   if (product.accessId !== undefined) {
+  //     dispatch(getAccessoryDetail(product.accessId));
+  //     // console.log("VIEW: ", product.accessId);
+  //   }
+    
+  // };
+  
+  const showProductDetail = (product: CartItem) => {
+    setSelectedProduct(product);
+    if (product.accessId !== undefined && product.accessId !== null) {
+      dispatch(getAccessoryDetail(product.accessId));
+    }
+  };
+
+  useEffect(() => {
+    if (selectedProduct && selectedProduct.accessId !== undefined && selectedProduct.accessId !== null) {
+      dispatch(getAccessoryDetail(selectedProduct.accessId));
+    }
+  }, [selectedProduct]);
+  
+  
+console.log("ACC: ", accessory);
+
   return (
     <div className='flex flex-col gap-4 my-11 cart-container'>
       <div>
@@ -59,13 +90,16 @@ const Cart = () => {
             <FormOrder toggleFormOrder={toggleFormOrder} totalPrice={orderTotal} cartItemsFromProps={cartItems} />
           )}
           {cartItems.map((product, index) => (
-            <ItemCart
-              key={index}
-              item={product}
-              onIncrease={() => updateQuantity(index, 1)}
-              onDecrease={() => updateQuantity(index, -1)}
-              onRemove={() => removeItem(index)}
-            />
+            <div key={index}>
+              <ItemCart
+                item={product}
+                onIncrease={() => updateQuantity(index, 1)}
+                onDecrease={() => updateQuantity(index, -1)}
+                onRemove={() => removeItem(index)}
+              />
+              <button onClick={() => showProductDetail(product)}>Chi tiết</button>
+            </div>
+
           ))}
         </div>
         <div className='flex justify-end gap-6 mt-4 mr-5'>
@@ -78,6 +112,26 @@ const Cart = () => {
           </button>
         </div>
       </div>
+
+      {selectedProduct && (
+  <div className='fixed top-0 left-0 z-50 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50'>
+    <div className='bg-white p-8 rounded-md'>
+      {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
+      {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt="" />}
+      <p>Color: {selectedProduct.colorId}</p>
+      <p>Size: {selectedProduct.sizeId}</p>
+      <p>Quantity: {selectedProduct.quantity}</p>
+      {/* Thêm các thông tin khác tại đây */}
+      <button
+        className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-md'
+        onClick={() => setSelectedProduct(null)}
+      >
+        Đóng
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   )
 }

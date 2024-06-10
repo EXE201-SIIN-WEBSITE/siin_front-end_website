@@ -15,6 +15,7 @@ export interface cartItem {
   accessoryName?: string
   productId?: number
   productMaterialId?: number
+  accessoryId?: number
 }
 
 
