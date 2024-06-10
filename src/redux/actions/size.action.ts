@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-
 import { ResponseData } from '~/types/respone.type'
 import { size } from '~/types/size.type'
 import { http } from '~/utils/http'
@@ -12,7 +11,7 @@ interface GetSizesParams {
 export const getSizes = createAsyncThunk('size/getSizes', async ({ signal }: GetSizesParams, thunkAPI) => {
   try {
     const response = await http.get<ResponseData<size[]>>(`/size/get-all/-1?pageSize=5&field=id`, {
-      signal 
+      signal
     })
     return response.data.data
   } catch (error: any) {
@@ -22,5 +21,3 @@ export const getSizes = createAsyncThunk('size/getSizes', async ({ signal }: Get
     return thunkAPI.rejectWithValue(error.response?.data || error)
   }
 })
-
-
