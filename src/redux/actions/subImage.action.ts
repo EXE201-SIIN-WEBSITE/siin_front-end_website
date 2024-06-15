@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ResponseData } from '~/types/respone.type'
 import { subImage } from '~/types/subImage.type'

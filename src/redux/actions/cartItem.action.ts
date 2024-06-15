@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { addCartItem, cartItem } from '~/types/cartItem.type'
 

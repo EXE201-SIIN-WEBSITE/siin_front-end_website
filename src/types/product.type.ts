@@ -11,20 +11,18 @@ export interface product {
 }
 
 export interface CartItem {
-  id: number;
-  name?: string;
-  price: number;
-  quantity: number;
+  id: number
+  name?: string
+  price: number
+  quantity: number
   image?: string
-  productMaterialId?: number,
+  productMaterialId?: number
   productId?: number
   sizeName?: string
   colorName?: string
-  accessoryName?:string
+  accessoryName?: string
   accessoryId?: number
   sizeId?: number
   colorId?: number
   accessId?: number
-  
-
 }

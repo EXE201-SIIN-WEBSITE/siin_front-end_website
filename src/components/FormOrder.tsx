@@ -130,6 +130,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
   const [orderDetail, setOrderDetail] = useState<OrderDetail>(initialOrderDetail)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [orderItem, setOrderItem] = useState<orderItem>({
     quantity: 0,
     price: totalPrice,

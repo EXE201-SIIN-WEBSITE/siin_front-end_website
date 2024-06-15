@@ -4,7 +4,6 @@ import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.ty
 import { initialSizeState } from '../types/size.type'
 import { getSizes } from '../actions/size.action'
 
-
 const sizeSlice = createSlice({
   name: 'size',
   initialState: initialSizeState,

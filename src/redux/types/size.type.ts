@@ -1,4 +1,4 @@
-import { size } from "~/types/size.type"
+import { size } from '~/types/size.type'
 
 export interface SizeState {
   sizeList: size[]

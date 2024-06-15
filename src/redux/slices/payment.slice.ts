@@ -1,15 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
-import { FulfilledAction, PendingAction, RejectedAction } from "~/types/redux.type";
-import { initialPaymentState } from "../types/payment.type";
-import { createPayment } from "../actions/payment.action";
-
-
+import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
+import { initialPaymentState } from '../types/payment.type'
+import { createPayment } from '../actions/payment.action'
 
 const paymentSlice = createSlice({
-  name:'payment',
+  name: 'payment',
   initialState: initialPaymentState,
-  reducers:{},
+  reducers: {},
 
   extraReducers(builder) {
     builder
