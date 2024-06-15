@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 
 const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)

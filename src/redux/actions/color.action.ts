@@ -22,3 +22,15 @@ export const getColors = createAsyncThunk('color/getColors', async ({ signal }: 
     return thunkAPI.rejectWithValue(error.response?.data || error)
   }
 })
+
+export const getColorDetail = createAsyncThunk('color/getColorDetail', async (id: number, thunkAPI) => {
+  try {
+    const response = await http.get<ResponseData<color>>(`/color/${id}`, {})
+    return response.data.data
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+    }
+    return thunkAPI.rejectWithValue(error.response?.data || error)
+  }
+})

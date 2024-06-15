@@ -42,9 +42,9 @@ const TopSeller = () => {
   // }, [dispatch])
   // console.log('data: ', productData)
 
-  const formatPriceToVND = (price: number): string => {
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
-  }
+  // const formatPriceToVND = (price: number): string => {
+  //   return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  // }
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -103,9 +103,6 @@ const TopSeller = () => {
                     <Link to={`/productdetail/${item.id}`}>
                       <span className='flex ml-3 text-sm text-white'>{item.name}</span>
                     </Link>
-                    <span className='flex items-center justify-center text-sm text-white'>
-                      {item.price !== undefined && formatPriceToVND(item.price)}
-                    </span>
                   </div>
                 </div>
               </div>

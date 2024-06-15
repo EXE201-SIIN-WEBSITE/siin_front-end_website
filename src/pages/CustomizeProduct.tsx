@@ -23,8 +23,6 @@ export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const material = useSelector((state: RootState) => state.material.material)
   const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
