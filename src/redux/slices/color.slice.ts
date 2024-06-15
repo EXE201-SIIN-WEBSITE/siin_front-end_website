@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 import { initialColorState } from '../types/color.type'
-import { getColors } from '../actions/color.action'
+import { getColorDetail, getColors } from '../actions/color.action'
 
 const colorSlice = createSlice({
   name: 'color',
@@ -14,6 +14,11 @@ const colorSlice = createSlice({
       .addCase(getColors.fulfilled, (state, action) => {
         state.loading = false
         state.colorList = action.payload
+      })
+
+      .addCase(getColorDetail.fulfilled, (state, action) => {
+        state.loading = false
+        state.color = action.payload
       })
 
       .addMatcher<PendingAction>(

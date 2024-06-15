@@ -4,9 +4,12 @@ import FormOrder from '~/components/FormOrder'
 import ItemCart from '~/components/ItemCart'
 import useKey from '~/hooks/useKey'
 import { getAccessoryDetail } from '~/redux/actions/accessory.action'
-import { clearCart, removeItemFromCart } from '~/redux/actions/cartItem.action'
+import { removeItemFromCart } from '~/redux/actions/cartItem.action'
+import { getColorDetail } from '~/redux/actions/color.action'
+import { getSizeDetail } from '~/redux/actions/size.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { CartItem } from '~/types/product.type'
+import '../components/animation/formOrder.css'
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -15,6 +18,8 @@ const Cart = () => {
   const dispatch = useAppDispatch()
   const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
   const accessory = useSelector((state: RootState) => state.accessory.accessory)
+  const color = useSelector((state: RootState) => state.color.color)
+  const size = useSelector((state: RootState) => state.size.size)
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
 
@@ -29,6 +34,9 @@ const Cart = () => {
     toggleFormOrder()
   }
   useKey('Escape', toggleFormOrder)
+  const formatPriceToVND = (price: number): string => {
+    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
+  }
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('cartItems') || '[]')
@@ -55,29 +63,36 @@ const Cart = () => {
     dispatch(removeItemFromCart(index))
   }
 
-  // const showProductDetail = (product: CartItem) => {
-  //   setSelectedProduct(product);
-  //   if (product.accessId !== undefined) {
-  //     dispatch(getAccessoryDetail(product.accessId));
-  //     // console.log("VIEW: ", product.accessId);
-  //   }
-
-  // };
-
   const showProductDetail = (product: CartItem) => {
     setSelectedProduct(product)
     if (product.accessId !== undefined && product.accessId !== null) {
       dispatch(getAccessoryDetail(product.accessId))
     }
+    if (product.colorId !== undefined && product.colorId !== null) {
+      dispatch(getColorDetail(product.colorId))
+    }
+    if (product.sizeId !== undefined && product.sizeId !== null) {
+      dispatch(getSizeDetail(product.sizeId))
+    }
   }
 
   useEffect(() => {
-    if (selectedProduct && selectedProduct.accessId !== undefined && selectedProduct.accessId !== null) {
-      dispatch(getAccessoryDetail(selectedProduct.accessId))
+    if (selectedProduct) {
+      if (selectedProduct.accessId !== undefined && selectedProduct.accessId !== null) {
+        dispatch(getAccessoryDetail(selectedProduct.accessId))
+      }
+      if (selectedProduct.colorId !== undefined && selectedProduct.colorId !== null) {
+        dispatch(getColorDetail(selectedProduct.colorId))
+      }
+      if (selectedProduct.sizeId !== undefined && selectedProduct.sizeId !== null) {
+        dispatch(getSizeDetail(selectedProduct.sizeId))
+      }
     }
-  }, [selectedProduct])
+  }, [selectedProduct, dispatch])
 
   console.log('ACC: ', accessory)
+  console.log('COL: ', color)
+  console.log('SIZE: ', size)
 
   return (
     <div className='flex flex-col gap-4 my-11 cart-container h-[60vh]'>
@@ -96,7 +111,10 @@ const Cart = () => {
                   onRemove={() => removeItem(index)}
                 />
                 <div className='flex justify-start md:ml-[210px]'>
-                  <button className='bg-black text-white px-2 py-1 rounded-md' onClick={() => showProductDetail(product)}>
+                  <button
+                    className='bg-black text-white px-2 py-1 rounded-md custom-button custom-button:hover'
+                    onClick={() => showProductDetail(product)}
+                  >
                     Chi tiết
                   </button>
                 </div>
@@ -105,9 +123,9 @@ const Cart = () => {
           </div>
 
           <div className='flex justify-end gap-6 mt-4 mr-5'>
-            <h1 className='text-xl font-bold'>Tổng cộng: {totalPrice.toLocaleString()} ₫</h1>
+            <h1 className='text-xl font-bold'>Tổng cộng: {formatPriceToVND(totalPrice)}</h1>
             <button
-              className='px-2 py-1 bg-black text-white rounded-md md:w-[16%]'
+              className='px-2 py-1 bg-black text-white rounded-md md:w-[16%] custom-button custom-button:hover'
               onClick={() => handleOrderForm(totalPrice)}
             >
               Đặt hàng
@@ -123,13 +141,19 @@ const Cart = () => {
       {selectedProduct && (
         <div className='fixed top-0 left-0 z-50 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50'>
           <div className='bg-white p-8 rounded-md'>
-            {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
-            {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt='' />}
-            <p>Color: {selectedProduct.colorId}</p>
-            <p>Size: {selectedProduct.sizeId}</p>
-            <p>Quantity: {selectedProduct.quantity}</p>
+            {selectedProduct.accessId
+              ? accessory && accessory.image && <img className='w-[250px] rounded-md' src={accessory.image} alt='Accessory' />
+              : cart && (
+                 <></>
+                )}
+            <div className='mt-[10px] flex justify-center flex-col items-start p-2 border-2 rounded-md'>
+              <p>Màu sắc: {color?.name}</p>
+              <p>Kích cỡ: {size?.name}</p>
+              <p>Số lượng: {selectedProduct.quantity}</p>
+            </div>
+
             <button
-              className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-md'
+              className='mt-4 px-4 py-2 bg-black text-white rounded-md'
               onClick={() => setSelectedProduct(null)}
             >
               Đóng
