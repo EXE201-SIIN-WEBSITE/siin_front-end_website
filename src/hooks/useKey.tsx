@@ -12,3 +12,5 @@ export default function useKey(key: string, action: () => void) {
     }
   }, [action, key])
 }
+// truyền vào key và action, nếu key được nhấn thì thực hiện action
+//(action là một hàm callback, key: ví dụ như 'Enter', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'...)

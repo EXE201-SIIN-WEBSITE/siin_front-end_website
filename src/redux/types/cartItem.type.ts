@@ -1,4 +1,4 @@
-import { cartItem } from "~/types/cartItem.type"
+import { cartItem } from '~/types/cartItem.type'
 
 export interface CartItemState {
   cartItemList: cartItem[]
@@ -15,5 +15,3 @@ export const initialCartItemState: CartItemState = {
   currentRequestId: undefined,
   error: null
 }
-
-

@@ -1,5 +1,4 @@
-import { OrderDetail } from "~/types/orderDetail.type"
-
+import { OrderDetail } from '~/types/orderDetail.type'
 
 export interface OrderDetailState {
   orderDetailList: OrderDetail[]

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { orderItem } from '~/types/orderItem.type'
 import { ResponseData } from '~/types/respone.type'

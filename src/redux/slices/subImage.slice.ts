@@ -1,18 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { initialSubImagetState } from "../types/subImage.type";
-import { FulfilledAction, PendingAction, RejectedAction } from "~/types/redux.type";
-import { getImageByProMaterialId } from "../actions/subImage.action";
-
-
+import { createSlice } from '@reduxjs/toolkit'
+import { initialSubImagetState } from '../types/subImage.type'
+import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
+import { getImageByProMaterialId } from '../actions/subImage.action'
 
 const subImageSlice = createSlice({
   name: 'subImage',
   initialState: initialSubImagetState,
-  reducers:{},
+  reducers: {},
 
   extraReducers(builder) {
     builder
-      .addCase(getImageByProMaterialId.fulfilled, (state, action)=> {
+      .addCase(getImageByProMaterialId.fulfilled, (state, action) => {
         state.loading = false
         state.subImageList = action.payload
       })
@@ -46,8 +44,7 @@ const subImageSlice = createSlice({
           state.error = null
         }
       )
-  },
-
+  }
 })
 
 export default subImageSlice.reducer

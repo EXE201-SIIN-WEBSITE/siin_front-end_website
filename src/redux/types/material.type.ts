@@ -1,5 +1,4 @@
-import { material } from "~/types/material.type"
-
+import { material } from '~/types/material.type'
 
 export interface MaterialState {
   materialList: material[]

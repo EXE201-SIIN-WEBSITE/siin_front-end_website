@@ -1,15 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
-import { FulfilledAction, PendingAction, RejectedAction } from "~/types/redux.type";
-import { initialOrderItemState } from "../types/orderItem.type";
-import { createOrderItem } from "../actions/orderItem.action";
-
-
+import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
+import { initialOrderItemState } from '../types/orderItem.type'
+import { createOrderItem } from '../actions/orderItem.action'
 
 const orderItemSlice = createSlice({
-  name:'orderItem',
+  name: 'orderItem',
   initialState: initialOrderItemState,
-  reducers:{},
+  reducers: {},
 
   extraReducers(builder) {
     builder

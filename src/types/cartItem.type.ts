@@ -7,7 +7,6 @@ export interface addCartItem {
   userId?: number
 }
 
-
 export interface cartItem {
   quantity: number
   sizeName?: string
@@ -17,5 +16,3 @@ export interface cartItem {
   productMaterialId?: number
   accessoryId?: number
 }
-
-
