@@ -4,7 +4,6 @@ import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.ty
 import { initialAccessoryState } from '../types/accessory.type'
 import { getAccessories, getAccessoryDetail } from '../actions/accessory.action'
 
-
 const accessorySlice = createSlice({
   name: 'accessory',
   initialState: initialAccessoryState,
@@ -21,7 +20,6 @@ const accessorySlice = createSlice({
         state.loading = false
         state.accessory = action.payload
       })
-
 
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),

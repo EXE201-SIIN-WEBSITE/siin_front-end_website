@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-
+import  { useState } from 'react'
 
 const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
@@ -24,8 +23,8 @@ const SignInSignUp = () => {
               />
             </div>
             <div className='col-span-1'>
-              <img className='w-[80x] h-[100px]' src="/assets/LOGO123.png" alt="" />
-              <h2 className='text-white text-2xl'>Đăng nhập</h2>
+              <img className='w-[80x] h-[100px]' src='/assets/LOGO123.png' alt='' />
+              <h2 className='text-2xl text-white'>Đăng nhập</h2>
               <input
                 className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
                 type='text'
@@ -82,7 +81,9 @@ const SignInSignUp = () => {
         </div>
         <button
           className={`absolute bottom-0 left-0 w-full py-2 text-center transition-all duration-500 ${
-            isSignIn ? 'bg-black text-white italic hover:scale-105 rounded-b-md mb-2' : 'bg-white text-black italic hover:scale-105 rounded-t-md mb-2'
+            isSignIn
+              ? 'bg-black text-white italic hover:scale-105 rounded-b-md mb-2'
+              : 'bg-white text-black italic hover:scale-105 rounded-t-md mb-2'
           }`}
           onClick={handleSwitch}
         >

@@ -1,25 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
+import { EffectCoverflow, Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Swiper as SwiperCore } from 'swiper/types'
-import { EffectCoverflow, Navigation } from 'swiper/modules'
 
+import { useSelector } from 'react-redux'
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { products } from '~/dummyData/product'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { getAccessories } from '~/redux/actions/accessory.action'
-import { getColors } from '~/redux/actions/color.action'
-import { getSizes } from '~/redux/actions/size.action'
-import { addCartItem } from '~/types/cartItem.type'
 import { createCartItem2 } from '~/redux/actions/cartItem.action'
-import { CartItem } from '~/types/product.type'
-import { getMaterials, getProductMaterial, getProductMaterialDetail } from '~/redux/actions/material.action'
-import { material } from '~/types/material.type'
+import { getColors } from '~/redux/actions/color.action'
 import { getProductDetail } from '~/redux/actions/product.action'
-
+import { getSizes } from '~/redux/actions/size.action'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { addCartItem } from '~/types/cartItem.type'
+import { CartItem } from '~/types/product.type'
 
 import image from '../../public/assets/cusdefault.jpg'
 
@@ -27,7 +23,6 @@ export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
-  const material = useSelector((state: RootState) => state.material.material)
   const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
@@ -42,6 +37,7 @@ export default function CustomizeProduct() {
   const [accessoryPrice, setAccessoryPrice] = useState(0)
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [product, setProduct] = useState({
     id: 0,
     name: 'Custom product',
@@ -160,9 +156,6 @@ export default function CustomizeProduct() {
     return null
   }
 
-
-  
-
   console.log('Cart info: ', cartInfo)
 
   const handleAddToCart = () => {
@@ -173,6 +166,7 @@ export default function CustomizeProduct() {
     // const uniqueId = generateUniqueId(product, cartInfo);
     dispatch(createCartItem2(cartInfo))
 
+    // eslint-disable-next-line prefer-const
     let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
 
     const newLocalStorageCartItem = {
@@ -301,7 +295,8 @@ export default function CustomizeProduct() {
                   <button
                     key={index}
                     className={`border-black md:shadow-2xl w-6 h-6 bg-black-300 lg:w-8 lg:h-8 ${
-                      activeSize === size.id ? 'bg-black text-white' : ' bg-white text-black'} `}
+                      activeSize === size.id ? 'bg-black text-white' : ' bg-white text-black'
+                    } `}
                     onClick={() => handleSizeSelect(size.id!)}
                   >
                     {size.name!}

@@ -14,6 +14,7 @@ export const getSizes = createAsyncThunk('size/getSizes', async ({ signal }: Get
       signal
     })
     return response.data.data
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.name === 'AbortError') {
       return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })

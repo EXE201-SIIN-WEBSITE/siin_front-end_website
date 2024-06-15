@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 import FormOrder from '~/components/FormOrder'
 import ItemCart from '~/components/ItemCart'
 import useKey from '~/hooks/useKey'
+
+
 import { getAccessoryDetail } from '~/redux/actions/accessory.action'
 import { removeItemFromCart } from '~/redux/actions/cartItem.action'
 import { getColorDetail } from '~/redux/actions/color.action'
@@ -112,7 +114,7 @@ const Cart = () => {
                 />
                 <div className='flex justify-start md:ml-[210px]'>
                   <button
-                    className='bg-black text-white px-2 py-1 rounded-md custom-button custom-button:hover'
+                    className='px-2 py-1 text-white bg-black rounded-md'
                     onClick={() => showProductDetail(product)}
                   >
                     Chi tiết
@@ -139,21 +141,15 @@ const Cart = () => {
       )}
 
       {selectedProduct && (
-        <div className='fixed top-0 left-0 z-50 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50'>
-          <div className='bg-white p-8 rounded-md'>
-            {selectedProduct.accessId
-              ? accessory && accessory.image && <img className='w-[250px] rounded-md' src={accessory.image} alt='Accessory' />
-              : cart && (
-                 <></>
-                )}
-            <div className='mt-[10px] flex justify-center flex-col items-start p-2 border-2 rounded-md'>
-              <p>Màu sắc: {color?.name}</p>
-              <p>Kích cỡ: {size?.name}</p>
-              <p>Số lượng: {selectedProduct.quantity}</p>
-            </div>
-
+        <div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-50'>
+          <div className='p-8 bg-white rounded-md'>
+            {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
+            {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt='' />}
+            <p>Color: {selectedProduct.colorId}</p>
+            <p>Size: {selectedProduct.sizeId}</p>
+            <p>Quantity: {selectedProduct.quantity}</p>
             <button
-              className='mt-4 px-4 py-2 bg-black text-white rounded-md'
+              className='px-4 py-2 mt-4 text-white bg-blue-500 rounded-md'
               onClick={() => setSelectedProduct(null)}
             >
               Đóng

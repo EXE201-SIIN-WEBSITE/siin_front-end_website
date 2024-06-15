@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { imageType } from '~/dummyData/images'
 import { createCartItem } from '~/redux/actions/cartItem.action'
 import { getColors } from '~/redux/actions/color.action'
 import { getProductMaterial } from '~/redux/actions/material.action'
@@ -10,19 +9,14 @@ import { getSizes } from '~/redux/actions/size.action'
 import { getImageByProMaterialId } from '~/redux/actions/subImage.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { addCartItem } from '~/types/cartItem.type'
-import { color } from '~/types/color.type'
-import { material } from '~/types/material.type'
 import { CartItem } from '~/types/product.type'
-import { size } from '~/types/size.type'
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
   const numericId = id ? parseInt(id, 10) : NaN
-  const [activeButton, setActiveButton] = useState<string | null>(null)
   const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const subImage = useSelector((state: RootState) => state.subImage.subImageList)
   const material = useSelector((state: RootState) => state.material.material)
-  const cart = useSelector((state: RootState) => state.cartItem.cartItemList)
   const colors = useSelector((state: RootState) => state.color.colorList)
   const sizes = useSelector((state: RootState) => state.size.sizeList)
   const [quantity, setQuantity] = useState(1)

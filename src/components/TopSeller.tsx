@@ -5,7 +5,6 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
-
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { getProducts } from '~/redux/actions/product.action'
 import { product } from '~/types/product.type'
@@ -99,18 +98,15 @@ const TopSeller = () => {
                   src={item.coverImage}
                   alt={item.name}
                 />
-                <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                <div className='absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100'>
                   <div className='grid grid-rows-2'>
                     <Link to={`/productdetail/${item.id}`}>
-                    <span className='flex text-white text-sm ml-3'>{item.name}</span>
+                      <span className='flex ml-3 text-sm text-white'>{item.name}</span>
                     </Link>
-                    {/* <span className='flex text-white text-sm justify-center items-center'>
-                      {item.price !== undefined && formatPriceToVND(item.price)}
-                    </span> */}
                   </div>
                 </div>
               </div>
-              <div className='md:hidden mt-2'>{item.name}</div>
+              <div className='mt-2 md:hidden'>{item.name}</div>
             </div>
           </div>
         ))}
