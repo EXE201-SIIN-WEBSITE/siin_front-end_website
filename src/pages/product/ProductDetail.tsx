@@ -81,10 +81,10 @@ const ProductDetail = () => {
   }
 
   // console.log("price real: ", priceSum);
-  
+
   const updateTotalPrice = (quantity: number, selectedMaterialPrice: number) => {
     // const productPrice = productDetail?.price || 0
-    setTotalPrice(quantity * selectedMaterialPrice )
+    setTotalPrice(quantity * selectedMaterialPrice)
   }
 
   const dispatch = useAppDispatch()
@@ -105,7 +105,7 @@ const ProductDetail = () => {
   useEffect(() => {
     if (productDetail && productDetail.price !== undefined) {
       // const productPrice = productDetail?.price || 0
-      setTotalPrice(quantity * productDetail.price )
+      setTotalPrice(quantity * productDetail.price)
     }
   }, [productDetail, quantity])
 
@@ -115,9 +115,6 @@ const ProductDetail = () => {
       quantity: quantity
     }))
   }, [quantity])
-
-
-
 
   useEffect(() => {
     if (selectedMaterialId !== null && Array.isArray(material)) {
@@ -168,14 +165,13 @@ const ProductDetail = () => {
       sizeId: sizeId,
       colorId: colorId,
       userId: cartItem.userId
-      
     }
     const newCartItemForStore = {
       id: numericId,
       cartItem: newCartItem
     }
     dispatch(createCartItem(newCartItemForStore))
-    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
     const newLocalStorageCartItem = {
       ...productInCart,
       quantity: newCartItem.quantity,
@@ -184,6 +180,7 @@ const ProductDetail = () => {
       sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
       colorName: colors.find((c) => c.id === colorId)?.name || 'N/A'
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.id)
     if (existingProductIndex !== -1) {
       cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity
@@ -200,11 +197,11 @@ const ProductDetail = () => {
   return (
     <>
       {productDetail ? (
-        <div className='grid md:grid-cols-2  grid-cols-1 md:mt-9'>
-          <div className='md:col-span-1 mt-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 md:mt-9'>
+          <div className='mt-6 md:col-span-1'>
             <div className='grid md:grid-cols-7 sm:grid-cols-4 grid-cols-4 md:gap-2 gap-y-2 md:w-[60%] md:h-[64%] md:ml-[220px]'>
               {activeColor === null && activeSize === null ? (
-                <div className='col-span-12 flex justify-center items-center'>
+                <div className='flex items-center justify-center col-span-12'>
                   <img
                     className='md:h-full md:w-full h-[200px] w-[180px]'
                     src={productDetail.coverImage}
@@ -236,15 +233,15 @@ const ProductDetail = () => {
             </div>
           </div>
           {/* RIGHT SECTION */}
-          <div className='grid md:grid-cols-3 grid-cols-1'>
-            <div className='md:col-span-1 md:flex md:justify-center hidden'>
+          <div className='grid grid-cols-1 md:grid-cols-3'>
+            <div className='hidden md:col-span-1 md:flex md:justify-center'>
               <div className='border-l-2 shadow-2xl border-black h-[80%] md:my-[13%]'></div>
             </div>
             <div className='md:col-span-2 md:justify-end md:items-end md:mt-[8%]'>
-              <h1 className='flex md:text-2xl md:mt-0 mt-7 md:justify-start  justify-center font-bold mb-2'>
+              <h1 className='flex justify-center mb-2 font-bold md:text-2xl md:mt-0 mt-7 md:justify-start'>
                 {productDetail?.name}
               </h1>
-              <span className='flex md:justify-start justify-center'>Sản phẩm liên quan</span>
+              <span className='flex justify-center md:justify-start'>Sản phẩm liên quan</span>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%] md:w-[95%] my-2'></div>
               <div className='flex gap-2 my-[25px]'>
                 {uniqueColors.map((color) => {
@@ -279,13 +276,13 @@ const ProductDetail = () => {
               </div>
               <div className='flex md:justify-start justify-center md:gap-11 gap-x-[10px]'>
                 <div className='flex items-center gap-2 md:gap-[40px] md:mb-[50px]'>
-                  <button onClick={handleDecrease} className='bg-gray-200 px-4 py-2 rounded-lg'>
+                  <button onClick={handleDecrease} className='px-4 py-2 bg-gray-200 rounded-lg'>
                     -
                   </button>
                   <span id='quantity' className='text-lg font-medium'>
                     {quantity}
                   </span>
-                  <button onClick={handleIncrease} className='bg-gray-200 px-4 py-2 rounded-lg'>
+                  <button onClick={handleIncrease} className='px-4 py-2 bg-gray-200 rounded-lg'>
                     +
                   </button>
                 </div>
@@ -297,7 +294,7 @@ const ProductDetail = () => {
               </div>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
               <div className='flex justify-center mb-[40px]'>
-                <h3 className='md:text-2xl text-xl'>
+                <h3 className='text-xl md:text-2xl'>
                   Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
                 </h3>
               </div>

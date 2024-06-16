@@ -6,10 +6,7 @@ const IntroPoduct: React.FC = () => {
     <>
       <div className='grid grid-cols-1 md:grid-cols-3'>
         <div className='md:col-span-1 md:m-[46px]'>
-          <img
-            className='hidden md:inline'
-            src='/assets/bannerLeft.png'
-          />
+          <img className='hidden md:inline' src='/assets/bannerLeft.png' />
         </div>
         <div className='col-span-1 mt-4 md:col-span-2 md:grid-rows-3'>
           <div className='md:grid md:grid-cols-3 md:row-span-2 md:m-[46px] '>
