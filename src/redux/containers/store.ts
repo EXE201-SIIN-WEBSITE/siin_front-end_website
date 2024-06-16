@@ -10,6 +10,7 @@ import accessorySlice from '../slices/accessory.slice'
 import cartItemSlice from '../slices/cartItem.slice'
 import colorSlice from '../slices/color.slice'
 import sizeSlice from '../slices/size.slice'
+import paymentPayOSSlice from '../slices/paymentPayOS.slice'
 
 export const store = configureStore({
   reducer: {
@@ -22,7 +23,8 @@ export const store = configureStore({
     accessory: accessorySlice,
     cartItem: cartItemSlice,
     color: colorSlice,
-    size: sizeSlice
+    size: sizeSlice,
+    payos: paymentPayOSSlice
   }
 })
 

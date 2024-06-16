@@ -4,7 +4,6 @@ import FormOrder from '~/components/FormOrder'
 import ItemCart from '~/components/ItemCart'
 import useKey from '~/hooks/useKey'
 
-
 import { getAccessoryDetail } from '~/redux/actions/accessory.action'
 import { removeItemFromCart } from '~/redux/actions/cartItem.action'
 import { getColorDetail } from '~/redux/actions/color.action'

@@ -6,7 +6,7 @@ export interface payment {
   orderDetailId?: number
 }
 
-export interface paymentCreate {
+export interface PaymentPayOS {
   bin: string
   checkoutUrl: string
   accountNumber: string
