@@ -5,9 +5,6 @@ import { useState, useEffect } from 'react'
 const Header = () => {
   const [isProductsHovered, setIsProductsHovered] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
-  useEffect(() => {
-    getItemNumberCart()
-  }, [localStorage.getItem('cartItems')])
 
   const getItemNumberCart = () => {
     const cartItemsString = localStorage.getItem('cartItems')
@@ -18,6 +15,19 @@ const Header = () => {
       setCartItemCount(0)
     }
   }
+
+  useEffect(() => {
+    getItemNumberCart() //first time
+
+    const handleCartUpdated = () => {
+      getItemNumberCart()
+    }
+    window.addEventListener('cartUpdated', handleCartUpdated)
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdated)
+    }
+  }, [])
 
   return (
     <header className='w-full text-white bg-black'>
