@@ -194,6 +194,8 @@ export default function CustomizeProduct() {
     }
 
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
+    window.dispatchEvent(event)
   }
 
   console.log('PRICE: ', totalPrice)

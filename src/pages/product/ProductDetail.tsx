@@ -188,6 +188,8 @@ const ProductDetail = () => {
       cartItems.push(newLocalStorageCartItem)
     }
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
+    const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
+    window.dispatchEvent(event)
     console.log('productInCart:', newCartItemForStore)
     // alert("Sản phẩm đã được thêm vào giỏ hàng!");
   }

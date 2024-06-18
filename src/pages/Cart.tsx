@@ -54,6 +54,8 @@ const Cart = () => {
 
     if (quantity === -1 && updatedItems.length !== cartItems.length) {
       dispatch(removeItemFromCart(index))
+      const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
+      window.dispatchEvent(event)
     }
   }
 
@@ -62,6 +64,8 @@ const Cart = () => {
     setCartItems(updatedItems)
     localStorage.setItem('cartItems', JSON.stringify(updatedItems))
     dispatch(removeItemFromCart(index))
+    const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
+    window.dispatchEvent(event)
   }
 
   const showProductDetail = (product: CartItem) => {
