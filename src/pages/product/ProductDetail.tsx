@@ -154,6 +154,9 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
+     if (activeColor === null || activeSize === null) {
+      return
+    }
     const productInCart = addToCart()
     if (!productInCart) {
       return
@@ -289,9 +292,13 @@ const ProductDetail = () => {
                   </button>
                 </div>
                 <div className='flex items-center md:mb-[50px]'>
-                  <button onClick={handleAddToCart} className='border-2 p-1.5  bg-black text-white rounded-lg'>
+                  <button onClick={handleAddToCart} 
+                  className={`border-2 p-2 bg-black text-white rounded-lg ${activeColor === null || activeSize === null ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  
+                  >
                     Thêm vào giỏ hàng
                   </button>
+                  
                 </div>
               </div>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
