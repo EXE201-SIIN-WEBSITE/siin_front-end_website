@@ -38,7 +38,7 @@ export default function CustomizeProduct() {
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [product, setProduct] = useState({
+  const [product] = useState({
     id: 0,
     name: 'Custom product',
     price: 0,
