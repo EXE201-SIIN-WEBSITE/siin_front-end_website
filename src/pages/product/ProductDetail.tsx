@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import swal from 'sweetalert'
 import { createCartItem } from '~/redux/actions/cartItem.action'
 import { getColors } from '~/redux/actions/color.action'
 import { getProductMaterial } from '~/redux/actions/material.action'
@@ -10,6 +11,7 @@ import { getImageByProMaterialId } from '~/redux/actions/subImage.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { addCartItem } from '~/types/cartItem.type'
 import { CartItem } from '~/types/product.type'
+
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -194,6 +196,11 @@ const ProductDetail = () => {
     const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
     window.dispatchEvent(event)
     console.log('productInCart:', newCartItemForStore)
+    swal({
+      title: "Sản phẩm đã được thêm vào giỏ hàng!",
+      text: "",
+      icon: "success"
+    });
     // alert("Sản phẩm đã được thêm vào giỏ hàng!");
   }
 
