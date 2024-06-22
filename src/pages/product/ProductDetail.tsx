@@ -303,7 +303,7 @@ const ProductDetail = () => {
               </div>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
               <div className='flex justify-center mb-[40px]'>
-                <h3 className='text-xl md:text-2xl'>
+                <h3 className={`text-xl md:text-2xl ${selectedMaterialId === null ? 'text-sm md:text-base' : ''}`}>
                   Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
                 </h3>
               </div>

@@ -1,11 +1,47 @@
 import { Link, NavLink } from 'react-router-dom'
 import Logo from '../Logo'
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { getUserIdByToken, getUserInfo } from '~/redux/actions/user.actions'
 
 const Header = () => {
   const [isProductsHovered, setIsProductsHovered] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
+  const userData = useSelector((state: RootState) => state.user.user)
+  const dispatch = useAppDispatch()
+  const [token, setToken] = useState<string>('');
+  const [userId, setUserId] = useState<number | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
+  
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const tokenInLocalStorage = localStorage.getItem('token') || '';
+
+      if (tokenInLocalStorage) {
+        try {
+          const action = await dispatch(getUserIdByToken(tokenInLocalStorage));
+          const userId = action.payload as number;
+
+          if (userId) {
+            await dispatch(getUserInfo(userId));
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [dispatch]);
+
+    console.log('User DATA: ', userData);
+  
   const getItemNumberCart = () => {
     const cartItemsString = localStorage.getItem('cartItems')
     if (cartItemsString) {
@@ -28,6 +64,20 @@ const Header = () => {
       window.removeEventListener('cartUpdated', handleCartUpdated)
     }
   }, [])
+
+  const renderUserLink = () => {
+    if (userData && userData.fullName) {
+      return (
+        <span className="text-white hover:text-gray-400 sm:text-[20px] text-[24px]">{userData.fullName}</span>
+      );
+    } else {
+      return (
+        <NavLink className="text-white hover:text-gray-400 sm:text-[20px] text-[24px]" to={'login'}>
+          <i className='fa-solid fa-circle-user'></i>
+        </NavLink>
+      );
+    }
+  };
 
   return (
     <header className='w-full text-white bg-black'>
@@ -80,9 +130,11 @@ const Header = () => {
               </span>
             )}
           </NavLink>
-          <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
-            <i className='fa-solid fa-circle-user'></i>
-          </NavLink>
+
+          {renderUserLink()}
+          {/* <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
+            <i className='fa-solid fa-circle-user'></i> 
+          </NavLink> */}
         </div>
       </div>
     </header>

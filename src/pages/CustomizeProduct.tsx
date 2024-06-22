@@ -37,6 +37,7 @@ export default function CustomizeProduct() {
   const [accessoryPrice, setAccessoryPrice] = useState(0)
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
+  const userData = useSelector((state: RootState) => state.user.user)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [product, setProduct] = useState({
     id: 0,
@@ -68,6 +69,8 @@ export default function CustomizeProduct() {
   // console.log('Colors List: ', color)
   // console.log('Sizes List: ', size)
   // console.log('Product price: ', productDetail)
+  console.log("ID NE: ", userData);
+  
 
   const handleColorSelect = (colorId: number) => {
     setSelectedColor(colorId)
@@ -159,6 +162,9 @@ export default function CustomizeProduct() {
   console.log('Cart info: ', cartInfo)
 
   const handleAddToCart = () => {
+    if(activeColor === null || activeSize === null || selectedAccess === null) {
+      return
+    }
     const productInCart = addToCart()
     if (!productInCart) {
       return
@@ -230,7 +236,7 @@ export default function CustomizeProduct() {
         >
           {accessoryData.map((accessories, index) => (
             <SwiperSlide key={index} className='w-[50%] h-full'>
-              <img className='object-contain w-full h-full' src={accessories.image} alt={accessories.name} />
+              <img className='object-contain w-full h-full mx-8 ' src={accessories.image} alt={accessories.name} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -265,7 +271,7 @@ export default function CustomizeProduct() {
               Customize
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
-              <label className='text-2xl text-left'>Color:</label>
+              <label className='text-2xl text-left'>Màu sắc:</label>
               <div></div>
               <div className='flex justify-around gap-2 colorbutton'>
                 {color.map((color, index) => (
@@ -282,11 +288,15 @@ export default function CustomizeProduct() {
               </div>
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
-              <label className='text-2xl text-left'>Item:</label>
+              <label className='text-2xl text-left mb-1'>Phụ kiện:</label>
               <div className='grid grid-cols-6 gap-6 colorbutton'>
                 {accessoryData.map((item, index) => (
                   <button key={item.id} onClick={() => handleAccessSelect(item.id, index)}>
-                    <img className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50' src={item.image} alt={item.name} />
+                    <img
+                      className='w-10 h-10 lg:w-16 lg:h-16 bg-gray-50 rounded-[10%]'
+                      src={item.image}
+                      alt={item.name}
+                    />
                   </button>
                 ))}
               </div>
@@ -296,7 +306,7 @@ export default function CustomizeProduct() {
                 {size.map((size, index) => (
                   <button
                     key={index}
-                    className={`border-black md:shadow-2xl w-6 h-6 bg-black-300 lg:w-8 lg:h-8 ${
+                    className={`border-2 border-black md:shadow-2xl w-6 h-6 bg-black-300 lg:w-8 lg:h-8 ${
                       activeSize === size.id ? 'bg-black text-white' : ' bg-white text-black'
                     } `}
                     onClick={() => handleSizeSelect(size.id!)}
@@ -369,10 +379,15 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
-        <h3 className='text-xl md:text-2xl'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
-        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
-          Them vao gio hàng
-        </button>
+        <div className='flex mt-2'>
+          <h3 className='text-xl md:text-2xl md:mt-2'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
+          <button
+            onClick={handleAddToCart}
+            className={`px-2 py-3 text-white bg-black lg:mx-9 lg:self-end addtocart ${activeColor === null || activeSize === null || selectedAccess === null ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            Them vao gio hàng
+          </button>
+        </div>
       </div>
     </div>
   )

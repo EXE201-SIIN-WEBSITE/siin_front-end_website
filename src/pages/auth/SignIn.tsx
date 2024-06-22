@@ -1,11 +1,30 @@
-import  { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { login } from '~/redux/actions/auth.action'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
 
 const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const handleSwitch = () => {
     setIsSignIn(!isSignIn)
   }
+
+  const handleLogin = () => {
+    dispatch(login({ email, password }))
+  }
+
+  useEffect(() => {
+    if (user) {
+      navigate('/')
+    }
+  }, [user, navigate])
 
   return (
     <div className='flex justify-center my-[50px]'>
@@ -28,19 +47,34 @@ const SignInSignUp = () => {
               <input
                 className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
                 type='text'
-                name='username'
+                name='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder='Nhập tên đăng nhập'
               />
               <input
                 className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
                 type='password'
                 name='password'
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder='Nhập mật khẩu'
               />
               <br />
-              <button className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '>
+              <Link to={'/'}>
+              <button
+                onClick={handleLogin}
+                className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '
+              >
                 Đăng nhập
-              </button>
+              </button>  
+              </Link>
+            
+              {user && (
+                <div>
+                  <p>Login successful!</p>
+                  <Link to='/'>Go to HomePage</Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

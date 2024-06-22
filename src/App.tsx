@@ -14,10 +14,11 @@ import SignIn from './pages/auth/SignIn'
 
 function App() {
   const location = useLocation()
-  const isLoginPath = location.pathname === '/login'
+  // const isLoginPath = location.pathname === '/login'
   return (
     <>
-      {!isLoginPath && <Header />}
+      {/* {!isLoginPath && <Header />} */}
+      <Header />
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<SignIn />} />
@@ -36,7 +37,8 @@ function App() {
 
         <Route path='*' element={<div>404 Not Found</div>} />
       </Routes>
-      {!isLoginPath && <Footer />}
+      <Footer />
+      {/* {!isLoginPath && <Footer />} */}
     </>
   )
 }
