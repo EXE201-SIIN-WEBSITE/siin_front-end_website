@@ -1,8 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
-import { ResponseData } from "~/types/respone.type"
-import { User } from "~/types/user.type"
-import { http } from "~/utils/http"
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { ResponseData } from '~/types/respone.type'
+import { User } from '~/types/user.type'
+import { http } from '~/utils/http'
 
 export const getUserIdByToken = createAsyncThunk('user/getUserIdByToken', async (token: string, thunkAPI) => {
   try {
