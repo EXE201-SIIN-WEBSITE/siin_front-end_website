@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { ResponseData } from '~/types/respone.type'
@@ -23,10 +24,14 @@ export const register = createAsyncThunk(
       const res = await http.post<ResponseData<token>>('/auth/register', {
         email,
         password,
-        username,
+        fullName: username,
         status: true
       })
+
       localStorage.setItem('token', res.data.data.access_token)
+      const userIdAction = await thunkAPI.dispatch(getUserIdByToken(res.data.data.access_token))
+      const userId = userIdAction.payload as number
+      await thunkAPI.dispatch(getUserInfo(userId))
 
       return res.data.data
     } catch (error) {

@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
-import { login } from '~/redux/actions/auth.action'
-import { RootState, useAppDispatch } from '~/redux/containers/store'
 import 'react-toastify/dist/ReactToastify.css'
+import { login, register } from '~/redux/actions/auth.action'
+import { useAppDispatch } from '~/redux/containers/store'
 
 type FormValues = {
   email: string
@@ -18,8 +17,7 @@ const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password1, setPassword1] = useState('')
+
   // const { user, loading } = useSelector((state: RootState) => state.auth)
   const [error, setError] = useState('')
 
@@ -36,33 +34,36 @@ const SignInSignUp = () => {
   //     navigate('/');
   //   } else {
   //     setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
-  //   }  
+  //   }
   // }
 
   const onSubmitSignIn: SubmitHandler<FormValues> = async (data) => {
-    setError('');
+    setError('')
     try {
-      
-      const resultAction = await dispatch(login({ email: data.email, password: data.password }));
-  
+      const resultAction = await dispatch(login({ email: data.email, password: data.password }))
+
       if (login.fulfilled.match(resultAction)) {
-        navigate('/');
+        navigate('/')
       } else {
-        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
+        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.')
       }
     } catch (error) {
-      setError('Đăng nhập thất bại. Vui lòng thử lại sau.');
-      console.error('Login error:', error); 
+      setError('Đăng nhập thất bại. Vui lòng thử lại sau.')
+      console.error('Login error:', error)
     }
-  };
-  
+  }
 
-
-
-  const onSubmitSignUp: SubmitHandler<FormValues> = (data) => {
-    console.log('data', data)
-
-    toast.success('Sign up successful!')
+  const onSubmitSignUp: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const res = await dispatch(register(data))
+      if (register.fulfilled.match(res)) {
+        navigate('/')
+      } else {
+        toast.error('Đăng ký thất bại. Vui lòng kiểm tra lại thông tin đăng ký.')
+      }
+    } catch (error) {
+      toast.error('Đăng ký thất bại. Vui lòng thử lại sau.')
+    }
   }
 
   const onError: SubmitErrorHandler<FormValues> = (errors) => {
@@ -83,11 +84,9 @@ const SignInSignUp = () => {
   //   }
   // }, [userData]);
 
- 
-  
   // if (user && !loading) {
   //   navigate('/');
-  //   return null; 
+  //   return null;
   // }
 
   return (
@@ -130,13 +129,13 @@ const SignInSignUp = () => {
                 />
 
                 <button
-                // onClick={handleLogin}
+                  // onClick={handleLogin}
                   type='submit'
                   className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '
                 >
                   Đăng nhập
                 </button>
-                {error && <p className='mt-[10px] text-red-500'>{error}</p>} 
+                {error && <p className='mt-[10px] text-red-500'>{error}</p>}
               </form>
             </div>
           </div>
