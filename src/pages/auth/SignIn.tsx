@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
@@ -20,11 +20,7 @@ const SignInSignUp = () => {
   const navigate = useNavigate()
   const { user } = useSelector((state: RootState) => state.auth)
 
-  const {
-    register: registerSignIn,
-    handleSubmit: handleSubmitSignIn,
-    formState: { errors: errorsSignIn }
-  } = useForm<FormValues>()
+  const { register: registerSignIn, handleSubmit: handleSubmitSignIn } = useForm<FormValues>()
 
   const { register: registerSignUp, handleSubmit: handleSubmitSignUp, watch } = useForm<FormValues>()
 
@@ -36,11 +32,14 @@ const SignInSignUp = () => {
   const onSubmitSignUp: SubmitHandler<FormValues> = (data) => {
     console.log('data', data)
 
-    if (data.password !== data.confirmPassword) {
-      toast.error('Passwords do not match!')
-      return
-    }
     toast.success('Sign up successful!')
+  }
+
+  const onError: SubmitErrorHandler<FormValues> = (errors) => {
+    Object.entries(errors).forEach(([, error]) => {
+      const errorMessage = error?.message
+      errorMessage && toast.error(errorMessage)
+    })
   }
 
   const handleSwitch = () => {
@@ -73,24 +72,25 @@ const SignInSignUp = () => {
             <div className='col-span-1 '>
               <img className='w-[80x] h-[100px]' src='/assets/LOGO123.png' alt='' />
               <h2 className='text-2xl text-white'>Đăng nhập</h2>
-              <form onSubmit={handleSubmitSignIn(onSubmitSignIn)}>
+              <form onSubmit={handleSubmitSignIn(onSubmitSignIn, onError)}>
                 <input
                   className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
-                  type='email'
+                  type='text'
                   {...registerSignIn('email', {
-                    required: 'Email is required',
-                    pattern: { value: /^\S+@\S+$/i, message: 'Địa chỉ email không đúng định dạng' }
+                    required: 'Email không được bỏ trống',
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: 'Email không đúng định dạng'
+                    }
                   })}
                   placeholder='Nhập email'
                 />
-                {errorsSignIn.email && toast.error(errorsSignIn.email.message)}
                 <input
                   className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
                   type='password'
                   {...registerSignIn('password', { required: 'Cần nhập password' })}
                   placeholder='Nhập mật khẩu'
                 />
-                {errorsSignIn.password && toast.error(errorsSignIn.password.message)}
 
                 <button
                   type='submit'
@@ -109,33 +109,36 @@ const SignInSignUp = () => {
         >
           <div className='flex flex-col items-center justify-center h-full gap-4 px-10 bg-black rounded-md shadow-md'>
             <img className='h-[100px]' src='/assets/LOGO123.png' alt='' />
-            <form className='flex flex-col items-center w-full gap-4' onSubmit={handleSubmitSignUp(onSubmitSignUp)}>
+            <form
+              className='flex flex-col items-center w-full gap-4'
+              onSubmit={handleSubmitSignUp(onSubmitSignUp, onError)}
+            >
               <input
                 className='w-full px-1 py-2 rounded-md md:w-1/2'
                 type='text'
-                {...registerSignUp('username', { required: 'Cần nhập tên người dùng' })}
+                {...registerSignUp('username', { required: 'Tên người dùng không được bỏ trống' })}
                 placeholder='Nhập tên người đùng'
               />
               <input
                 className='w-full px-1 py-2 rounded-md md:w-1/2'
-                type='email'
+                type='text'
                 {...registerSignUp('email', {
-                  required: 'Email is required',
-                  pattern: { value: /^\S+@\S+$/i, message: 'Địa chỉ email không đúng định dạng' }
+                  required: 'Email không được bỏ trống',
+                  pattern: { value: /^\S+@\S+$/i, message: 'Email không đúng định dạng' }
                 })}
                 placeholder='Nhập email'
               />
               <input
                 className='w-full px-1 py-2 rounded-md md:w-1/2'
                 type='password'
-                {...registerSignUp('password', { required: 'Cần nhập tên người dùng' })}
+                {...registerSignUp('password', { required: 'Mật khẩu không được bỏ trống' })}
                 placeholder='Nhập mật khẩu'
               />
               <input
                 className='w-full px-1 py-2 rounded-md md:w-1/2'
                 type='password'
                 {...registerSignUp('confirmPassword', {
-                  required: 'Confirm Password is required',
+                  required: 'Xác nhận mật khẩu không được bỏ trống',
                   validate: (value) => value === password || 'Mật khẩu không khớp'
                 })}
                 placeholder='Xác nhận mật khẩu'
