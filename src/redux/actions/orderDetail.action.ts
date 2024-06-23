@@ -6,9 +6,13 @@ import { http } from '~/utils/http'
 
 export const createOrderDetail = createAsyncThunk(
   'orderDetail/createOrderDetail',
-  async (data: OrderDetail, thunkAPI) => {
+  async ({data, userId}:{data: OrderDetail; userId?: number}, thunkAPI) => {
     try {
-      const response = await http.post<ResponseData<OrderDetail>>(`/order-detail`, data)
+      let url = '/order-detail';
+      if (userId) {
+        url += `?userId=${userId}`;
+      }
+      const response = await http.post<ResponseData<OrderDetail>>(url, data)
       return response.data.data
     } catch (error: any) {
       if (error.name === 'AbortError') {

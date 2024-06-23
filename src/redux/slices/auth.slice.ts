@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AuthResponse, initialAuthState } from "../types/auth.type";
-import { login } from "../actions/auth.action";
+import { login, logout } from "../actions/auth.action";
 import { FulfilledAction, PendingAction, RejectedAction } from "~/types/redux.type";
 
 
@@ -10,18 +10,24 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialAuthState,
   reducers: {
-    logout(state) {
-      state.user = null;
-      state.token = null;
-    },
+    // logout(state) {
+    //   state.user = null;
+    //   state.token = null;
+    // },
   },
 
   extraReducers: (builder) => {
-
-    builder.addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
+    builder
+    .addCase(login.fulfilled, (state, action: PayloadAction<{ token: string; }>) => {
       state.loading = false;
-      state.user = action.payload.user;
+      // state.user = action.payload.userId;
       state.token = action.payload.token;
+      state.error = null;
+    })
+    
+    
+    .addCase(logout.fulfilled, (state) => {
+      return initialAuthState; 
     })
     .addMatcher<PendingAction>(
       (action) => action.type.endsWith('/pending'),
@@ -56,6 +62,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+// export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

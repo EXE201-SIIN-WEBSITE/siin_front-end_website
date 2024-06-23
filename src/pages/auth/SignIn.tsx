@@ -10,21 +10,34 @@ const SignInSignUp = () => {
   const [password, setPassword] = useState('')
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { user } = useSelector((state: RootState) => state.auth);
-
+  const [error, setError] = useState('')
+  const { user, loading } = useSelector((state: RootState) => state.auth);
+  const userData = useSelector((state: RootState) => state.user.user)
   const handleSwitch = () => {
     setIsSignIn(!isSignIn)
   }
 
-  const handleLogin = () => {
-    dispatch(login({ email, password }))
-  }
-
   useEffect(() => {
-    if (user) {
-      navigate('/')
+    if (!userData && localStorage.getItem('token')) {
+      console.log('Fetching user data after logout');
     }
-  }, [user, navigate])
+  }, [userData]);
+
+  const handleLogin = async () => {
+    setError('')
+    const resultAction = await dispatch(login({ email, password }));
+  
+    if (login.fulfilled.match(resultAction)) {
+      navigate('/');
+    } else {
+      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
+    }
+  };
+  
+  if (user && !loading) {
+    navigate('/');
+    return null; 
+  }
 
   return (
     <div className='flex justify-center my-[50px]'>
@@ -60,21 +73,21 @@ const SignInSignUp = () => {
                 placeholder='Nhập mật khẩu'
               />
               <br />
-              <Link to={'/'}>
+           
               <button
                 onClick={handleLogin}
                 className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '
               >
                 Đăng nhập
               </button>  
-              </Link>
-            
-              {user && (
+              {error && <p className='mt-[10px] text-red-500'>{error}</p>}
+          
+              {/* {user && (
                 <div>
                   <p>Login successful!</p>
                   <Link to='/'>Go to HomePage</Link>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

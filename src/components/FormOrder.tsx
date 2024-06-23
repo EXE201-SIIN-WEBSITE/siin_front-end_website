@@ -43,6 +43,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   const [, setSelectedWard] = useState('')
 
   const orderDetailProps = useSelector((state: RootState) => state.orderDetail)
+  const userData = useSelector((state: RootState) => state.user.user)
 
   useEffect(() => {
     // get tinh dau tien
@@ -243,7 +244,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
       orderDetailRequestDTO: data,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
     }
-    dispatch(createOrderDetail(filteredOrderDetail))
+    dispatch(createOrderDetail({data: filteredOrderDetail, userId:userData?.id}))
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
     reset()

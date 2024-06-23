@@ -19,6 +19,7 @@ const ProductDetail = () => {
   const material = useSelector((state: RootState) => state.material.material)
   const colors = useSelector((state: RootState) => state.color.colorList)
   const sizes = useSelector((state: RootState) => state.size.sizeList)
+  const userData = useSelector((state: RootState) => state.user.user)
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState(0)
   const [priceSum, setPriceSum] = useState(0)
@@ -26,7 +27,7 @@ const ProductDetail = () => {
     colorId: 0,
     sizeId: 0,
     quantity: quantity,
-    userId: 0
+    userId: userData?.id
   })
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
 

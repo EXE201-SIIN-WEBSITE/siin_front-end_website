@@ -49,7 +49,8 @@ export default function CustomizeProduct() {
     colorId: 0,
     sizeId: 0,
     accessoryId: 0,
-    quantity: 0
+    quantity: 0,
+    userId: userData?.id
   })
   useEffect(() => {
     const abortController = new AbortController()
