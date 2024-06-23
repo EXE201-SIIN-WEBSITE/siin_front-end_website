@@ -18,16 +18,46 @@ const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { user } = useSelector((state: RootState) => state.auth)
+  const [email, setEmail] = useState('')
+  const [password1, setPassword1] = useState('')
+  // const { user, loading } = useSelector((state: RootState) => state.auth)
+  const [error, setError] = useState('')
 
   const { register: registerSignIn, handleSubmit: handleSubmitSignIn } = useForm<FormValues>()
 
   const { register: registerSignUp, handleSubmit: handleSubmitSignUp, watch } = useForm<FormValues>()
 
-  const onSubmitSignIn: SubmitHandler<FormValues> = (data) => {
-    console.log('data', data)
-    dispatch(login({ email: data.email, password: data.password }))
-  }
+  // const onSubmitSignIn: SubmitHandler<FormValues> = (data) => {
+  //   setError('')
+  //   const resultAction = dispatch(login({ email, password }));
+  //   console.log('data', data)
+  //   dispatch(login({ email: data.email, password: data.password }))
+  //   if (login.fulfilled.match(resultAction)) {
+  //     navigate('/');
+  //   } else {
+  //     setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
+  //   }  
+  // }
+
+  const onSubmitSignIn: SubmitHandler<FormValues> = async (data) => {
+    setError('');
+    try {
+      
+      const resultAction = await dispatch(login({ email: data.email, password: data.password }));
+  
+      if (login.fulfilled.match(resultAction)) {
+        navigate('/');
+      } else {
+        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
+      }
+    } catch (error) {
+      setError('Đăng nhập thất bại. Vui lòng thử lại sau.');
+      console.error('Login error:', error); 
+    }
+  };
+  
+
+
 
   const onSubmitSignUp: SubmitHandler<FormValues> = (data) => {
     console.log('data', data)
@@ -53,16 +83,7 @@ const SignInSignUp = () => {
   //   }
   // }, [userData]);
 
-  // const handleLogin = async () => {
-  //   setError('')
-  //   const resultAction = await dispatch(login({ email, password }));
-  
-  //   if (login.fulfilled.match(resultAction)) {
-  //     navigate('/');
-  //   } else {
-  //     setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
-  //   }
-  // };
+ 
   
   // if (user && !loading) {
   //   navigate('/');
@@ -109,11 +130,13 @@ const SignInSignUp = () => {
                 />
 
                 <button
+                // onClick={handleLogin}
                   type='submit'
                   className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '
                 >
                   Đăng nhập
                 </button>
+                {error && <p className='mt-[10px] text-red-500'>{error}</p>} 
               </form>
             </div>
           </div>
