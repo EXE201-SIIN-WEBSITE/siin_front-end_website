@@ -114,6 +114,7 @@ const Cart = () => {
                   onIncrease={() => updateQuantity(index, 1)}
                   onDecrease={() => updateQuantity(index, -1)}
                   onRemove={() => removeItem(index)}
+   
                 />
                 <div className='flex justify-start md:ml-[210px]'>
                   <button
@@ -146,15 +147,17 @@ const Cart = () => {
       {selectedProduct && (
         <div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-50'>
           <div className='p-8 bg-white rounded-md'>
-            {/* <h2 className='text-xl font-semibold'>{selectedProduct.accessoryName}</h2> */}
-            {accessory && accessory.image && <img className='w-[250px]' src={accessory.image} alt='' />}
-            <p>Color: {selectedProduct.colorId}</p>
-            <p>Size: {selectedProduct.sizeId}</p>
-            <p>Quantity: {selectedProduct.quantity}</p>
-            <button
-              className='px-4 py-2 mt-4 text-white bg-blue-500 rounded-md'
-              onClick={() => setSelectedProduct(null)}
-            >
+            {selectedProduct.accessId
+              ? accessory && accessory.image && <img className='w-[250px] rounded-md' src={accessory.image} alt='Accessory' />
+              : cart && (
+                 <></>
+                )}
+            <div className='mt-[10px] flex justify-center flex-col items-start p-2 border-2 rounded-md'>
+              <p>Màu sắc: {color?.name}</p>
+              <p>Kích cỡ: {size?.name}</p>
+              <p>Số lượng: {selectedProduct.quantity}</p>
+            </div>
+            <button className='px-4 py-2 mt-4 text-white bg-black rounded-md' onClick={() => setSelectedProduct(null)}>
               Đóng
             </button>
           </div>
