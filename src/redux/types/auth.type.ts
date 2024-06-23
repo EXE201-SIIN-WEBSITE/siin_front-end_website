@@ -1,10 +1,9 @@
-import { auth } from "~/types/auth.type"
+import { auth } from '~/types/auth.type'
 
 export interface credentials {
   email: string
   password: string
 }
-
 
 export interface AuthResponse {
   user: auth
