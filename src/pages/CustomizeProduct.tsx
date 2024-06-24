@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { EffectCoverflow, Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Swiper as SwiperCore } from 'swiper/types'
+import swal from 'sweetalert'
 
 import { useSelector } from 'react-redux'
 import 'swiper/css'
@@ -39,7 +40,7 @@ export default function CustomizeProduct() {
   const [activeColor, setActiveColor] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.user.user)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [product, setProduct] = useState({
+  const [product] = useState({
     id: 0,
     name: 'Custom product',
     price: 0,
@@ -203,6 +204,11 @@ export default function CustomizeProduct() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
     const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
     window.dispatchEvent(event)
+    swal({
+      title: "Sản phẩm đã được thêm vào giỏ hàng!",
+      text: "",
+      icon: "success"
+    });
   }
 
   console.log('PRICE: ', totalPrice)
@@ -380,6 +386,7 @@ export default function CustomizeProduct() {
             </div>
           </div>
         </div>
+
         <div className='flex mt-2'>
           <h3 className='text-xl md:text-2xl md:mt-2'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
           <button
@@ -389,6 +396,12 @@ export default function CustomizeProduct() {
             Them vao gio hàng
           </button>
         </div>
+
+<!--         <h3 className='text-xl md:text-2xl'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
+        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
+         Thêm vào giỏ hàng
+        </button> -->
+
       </div>
     </div>
   )
