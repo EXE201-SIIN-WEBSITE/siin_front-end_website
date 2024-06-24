@@ -7,6 +7,7 @@ import { payment } from '~/types/payment.type'
 import '../components/animation/formOrder.css'
 
 import { unwrapResult } from '@reduxjs/toolkit'
+import { Controller, useForm } from 'react-hook-form'
 import { clearCart } from '~/redux/actions/cartItem.action'
 import { createOrderDetail } from '~/redux/actions/orderDetail.action'
 import { createPaymentPayOS } from '~/redux/actions/paymentPayOS.action'
@@ -18,8 +19,6 @@ import { province } from '~/types/province.type'
 import { ResponseData } from '~/types/respone.type'
 import { ward } from '~/types/ward.type'
 import { ghnApi } from '~/utils/http'
-import { Controller, useForm } from 'react-hook-form'
-import { error } from 'console'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -244,7 +243,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
       orderDetailRequestDTO: data,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
     }
-    dispatch(createOrderDetail({data: filteredOrderDetail, userId:userData?.id}))
+    dispatch(createOrderDetail({ data: filteredOrderDetail, userId: userData?.id }))
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
     reset()
@@ -252,8 +251,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   }
 
   console.log('order: ', orderDetail)
-  console.log("PRICE: ", totalPrice);
-  
+  console.log('PRICE: ', totalPrice)
 
   const validatePhoneNumber = (value: string) => {
     const phoneNumberRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/
@@ -318,7 +316,10 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
             </div>
           </div>
         ) : (
-          <form className='w-[230px] h-[400px] md:w-[600px] md:h-auto overflow-y-auto' onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className='w-[230px] h-[400px] md:w-[600px] md:h-auto overflow-y-auto'
+            onSubmit={handleSubmit(onSubmit)}
+          >
             {isOrderForm ? (
               <>
                 <div className='flex justify-between'>
@@ -331,7 +332,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   </div>
                 </div>
                 <div>
-                  <div className='grid items-center m-2 mb-4 md:grid-cols-4 grid-cols-1'>
+                  <div className='grid items-center grid-cols-1 m-2 mb-4 md:grid-cols-4'>
                     <div className='md:col-span-1'>
                       <label htmlFor='name' className='mb-2 font-bold text-gray-700'>
                         Họ và tên
@@ -354,7 +355,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               }}
                               className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             />
-                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                            {error && <span className='ml-1 italic text-red-400'>{error.message}</span>}
                           </>
                         )}
                       />
@@ -384,7 +385,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               }}
                               className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             />
-                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                            {error && <span className='ml-1 italic text-red-400'>{error.message}</span>}
                           </>
                         )}
                       />
@@ -414,7 +415,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               }}
                               className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             />
-                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                            {error && <span className='ml-1 italic text-red-400'>{error.message}</span>}
                           </>
                         )}
                       />
@@ -453,7 +454,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               ))}
                             </select>
                             {fieldState.error && (
-                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                              <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>
                             )}
                           </>
                         )}
@@ -477,9 +478,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               disabled={!selectedProvince}
                               className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             >
-                              <option value=''>
-                                Chọn Quận/Huyện
-                              </option>
+                              <option value=''>Chọn Quận/Huyện</option>
                               {districts.map((district) => (
                                 <option
                                   key={district.DistrictID}
@@ -491,7 +490,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               ))}
                             </select>
                             {fieldState.error && (
-                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                              <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>
                             )}
                           </>
                         )}
@@ -523,7 +522,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               ))}
                             </select>
                             {fieldState.error && (
-                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                              <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>
                             )}
                           </>
                         )}
@@ -554,7 +553,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               }}
                               className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             />
-                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                            {error && <span className='ml-1 italic text-red-400'>{error.message}</span>}
                           </>
                         )}
                       />
@@ -568,7 +567,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       </label>
                     </div>
                     <div className='col-span-3'>
-                    <Controller
+                      <Controller
                         name='note'
                         control={control}
                         // rules={{ required: 'Bạn vui lòng nhập địa chỉ (tên đường/số nhà)' }}
@@ -584,7 +583,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               }}
                               className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             />
-                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                            {error && <span className='ml-1 italic text-red-400'>{error.message}</span>}
                           </>
                         )}
                       />

@@ -6,17 +6,16 @@ import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { getUserIdByToken, getUserInfo } from '~/redux/actions/user.actions'
 import { logout } from '~/redux/actions/auth.action'
 
-
-
 const Header = () => {
   const [isProductsHovered, setIsProductsHovered] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
   const userData = useSelector((state: RootState) => state.user.user)
   const dispatch = useAppDispatch()
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const navigate = useNavigate()
-  const fixedAvatar = 'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1719100800&semt=ais_user';
+  const fixedAvatar =
+    'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1719100800&semt=ais_user'
   useEffect(() => {
     const fetchUserData = async () => {
       const tokenInLocalStorage = localStorage.getItem('token') || ''
@@ -47,7 +46,7 @@ const Header = () => {
       setLoading(false)
     }
   }, [userData])
-  
+
   console.log('User DATA: ', userData)
 
   const getItemNumberCart = () => {
@@ -73,20 +72,18 @@ const Header = () => {
     }
   }, [])
 
-
-
   const handleLogout = () => {
     dispatch(logout())
       .then(() => {
         // Clear user-related state or conditions if needed
-        setIsDropdownOpen(false);
+        setIsDropdownOpen(false)
         // Navigate to login page immediately
-        navigate('/login', { replace: true });
+        navigate('/login', { replace: true })
       })
       .catch((error) => {
-        console.error('Logout error:', error);
-      });
-  };
+        console.error('Logout error:', error)
+      })
+  }
 
   const renderUserLink = () => {
     if (userData && userData.fullName) {
@@ -99,7 +96,7 @@ const Header = () => {
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           />
           {isDropdownOpen && (
-            <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10'>
+            <div className='absolute right-0 z-10 w-48 mt-2 bg-white rounded-md shadow-lg'>
               <div className='py-2'>
                 <span className='block px-4 py-2 text-sm text-gray-700'>{userData.fullName}</span>
                 <NavLink
@@ -111,7 +108,7 @@ const Header = () => {
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  className='block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100'
                 >
                   Đăng xuất
                 </button>
@@ -119,15 +116,15 @@ const Header = () => {
             </div>
           )}
         </div>
-      );
+      )
     } else {
       return (
         <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'/login'}>
           <i className='fa-solid fa-circle-user'></i>
         </NavLink>
-      );
+      )
     }
-  };
+  }
 
   return (
     <header className='w-full text-white bg-black'>

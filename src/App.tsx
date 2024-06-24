@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage'
 import Header from './components/layout/Header'
@@ -13,7 +13,7 @@ import Cart from './pages/Cart'
 import SignIn from './pages/auth/SignIn'
 
 function App() {
-  const location = useLocation()
+  // const location = useLocation()
   // const isLoginPath = location.pathname === '/login'
   return (
     <>

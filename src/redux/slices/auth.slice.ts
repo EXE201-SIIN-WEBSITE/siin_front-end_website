@@ -1,17 +1,12 @@
-
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AuthResponse, initialAuthState } from "../types/auth.type";
-import { login, logout } from "../actions/auth.action";
-import { FulfilledAction, PendingAction, RejectedAction } from "~/types/redux.type";
-
-
+import { createSlice } from '@reduxjs/toolkit'
+import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
+import { login } from '../actions/auth.action'
+import { initialAuthState } from '../types/auth.type'
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialAuthState,
-  reducers: {
-
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder
@@ -52,6 +47,5 @@ const authSlice = createSlice({
       )
   }
 })
-
 
 export default authSlice.reducer
