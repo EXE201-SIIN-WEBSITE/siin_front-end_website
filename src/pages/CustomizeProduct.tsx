@@ -71,8 +71,7 @@ export default function CustomizeProduct() {
   // console.log('Colors List: ', color)
   // console.log('Sizes List: ', size)
   // console.log('Product price: ', productDetail)
-  console.log("ID NE: ", userData?.id);
-  
+  console.log('ID NE: ', userData?.id)
 
   const handleColorSelect = (colorId: number) => {
     setSelectedColor(colorId)
@@ -164,7 +163,7 @@ export default function CustomizeProduct() {
   console.log('Cart info: ', cartInfo)
 
   const handleAddToCart = () => {
-    if(activeColor === null || activeSize === null || selectedAccess === null) {
+    if (activeColor === null || activeSize === null || selectedAccess === null) {
       return
     }
     const productInCart = addToCart()
@@ -205,10 +204,10 @@ export default function CustomizeProduct() {
     const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
     window.dispatchEvent(event)
     swal({
-      title: "Sản phẩm đã được thêm vào giỏ hàng!",
-      text: "",
-      icon: "success"
-    });
+      title: 'Sản phẩm đã được thêm vào giỏ hàng!',
+      text: '',
+      icon: 'success'
+    })
   }
 
   console.log('PRICE: ', totalPrice)
@@ -295,7 +294,7 @@ export default function CustomizeProduct() {
               </div>
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
-              <label className='text-2xl text-left mb-1'>Phụ kiện:</label>
+              <label className='mb-1 text-2xl text-left'>Phụ kiện:</label>
               <div className='grid grid-cols-6 gap-6 colorbutton'>
                 {accessoryData.map((item, index) => (
                   <button key={item.id} onClick={() => handleAccessSelect(item.id, index)}>
@@ -393,15 +392,9 @@ export default function CustomizeProduct() {
             onClick={handleAddToCart}
             className={`px-2 py-3 text-white bg-black lg:mx-9 lg:self-end addtocart ${activeColor === null || activeSize === null || selectedAccess === null ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Them vao gio hàng
+            Thêm vào giỏ hàng
           </button>
         </div>
-
-<!--         <h3 className='text-xl md:text-2xl'>Thành tiền: {formatPriceToVND(totalPrice)}</h3>
-        <button onClick={handleAddToCart} className='p-4 text-white bg-black lg:mx-9 lg:self-end addtocart'>
-         Thêm vào giỏ hàng
-        </button> -->
-
       </div>
     </div>
   )
