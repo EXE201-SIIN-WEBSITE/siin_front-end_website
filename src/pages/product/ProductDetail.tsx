@@ -21,6 +21,7 @@ const ProductDetail = () => {
   const material = useSelector((state: RootState) => state.material.material)
   const colors = useSelector((state: RootState) => state.color.colorList)
   const sizes = useSelector((state: RootState) => state.size.sizeList)
+  const userData = useSelector((state: RootState) => state.user.user)
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState(0)
   const [priceSum, setPriceSum] = useState(0)
@@ -28,7 +29,7 @@ const ProductDetail = () => {
     colorId: 0,
     sizeId: 0,
     quantity: quantity,
-    userId: 0
+    userId: userData?.id
   })
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
 
@@ -255,7 +256,7 @@ const ProductDetail = () => {
               </h1>
               <span className='flex justify-center md:justify-start'>Sản phẩm liên quan</span>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%] md:w-[95%] my-2'></div>
-              <div className='flex gap-2 my-[25px]'>
+              <div className='flex gap-2 my-[25px] justify-center sm:items-center'>
                 {uniqueColors.map((color) => {
                   const colorName = colors.find((c) => c.id === color.colorId)?.name || 'Unknown'
                   return (
@@ -310,7 +311,7 @@ const ProductDetail = () => {
               </div>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
               <div className='flex justify-center mb-[40px]'>
-                <h3 className='text-xl md:text-2xl'>
+                <h3 className={`text-xl md:text-2xl ${selectedMaterialId === null ? 'text-sm md:text-base' : ''}`}>
                   Thành tiền: {selectedMaterialId !== null ? formatPriceToVND(totalPrice) : 'Chọn màu và kích thước'}
                 </h3>
               </div>

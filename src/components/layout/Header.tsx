@@ -1,10 +1,54 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Logo from '../Logo'
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '~/redux/containers/store'
+import { getUserIdByToken, getUserInfo } from '~/redux/actions/user.actions'
+import { logout } from '~/redux/actions/auth.action'
+
+
 
 const Header = () => {
   const [isProductsHovered, setIsProductsHovered] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
+  const userData = useSelector((state: RootState) => state.user.user)
+  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const fixedAvatar = 'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1719100800&semt=ais_user';
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const tokenInLocalStorage = localStorage.getItem('token') || ''
+
+      if (tokenInLocalStorage) {
+        try {
+          const action = await dispatch(getUserIdByToken(tokenInLocalStorage))
+          const userId = action.payload as number
+
+          if (userId) {
+            await dispatch(getUserInfo(userId))
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        } finally {
+          setLoading(false)
+        }
+      } else {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [dispatch])
+
+  useEffect(() => {
+    if (userData && userData.id) {
+      setLoading(false)
+    }
+  }, [userData])
+  
+  console.log('User DATA: ', userData)
 
   const getItemNumberCart = () => {
     const cartItemsString = localStorage.getItem('cartItems')
@@ -28,6 +72,62 @@ const Header = () => {
       window.removeEventListener('cartUpdated', handleCartUpdated)
     }
   }, [])
+
+
+
+  const handleLogout = () => {
+    dispatch(logout())
+      .then(() => {
+        // Clear user-related state or conditions if needed
+        setIsDropdownOpen(false);
+        // Navigate to login page immediately
+        navigate('/login', { replace: true });
+      })
+      .catch((error) => {
+        console.error('Logout error:', error);
+      });
+  };
+
+  const renderUserLink = () => {
+    if (userData && userData.fullName) {
+      return (
+        <div className='relative'>
+          <img
+            src={userData.avatar || fixedAvatar}
+            alt='User Avatar'
+            className='w-10 h-10 rounded-full cursor-pointer'
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          />
+          {isDropdownOpen && (
+            <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10'>
+              <div className='py-2'>
+                <span className='block px-4 py-2 text-sm text-gray-700'>{userData.fullName}</span>
+                <NavLink
+                  to='/profile'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Hồ sơ
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'/login'}>
+          <i className='fa-solid fa-circle-user'></i>
+        </NavLink>
+      );
+    }
+  };
 
   return (
     <header className='w-full text-white bg-black'>
@@ -80,9 +180,11 @@ const Header = () => {
               </span>
             )}
           </NavLink>
-          <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
-            <i className='fa-solid fa-circle-user'></i>
-          </NavLink>
+
+          {renderUserLink()}
+          {/* <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
+            <i className='fa-solid fa-circle-user'></i> 
+          </NavLink> */}
         </div>
       </div>
     </header>

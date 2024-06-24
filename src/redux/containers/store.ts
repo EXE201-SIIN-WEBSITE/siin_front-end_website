@@ -11,6 +11,8 @@ import cartItemSlice from '../slices/cartItem.slice'
 import colorSlice from '../slices/color.slice'
 import sizeSlice from '../slices/size.slice'
 import paymentPayOSSlice from '../slices/paymentPayOS.slice'
+import authSlice from '../slices/auth.slice'
+import userSlice from '../slices/user.slice'
 
 export const store = configureStore({
   reducer: {
@@ -24,7 +26,9 @@ export const store = configureStore({
     cartItem: cartItemSlice,
     color: colorSlice,
     size: sizeSlice,
-    payos: paymentPayOSSlice
+    payos: paymentPayOSSlice,
+    auth: authSlice,
+    user: userSlice,
   }
 })
 

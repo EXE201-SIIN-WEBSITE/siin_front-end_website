@@ -23,7 +23,7 @@ const ItemCart: React.FC<ItemCartProps> = ({ item, onIncrease, onDecrease, onRem
         />
       </div>
       <div className='col-span-1 gap-2'>
-        <h1 className='text-xl font-bold'>{item.name}</h1>
+        <h1 className='mt-[30px] md:mt-0 md:text-xl font-bold'>{item.name}</h1>
         <h3 className='mt-3'>Số lượng: {item.quantity}</h3>
         <div className='flex gap-2 mt-3'>
           <button onClick={onDecrease} className='px-[14px] py-2 bg-black text-white rounded'>
@@ -35,7 +35,7 @@ const ItemCart: React.FC<ItemCartProps> = ({ item, onIncrease, onDecrease, onRem
         </div>
       </div>
       <div className='col-span-1 gap-2 mt-2 price'>
-        <h1 className='text-xl text-nowrap'>Đơn giá</h1>
+        <h1 className='mt-[20px] md:mt-0 text-xl text-nowrap'>Đơn giá</h1>
         <p className='mt-3'>{formatPriceToVND(item.price)}</p>
         <button onClick={onRemove} className='px-3 py-2 mt-4 text-white bg-red-500 rounded'>
           Xóa

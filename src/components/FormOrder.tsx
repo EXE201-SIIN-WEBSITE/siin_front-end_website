@@ -18,6 +18,8 @@ import { province } from '~/types/province.type'
 import { ResponseData } from '~/types/respone.type'
 import { ward } from '~/types/ward.type'
 import { ghnApi } from '~/utils/http'
+import { Controller, useForm } from 'react-hook-form'
+import { error } from 'console'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -26,6 +28,7 @@ interface FormOrderProps {
 }
 
 const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cartItemsFromProps }) => {
+  const { control, handleSubmit, reset } = useForm()
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
   const [isThankYou, setIsThankYou] = useState(false)
@@ -40,6 +43,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   const [, setSelectedWard] = useState('')
 
   const orderDetailProps = useSelector((state: RootState) => state.orderDetail)
+  const userData = useSelector((state: RootState) => state.user.user)
 
   useEffect(() => {
     // get tinh dau tien
@@ -82,7 +86,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
           const response = await ghnApi.get<ResponseData<ward[]>>(`/ward`, {
             params: { district_id: selectedDistrict }
           })
-
+          console.log('Wards response:', response.data.data)
           setWards(response.data.data)
         } catch (error) {
           console.error('Error fetching wards:', error)
@@ -92,6 +96,10 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
       fetchWards()
     }
   }, [selectedDistrict, selectedProvince])
+  // useEffect(() => {
+  //   console.log('Selected District:', selectedDistrict)
+  //   console.log('Wards:', wards)
+  // }, [selectedDistrict, wards])
 
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.options[e.target.selectedIndex]
@@ -215,7 +223,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
       typePayment: value
     }))
   }
-  console.log('data inserted: ', payment)
+  // console.log('data inserted: ', payment)
 
   const handleClickOutside = (e: MouseEvent) => {
     if (elModal.current && !elModal.current.contains(e.target as Node)) {
@@ -230,16 +238,35 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: any) => {
     const filteredOrderDetail = {
       ...orderDetail,
+      orderDetailRequestDTO: data,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
     }
-    dispatch(createOrderDetail(filteredOrderDetail))
+    dispatch(createOrderDetail({data: filteredOrderDetail, userId:userData?.id}))
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
+    reset()
     setIsOrderForm(false)
+  }
+
+  console.log('order: ', orderDetail)
+  console.log("PRICE: ", totalPrice);
+  
+
+  const validatePhoneNumber = (value: string) => {
+    const phoneNumberRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/
+    if (!value) return 'Vui lòng điền số điện thoại'
+    if (!phoneNumberRegex.test(value)) return 'Số điện thoại không có thật'
+    return true
+  }
+
+  const validateEmail = (value: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!value) return 'Vui lòng điền email'
+    if (!emailRegex.test(value)) return 'Email không có thật'
+    return true
   }
 
   const handlePaymentSubmit = async () => {
@@ -291,7 +318,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
             </div>
           </div>
         ) : (
-          <form className='w-[600px] h-auto' onSubmit={handleSubmit}>
+          <form className='w-[230px] h-[400px] md:w-[600px] md:h-auto overflow-y-auto' onSubmit={handleSubmit(onSubmit)}>
             {isOrderForm ? (
               <>
                 <div className='flex justify-between'>
@@ -304,19 +331,32 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   </div>
                 </div>
                 <div>
-                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
-                    <div className='col-span-1'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4 grid-cols-1'>
+                    <div className='md:col-span-1'>
                       <label htmlFor='name' className='mb-2 font-bold text-gray-700'>
                         Họ và tên
                       </label>
                     </div>
-                    <div className='col-span-3'>
-                      <input
-                        type='text'
-                        id='name'
+                    <div className='md:col-span-3'>
+                      <Controller
                         name='nameCustomer'
-                        onChange={getData}
-                        className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA]  rounded-md'
+                        control={control}
+                        rules={{ required: 'Bạn vui lòng nhập họ và tên' }}
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <input
+                              type='text'
+                              id='nameCustomer'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                getData(e)
+                              }}
+                              className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            />
+                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                          </>
+                        )}
                       />
                     </div>
                   </div>
@@ -328,12 +368,25 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       </label>
                     </div>
                     <div className='col-span-3'>
-                      <input
-                        type='email'
-                        id='email'
+                      <Controller
                         name='email'
-                        onChange={getData}
-                        className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                        control={control}
+                        rules={{ validate: validateEmail }}
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <input
+                              type='text'
+                              id='email'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                getData(e)
+                              }}
+                              className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            />
+                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                          </>
+                        )}
                       />
                     </div>
                   </div>
@@ -345,67 +398,136 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       </label>
                     </div>
                     <div className='col-span-3'>
-                      <input
-                        type='tel'
-                        id='phone'
+                      <Controller
                         name='phone'
-                        onChange={getData}
-                        className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                        control={control}
+                        rules={{ validate: validatePhoneNumber }}
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <input
+                              type='text'
+                              id='phone'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                getData(e)
+                              }}
+                              className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            />
+                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                          </>
+                        )}
                       />
                     </div>
                   </div>
 
                   <div className='grid md:grid-cols-3'>
                     <div className='items-center m-2 mb-4'>
-                      <select
-                        id='province'
+                      <Controller
                         name='province'
-                        onChange={handleProvinceChange}
-                        className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
-                      >
-                        <option value=''>Tỉnh/Thành</option>
-                        {provinces.map((province) => (
-                          <option key={province.ProvinceID} value={province.ProvinceName} data-id={province.ProvinceID}>
-                            {province.ProvinceName}
-                          </option>
-                        ))}
-                      </select>
+                        control={control}
+                        defaultValue=''
+                        rules={{ required: 'Vui lòng chọn tỉnh' }}
+                        render={({ field, fieldState }) => (
+                          <>
+                            <select
+                              id='province'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                handleProvinceChange(e)
+                              }}
+                              className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            >
+                              <option value='' data-id=''>
+                                Chọn Tỉnh
+                              </option>
+                              {provinces.map((province) => (
+                                <option
+                                  key={province.ProvinceID}
+                                  value={province.ProvinceName}
+                                  data-id={province.ProvinceID}
+                                >
+                                  {province.ProvinceName}
+                                </option>
+                              ))}
+                            </select>
+                            {fieldState.error && (
+                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                            )}
+                          </>
+                        )}
+                      />
                     </div>
                     <div className='items-center m-2 mb-4'>
-                      <select
-                        id='district'
+                      <Controller
                         name='district'
-                        onChange={handleDistrictChange}
-                        className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
-                        disabled={!selectedProvince}
-                      >
-                        <option value=''>Quận/Huyện</option>
-                        {districts.map((district) => (
-                          <option
-                            key={district.DistrictID}
-                            value={district.DistrictName}
-                            district-id={district.DistrictID}
-                          >
-                            {district.DistrictName}
-                          </option>
-                        ))}
-                      </select>
+                        control={control}
+                        defaultValue=''
+                        rules={{ required: 'Vui lòng chọn quận/huyện' }}
+                        render={({ field, fieldState }) => (
+                          <>
+                            <select
+                              id='district'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                handleDistrictChange(e)
+                              }}
+                              disabled={!selectedProvince}
+                              className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            >
+                              <option value=''>
+                                Chọn Quận/Huyện
+                              </option>
+                              {districts.map((district) => (
+                                <option
+                                  key={district.DistrictID}
+                                  value={district.DistrictName}
+                                  district-id={district.DistrictID}
+                                >
+                                  {district.DistrictName}
+                                </option>
+                              ))}
+                            </select>
+                            {fieldState.error && (
+                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                            )}
+                          </>
+                        )}
+                      />
                     </div>
                     <div className='items-center m-2 mb-4'>
-                      <select
-                        id='ward'
+                      <Controller
                         name='ward'
-                        onChange={getData}
-                        className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
-                        disabled={!selectedDistrict}
-                      >
-                        <option value=''>Phường/Xã</option>
-                        {wards.map((ward) => (
-                          <option key={ward.DistrictID} value={ward.WardName}>
-                            {ward.WardName}
-                          </option>
-                        ))}
-                      </select>
+                        control={control}
+                        defaultValue=''
+                        rules={{ required: 'Vui lòng chọn phường/xã' }}
+                        render={({ field, fieldState }) => (
+                          <>
+                            <select
+                              id='ward'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                setSelectedWard(e.target.value)
+                              }}
+                              disabled={!selectedDistrict}
+                              className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            >
+                              <option value=''>Chọn Phường/Xã</option>
+                              {wards.map((ward) => (
+                                <option key={ward.DistrictID} value={ward.WardName}>
+                                  {ward.WardName}
+                                </option>
+                              ))}
+                            </select>
+                            {fieldState.error && (
+                              <span className='text-red-400 italic ml-1'>{fieldState.error.message}</span>
+                            )}
+                          </>
+                        )}
+                      />
                     </div>
                   </div>
 
@@ -416,12 +538,25 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       </label>
                     </div>
                     <div className='col-span-3'>
-                      <input
-                        type='text'
-                        id='address'
+                      <Controller
                         name='address'
-                        onChange={getData}
-                        className='md:w-full px-3 py-2 border border-gray-300 rounded-md bg-[#AAAAAA]'
+                        control={control}
+                        rules={{ required: 'Bạn vui lòng nhập địa chỉ (tên đường/số nhà)' }}
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <input
+                              type='text'
+                              id='address'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                getData(e)
+                              }}
+                              className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            />
+                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                          </>
+                        )}
                       />
                     </div>
                   </div>
@@ -433,13 +568,33 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       </label>
                     </div>
                     <div className='col-span-3'>
-                      <input
+                    <Controller
+                        name='note'
+                        control={control}
+                        // rules={{ required: 'Bạn vui lòng nhập địa chỉ (tên đường/số nhà)' }}
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <input
+                              type='text'
+                              id='note'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                getData(e)
+                              }}
+                              className='md:w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            />
+                            {error && <span className='text-red-400 italic ml-1'>{error.message}</span>}
+                          </>
+                        )}
+                      />
+                      {/* <input
                         type='text'
                         id='note'
                         name='note'
                         onChange={getData}
                         className='md:w-full px-3 py-2 border border-gray-300  bg-[#AAAAAA] rounded-md'
-                      />
+                      /> */}
                     </div>
                   </div>
                 </div>
@@ -468,7 +623,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   <h2 className='flex justify-center mb-4 text-xl font-bolds'>Phương Thức Thanh Toán</h2>
                   <div className='flex m-4 md:justify-evenly'>
                     <div
-                      className={`border-2 px-3 ${payment.typePayment === 'Thanh toán online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
+                      className={` border-2 px-3 ${payment.typePayment === 'Thanh toán online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
                     >
                       <button type='button' onClick={() => getDataPayment('Thanh toán online')}>
                         THANH TOÁN ONLINE
@@ -487,7 +642,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                     <div>
                       {payment.typePayment === 'Thanh toán online' && (
                         <div>
-                          <img src='/assets/qr.png' alt='QR Code' className='w-32 h-32' />
+                          <img src='/assets/qr.png' alt='QR Code' className='md:w-32 md:h-32 w-28' />
                         </div>
                       )}
                     </div>
@@ -496,7 +651,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       <h3 className='flex justify-end mb-4'>
                         {payment.total !== undefined && formatPriceToVND(payment.total)}
                       </h3>
-                      <h3 className='flex justify-end mb-4'>
+                      <h3 className='flex justify-end mb-4 mt-[30px] ml-[50px]'>
                         Thành tiền: {payment.total !== undefined && formatPriceToVND(payment.total)}
                       </h3>
                     </div>
