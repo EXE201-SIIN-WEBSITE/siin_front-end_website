@@ -16,6 +16,7 @@ const Header = () => {
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const fixedAvatar = 'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1719100800&semt=ais_user';
   useEffect(() => {
     const fetchUserData = async () => {
       const tokenInLocalStorage = localStorage.getItem('token') || ''
@@ -72,17 +73,6 @@ const Header = () => {
     }
   }, [])
 
-  // const renderUserLink = () => {
-  //   if (userData && userData.fullName) {
-  //     return <span className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]'>{userData.fullName}</span>
-  //   } else {
-  //     return (
-  //       <NavLink className='text-white hover:text-gray-400 sm:text-[20px] text-[24px]' to={'login'}>
-  //         <i className='fa-solid fa-circle-user'></i>
-  //       </NavLink>
-  //     )
-  //   }
-  // }
 
 
   const handleLogout = () => {
@@ -103,7 +93,7 @@ const Header = () => {
       return (
         <div className='relative'>
           <img
-            src={userData.avatar}
+            src={userData.avatar || fixedAvatar}
             alt='User Avatar'
             className='w-10 h-10 rounded-full cursor-pointer'
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}

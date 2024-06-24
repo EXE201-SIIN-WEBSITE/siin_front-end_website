@@ -18,46 +18,27 @@ const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password1, setPassword1] = useState('')
-  // const { user, loading } = useSelector((state: RootState) => state.auth)
   const [error, setError] = useState('')
 
   const { register: registerSignIn, handleSubmit: handleSubmitSignIn } = useForm<FormValues>()
 
   const { register: registerSignUp, handleSubmit: handleSubmitSignUp, watch } = useForm<FormValues>()
 
-  // const onSubmitSignIn: SubmitHandler<FormValues> = (data) => {
-  //   setError('')
-  //   const resultAction = dispatch(login({ email, password }));
-  //   console.log('data', data)
-  //   dispatch(login({ email: data.email, password: data.password }))
-  //   if (login.fulfilled.match(resultAction)) {
-  //     navigate('/');
-  //   } else {
-  //     setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
-  //   }  
-  // }
-
   const onSubmitSignIn: SubmitHandler<FormValues> = async (data) => {
-    setError('');
+    setError('')
     try {
-      
-      const resultAction = await dispatch(login({ email: data.email, password: data.password }));
-  
+      const resultAction = await dispatch(login({ email: data.email, password: data.password }))
+
       if (login.fulfilled.match(resultAction)) {
-        navigate('/');
+        navigate('/')
       } else {
-        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.');
+        setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.')
       }
     } catch (error) {
-      setError('Đăng nhập thất bại. Vui lòng thử lại sau.');
-      console.error('Login error:', error); 
+      setError('Đăng nhập thất bại. Vui lòng thử lại sau.')
+      console.error('Login error:', error)
     }
-  };
-  
-
-
+  }
 
   const onSubmitSignUp: SubmitHandler<FormValues> = (data) => {
     console.log('data', data)
@@ -77,19 +58,6 @@ const SignInSignUp = () => {
   }
   const password = watch('password')
 
-  // useEffect(() => {
-  //   if (!userData && localStorage.getItem('token')) {
-  //     console.log('Fetching user data after logout');
-  //   }
-  // }, [userData]);
-
- 
-  
-  // if (user && !loading) {
-  //   navigate('/');
-  //   return null; 
-  // }
-
   return (
     <div className='flex justify-center my-[50px] '>
       <ToastContainer />
@@ -99,17 +67,22 @@ const SignInSignUp = () => {
             isSignIn ? 'transform translate-x-0' : 'transform -translate-x-full'
           }`}
         >
-          <div className='grid flex-col justify-center h-full grid-cols-2 col-span-1 py-10 bg-black rounded-md'>
-            <div className='hidden col-span-1 md:block'>
+          <div className='grid flex-col justify-center h-full md:grid-cols-2 sm:grid-cols-1 col-span-1 py-10 bg-black rounded-md'>
+            <div className='flex sm:justify-center md:col-span-1 md:block'>
               <img
-                className='md: ml-8 md:mt-[30px] md:w-[250px] md:h-[288px] rounded-r-xl flex'
+                className='sm:w-[80px] sm:h-[100px] sm:rounded-md md:ml-8 md:mt-[30px] md:w-[250px] md:h-[288px] md:rounded-r-xl flex'
                 src='https://res.cloudinary.com/wolfandbadger/image/upload/f_auto,q_auto:best,c_pad,h_800,w_800/products/venus-bracelet-with-onxy-zircons__da29f2540ee78ece22ea092570b1320d'
               />
             </div>
-            <div className='col-span-1 '>
-              <img className='w-[80x] h-[100px]' src='/assets/LOGO123.png' alt='' />
-              <h2 className='text-2xl text-white'>Đăng nhập</h2>
-              <form onSubmit={handleSubmitSignIn(onSubmitSignIn, onError)}>
+            <div className='col-span-1'>
+              <div className='sm:flex sm:justify-center sm:items-center'>
+                <img className='w-[40x] h-[80px] sm:h-[120px]' src='/assets/LOGO123.png' alt='' />
+              </div>
+              <h2 className='sm:hidden text-2xl text-white'>Đăng nhập</h2>
+              <form
+                onSubmit={handleSubmitSignIn(onSubmitSignIn, onError)}
+                className='w-full flex flex-col items-center'
+              >
                 <input
                   className='mt-[20px] px-1 py-2 w-[90%] rounded-md'
                   type='text'
@@ -130,13 +103,13 @@ const SignInSignUp = () => {
                 />
 
                 <button
-                // onClick={handleLogin}
+                  // onClick={handleLogin}
                   type='submit'
                   className='mt-[25px] text-white items-center border px-3 py-1 border-white rounded-lg hover:bg-white hover:text-black '
                 >
                   Đăng nhập
                 </button>
-                {error && <p className='mt-[10px] text-red-500'>{error}</p>} 
+                {error && <p className='mt-[10px] text-red-500'>{error}</p>}
               </form>
             </div>
           </div>

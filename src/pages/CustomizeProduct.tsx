@@ -70,7 +70,7 @@ export default function CustomizeProduct() {
   // console.log('Colors List: ', color)
   // console.log('Sizes List: ', size)
   // console.log('Product price: ', productDetail)
-  console.log("ID NE: ", userData);
+  console.log("ID NE: ", userData?.id);
   
 
   const handleColorSelect = (colorId: number) => {

@@ -249,7 +249,7 @@ const ProductDetail = () => {
               </h1>
               <span className='flex justify-center md:justify-start'>Sản phẩm liên quan</span>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%] md:w-[95%] my-2'></div>
-              <div className='flex gap-2 my-[25px]'>
+              <div className='flex gap-2 my-[25px] justify-center sm:items-center'>
                 {uniqueColors.map((color) => {
                   const colorName = colors.find((c) => c.id === color.colorId)?.name || 'Unknown'
                   return (

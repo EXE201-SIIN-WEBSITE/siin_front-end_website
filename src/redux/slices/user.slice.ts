@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 import { initialUserState } from '../types/user.type'
 import { getUserIdByToken, getUserInfo } from '../actions/user.actions'
+import { logout } from '../actions/auth.action'
 
 
 const userSlice = createSlice({
@@ -20,6 +21,9 @@ const userSlice = createSlice({
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.loading = false
         state.user = action.payload
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
       })
 
 

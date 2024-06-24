@@ -318,7 +318,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
             </div>
           </div>
         ) : (
-          <form className='w-[600px] h-auto' onSubmit={handleSubmit(onSubmit)}>
+          <form className='w-[230px] h-[400px] md:w-[600px] md:h-auto overflow-y-auto' onSubmit={handleSubmit(onSubmit)}>
             {isOrderForm ? (
               <>
                 <div className='flex justify-between'>
@@ -331,13 +331,13 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   </div>
                 </div>
                 <div>
-                  <div className='grid items-center m-2 mb-4 md:grid-cols-4'>
-                    <div className='col-span-1'>
+                  <div className='grid items-center m-2 mb-4 md:grid-cols-4 grid-cols-1'>
+                    <div className='md:col-span-1'>
                       <label htmlFor='name' className='mb-2 font-bold text-gray-700'>
                         Họ và tên
                       </label>
                     </div>
-                    <div className='col-span-3'>
+                    <div className='md:col-span-3'>
                       <Controller
                         name='nameCustomer'
                         control={control}
@@ -623,7 +623,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   <h2 className='flex justify-center mb-4 text-xl font-bolds'>Phương Thức Thanh Toán</h2>
                   <div className='flex m-4 md:justify-evenly'>
                     <div
-                      className={`border-2 px-3 ${payment.typePayment === 'Thanh toán online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
+                      className={` border-2 px-3 ${payment.typePayment === 'Thanh toán online' ? 'bg-black border-black text-white' : 'border-black text-black'}`}
                     >
                       <button type='button' onClick={() => getDataPayment('Thanh toán online')}>
                         THANH TOÁN ONLINE
@@ -642,7 +642,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                     <div>
                       {payment.typePayment === 'Thanh toán online' && (
                         <div>
-                          <img src='/assets/qr.png' alt='QR Code' className='w-32 h-32' />
+                          <img src='/assets/qr.png' alt='QR Code' className='md:w-32 md:h-32 w-28' />
                         </div>
                       )}
                     </div>
@@ -651,7 +651,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       <h3 className='flex justify-end mb-4'>
                         {payment.total !== undefined && formatPriceToVND(payment.total)}
                       </h3>
-                      <h3 className='flex justify-end mb-4'>
+                      <h3 className='flex justify-end mb-4 mt-[30px] ml-[50px]'>
                         Thành tiền: {payment.total !== undefined && formatPriceToVND(payment.total)}
                       </h3>
                     </div>
