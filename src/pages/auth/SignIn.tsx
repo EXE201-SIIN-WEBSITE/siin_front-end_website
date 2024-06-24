@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
-import { login } from '~/redux/actions/auth.action'
-import { RootState, useAppDispatch } from '~/redux/containers/store'
 import 'react-toastify/dist/ReactToastify.css'
+import { login, register } from '~/redux/actions/auth.action'
+import { useAppDispatch } from '~/redux/containers/store'
 
 type FormValues = {
   email: string
@@ -18,6 +17,8 @@ const SignInSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+
+  // const { user, loading } = useSelector((state: RootState) => state.auth)
   const [error, setError] = useState('')
 
   const { register: registerSignIn, handleSubmit: handleSubmitSignIn } = useForm<FormValues>()
@@ -40,10 +41,17 @@ const SignInSignUp = () => {
     }
   }
 
-  const onSubmitSignUp: SubmitHandler<FormValues> = (data) => {
-    console.log('data', data)
-
-    toast.success('Sign up successful!')
+  const onSubmitSignUp: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const res = await dispatch(register(data))
+      if (register.fulfilled.match(res)) {
+        navigate('/')
+      } else {
+        toast.error('Đăng ký thất bại. Vui lòng kiểm tra lại thông tin đăng ký.')
+      }
+    } catch (error) {
+      toast.error('Đăng ký thất bại. Vui lòng thử lại sau.')
+    }
   }
 
   const onError: SubmitErrorHandler<FormValues> = (errors) => {
@@ -57,6 +65,7 @@ const SignInSignUp = () => {
     setIsSignIn(!isSignIn)
   }
   const password = watch('password')
+
 
   return (
     <div className='flex justify-center my-[50px] '>
