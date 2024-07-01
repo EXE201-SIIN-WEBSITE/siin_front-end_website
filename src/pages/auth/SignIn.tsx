@@ -66,7 +66,6 @@ const SignInSignUp = () => {
   }
   const password = watch('password')
 
-
   return (
     <div className='flex justify-center my-[50px] '>
       <ToastContainer />
@@ -76,7 +75,7 @@ const SignInSignUp = () => {
             isSignIn ? 'transform translate-x-0' : 'transform -translate-x-full'
           }`}
         >
-          <div className='grid flex-col justify-center h-full md:grid-cols-2 sm:grid-cols-1 col-span-1 py-10 bg-black rounded-md'>
+          <div className='grid flex-col justify-center h-full col-span-1 py-10 bg-black rounded-md md:grid-cols-2 sm:grid-cols-1'>
             <div className='flex sm:justify-center md:col-span-1 md:block'>
               <img
                 className='sm:w-[80px] sm:h-[100px] sm:rounded-md md:ml-8 md:mt-[30px] md:w-[250px] md:h-[288px] md:rounded-r-xl flex'
@@ -87,10 +86,10 @@ const SignInSignUp = () => {
               <div className='sm:flex sm:justify-center sm:items-center'>
                 <img className='w-[40x] h-[80px] sm:h-[120px]' src='/assets/LOGO123.png' alt='' />
               </div>
-              <h2 className='sm:hidden text-2xl text-white'>Đăng nhập</h2>
+              <h2 className='text-2xl text-white sm:hidden'>Đăng nhập</h2>
               <form
                 onSubmit={handleSubmitSignIn(onSubmitSignIn, onError)}
-                className='w-full flex flex-col items-center'
+                className='flex flex-col items-center w-full'
               >
                 <input
                   className='mt-[20px] px-1 py-2 w-[90%] rounded-md'

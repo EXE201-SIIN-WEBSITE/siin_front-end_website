@@ -1,8 +1,8 @@
 import Item from './Item'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
-import { useEffect } from 'react'
-import { getProducts } from '~/redux/actions/product.action'
+import { useEffect, useRef, useState } from 'react'
+import { getProducts, getProducts2 } from '~/redux/actions/product.action'
 import { product } from '~/types/product.type'
 
 interface props {
@@ -11,18 +11,69 @@ interface props {
 
 export default function ListItem({ title }: props) {
   const productData = useSelector((state: RootState) => state.product.productList)
+  const totalPage = useSelector((state: RootState) => state.product.totalPage)
+  // const currentPage = useSelector((state: RootState) => state.product.currentPage);
   const dispatch = useAppDispatch()
+  const [currentPage, setCurrentPage] = useState(1);
+  const abortControllerRef = useRef(new AbortController());
 
   useEffect(() => {
-    const abortController = new AbortController()
-    const signal = abortController.signal
+    // Abort previous requests if any
+    abortControllerRef.current.abort();
 
-    dispatch(getProducts({ signal }))
+    // Create a new abort controller for the new request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal; 
 
+    // Fetch new data based on the current page
+    dispatch(getProducts2({ currentPage, signal }));
+
+    // Cleanup function to abort the request on unmount
     return () => {
-      abortController.abort()
+      abortControllerRef.current.abort();
+    };
+  }, [dispatch, currentPage]);
+
+  // useEffect(() => {
+  //   const abortController = new AbortController()
+  //   const signal = abortController.signal
+
+  //   dispatch(getProducts({ signal }))
+
+  //   return () => {
+  //     abortController.abort()
+  //   }
+  // }, [dispatch])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  console.log("preo: ", productData);
+  
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          disabled={currentPage === i}
+          className={`px-4 py-2 mx-1 rounded ${currentPage === i ? 'bg-black text-white' : 'bg-gray-100'} disabled:bg-black`}
+        >
+          {i}
+        </button>
+      );
     }
-  }, [dispatch])
+    return pageNumbers;
+  };
+
+  console.log("SIZE: ", currentPage);
+  console.log("SIZE: ", productData);
+  
+  
+  
   return (
     <div className='flex flex-col w-[100%] my-[3%] justify-center'>
       <div className='flex items-center gap-2 title my-[2%]'>
@@ -32,10 +83,13 @@ export default function ListItem({ title }: props) {
         <span className='text-2xl font-bold'>{title.toLocaleUpperCase()}</span>
       </div>
 
-      <div className='flex flex-wrap justify-between w-full gap-20 sm:justify-center'>
-        {productData.map((item: product) => (
+      <div className='flex flex-wrap w-full gap-20 justify-center'>
+        {Array.isArray(productData) && productData.map((item: product) => (
           <Item key={item.id} item={item} />
         ))}
+      </div>
+      <div className='flex justify-center mt-4'>
+        {renderPageNumbers()}
       </div>
     </div>
   )

@@ -19,7 +19,6 @@ const ghn = axios.create({
 })
 
 const payment = axios.create({
-  // baseURL: 'http://172.171.207.227:3000/payments/create-link/',
   baseURL: 'https://payos.exe201-backend.click/payments/create-link/',
   timeout: 10000000
 })

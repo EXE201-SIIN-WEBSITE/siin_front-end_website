@@ -8,6 +8,7 @@ export interface product {
   categoryId?: number
   accessoryId?: number
   materialId?: number
+  
 }
 
 export interface CartItem {

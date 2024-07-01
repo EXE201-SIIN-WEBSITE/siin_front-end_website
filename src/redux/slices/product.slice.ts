@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { initialProductState } from '../types/product.type'
-import { getProductDetail, getProducts } from '../actions/product.action'
+import { getProductDetail, getProducts, getProducts2 } from '../actions/product.action'
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 
 const productSlice = createSlice({
@@ -16,6 +16,13 @@ const productSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.loading = false
         state.productList = action.payload
+      })
+
+      .addCase(getProducts2.fulfilled, (state, action) => {
+        state.loading = false
+        state.productList = action.payload.listResult
+        state.currentPage = action.payload.currentPage
+        state.totalPage = action.payload.totalPage
       })
 
       .addCase(getProductDetail.fulfilled, (state, action) => {
