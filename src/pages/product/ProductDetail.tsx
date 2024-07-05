@@ -25,11 +25,12 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState(0)
   const [priceSum, setPriceSum] = useState(0)
+  const userId = userData?.id; 
   const [cartItem, setCartItem] = useState<addCartItem>({
     colorId: 0,
     sizeId: 0,
     quantity: quantity,
-    userId: userData?.id
+    // userId: userData?.id
   })
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
 
@@ -170,11 +171,12 @@ const ProductDetail = () => {
       quantity: cartItem.quantity,
       sizeId: sizeId,
       colorId: colorId,
-      userId: cartItem.userId
+      // userId: cartItem.userId
     }
     const newCartItemForStore = {
       id: numericId,
-      cartItem: newCartItem
+      cartItem: newCartItem,
+      ...(userId && { userId: userId })
     }
     dispatch(createCartItem(newCartItemForStore))
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')

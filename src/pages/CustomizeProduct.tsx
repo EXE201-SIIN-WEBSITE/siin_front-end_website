@@ -10,7 +10,7 @@ import 'swiper/css/effect-coverflow'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { getAccessories } from '~/redux/actions/accessory.action'
-import { createCartItem2 } from '~/redux/actions/cartItem.action'
+import { createCartItem } from '~/redux/actions/cartItem.action'
 import { getColors } from '~/redux/actions/color.action'
 import { getProductDetail } from '~/redux/actions/product.action'
 import { getSizes } from '~/redux/actions/size.action'
@@ -39,6 +39,8 @@ export default function CustomizeProduct() {
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.user.user)
+  const userId = userData?.id;
+  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [product] = useState({
     id: 0,
@@ -51,7 +53,6 @@ export default function CustomizeProduct() {
     sizeId: 0,
     accessoryId: 0,
     quantity: 0,
-    userId: userData?.id
   })
   useEffect(() => {
     const abortController = new AbortController()
@@ -170,8 +171,13 @@ export default function CustomizeProduct() {
     if (!productInCart) {
       return
     }
-    // const uniqueId = generateUniqueId(product, cartInfo);
-    dispatch(createCartItem2(cartInfo))
+
+    const newCartItemForStore = {
+      cartItem: cartInfo,
+      ...(userId && { userId: userId }), 
+      ...(product.id && { id: product.id })  
+    };
+    dispatch(createCartItem(newCartItemForStore))
 
     // eslint-disable-next-line prefer-const
     let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
