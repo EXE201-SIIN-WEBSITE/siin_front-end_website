@@ -237,18 +237,40 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // const onSubmit = async (data: any) => {
+  //   const filteredOrderDetail = {
+  //     ...orderDetail,
+  //     orderDetailRequestDTO: data,
+  //     cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
+  //   }
+  //   dispatch(createOrderDetail({ data: filteredOrderDetail, userId: userData?.id }))
+  //   localStorage.removeItem('cartItems')
+  //   setOrderDetail(initialOrderDetail)
+  //   reset()
+  //   setIsOrderForm(false)
+  // }
+
   const onSubmit = async (data: any) => {
+    const orderDetailRequestDTO = { ...data };
     const filteredOrderDetail = {
       ...orderDetail,
-      orderDetailRequestDTO: data,
+      orderDetailRequestDTO,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
+    };
+  
+    if (userData?.id) {
+      dispatch(createOrderDetail({ data: { orderDetailRequestDTO }, userId: userData.id }));
+    } else {
+      dispatch(createOrderDetail({ data: filteredOrderDetail }));
     }
-    dispatch(createOrderDetail({ data: filteredOrderDetail, userId: userData?.id }))
-    localStorage.removeItem('cartItems')
-    setOrderDetail(initialOrderDetail)
-    reset()
-    setIsOrderForm(false)
-  }
+  
+    localStorage.removeItem('cartItems');
+    setOrderDetail(initialOrderDetail);
+    reset();
+    setIsOrderForm(false);
+  };
+  
+  
 
   console.log('order: ', orderDetail)
   console.log('PRICE: ', totalPrice)
