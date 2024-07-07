@@ -39,8 +39,8 @@ export default function CustomizeProduct() {
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.user.user)
-  const userId = userData?.id;
-  
+  const userId = userData?.id
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [product] = useState({
     id: 0,
@@ -52,7 +52,7 @@ export default function CustomizeProduct() {
     colorId: 0,
     sizeId: 0,
     accessoryId: 0,
-    quantity: 0,
+    quantity: 0
   })
   useEffect(() => {
     const abortController = new AbortController()
@@ -174,9 +174,9 @@ export default function CustomizeProduct() {
 
     const newCartItemForStore = {
       cartItem: cartInfo,
-      ...(userId && { userId: userId }), 
-      ...(product.id && { id: product.id })  
-    };
+      ...(userId && { userId: userId }),
+      ...(product.id && { id: product.id })
+    }
     dispatch(createCartItem(newCartItemForStore))
 
     // eslint-disable-next-line prefer-const

@@ -12,7 +12,6 @@ import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { addCartItem } from '~/types/cartItem.type'
 import { CartItem } from '~/types/product.type'
 
-
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
   const numericId = id ? parseInt(id, 10) : NaN
@@ -25,11 +24,11 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1)
   const [totalPrice, setTotalPrice] = useState(0)
   const [priceSum, setPriceSum] = useState(0)
-  const userId = userData?.id; 
+  const userId = userData?.id
   const [cartItem, setCartItem] = useState<addCartItem>({
     colorId: 0,
     sizeId: 0,
-    quantity: quantity,
+    quantity: quantity
     // userId: userData?.id
   })
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null)
@@ -158,7 +157,7 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-     if (activeColor === null || activeSize === null) {
+    if (activeColor === null || activeSize === null) {
       return
     }
     const productInCart = addToCart()
@@ -170,7 +169,7 @@ const ProductDetail = () => {
     const newCartItem: addCartItem = {
       quantity: cartItem.quantity,
       sizeId: sizeId,
-      colorId: colorId,
+      colorId: colorId
       // userId: cartItem.userId
     }
     const newCartItemForStore = {
@@ -200,10 +199,10 @@ const ProductDetail = () => {
     window.dispatchEvent(event)
     console.log('productInCart:', newCartItemForStore)
     swal({
-      title: "Sản phẩm đã được thêm vào giỏ hàng!",
-      text: "",
-      icon: "success"
-    });
+      title: 'Sản phẩm đã được thêm vào giỏ hàng!',
+      text: '',
+      icon: 'success'
+    })
     // alert("Sản phẩm đã được thêm vào giỏ hàng!");
   }
 
@@ -302,13 +301,12 @@ const ProductDetail = () => {
                   </button>
                 </div>
                 <div className='flex items-center md:mb-[50px]'>
-                  <button onClick={handleAddToCart} 
-                  className={`border-2 p-2 bg-black text-white rounded-lg ${activeColor === null || activeSize === null ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  
+                  <button
+                    onClick={handleAddToCart}
+                    className={`border-2 p-2 bg-black text-white rounded-lg ${activeColor === null || activeSize === null ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Thêm vào giỏ hàng
                   </button>
-                  
                 </div>
               </div>
               <div className='border-b-[1px] shadow-2xl border-black w-[100%]  md:w-[95%] my-5'></div>
