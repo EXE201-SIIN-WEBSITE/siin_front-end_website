@@ -251,26 +251,24 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   // }
 
   const onSubmit = async (data: any) => {
-    const orderDetailRequestDTO = { ...data };
+    const orderDetailRequestDTO = { ...data }
     const filteredOrderDetail = {
       ...orderDetail,
       orderDetailRequestDTO,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
-    };
-  
-    if (userData?.id) {
-      dispatch(createOrderDetail({ data: { orderDetailRequestDTO }, userId: userData.id }));
-    } else {
-      dispatch(createOrderDetail({ data: filteredOrderDetail }));
     }
-  
-    localStorage.removeItem('cartItems');
-    setOrderDetail(initialOrderDetail);
-    reset();
-    setIsOrderForm(false);
-  };
-  
-  
+
+    if (userData?.id) {
+      dispatch(createOrderDetail({ data: { orderDetailRequestDTO }, userId: userData.id }))
+    } else {
+      dispatch(createOrderDetail({ data: filteredOrderDetail }))
+    }
+
+    localStorage.removeItem('cartItems')
+    setOrderDetail(initialOrderDetail)
+    reset()
+    setIsOrderForm(false)
+  }
 
   console.log('order: ', orderDetail)
   console.log('PRICE: ', totalPrice)
