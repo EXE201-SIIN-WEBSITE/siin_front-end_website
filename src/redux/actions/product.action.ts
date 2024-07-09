@@ -25,7 +25,7 @@ interface GetProductsParams2 {
 
 export const getProducts = createAsyncThunk('product/getProducts', async ({ signal }: GetProductsParams, thunkAPI) => {
   try {
-    const response = await http.get<ResponseData<product[]>>(`/product/get-all/-1?pageSize=5&field=name`, {
+    const response = await http.get<ResponseData<product[]>>(`/product/get-all-excluding-customize/-1?pageSize=5&field=name`, {
       signal // Pass the abort signal for request cancellation
     })
     return response.data.data
