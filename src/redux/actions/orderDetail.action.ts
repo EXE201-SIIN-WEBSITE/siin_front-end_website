@@ -32,7 +32,6 @@ export const createOrderDetail = createAsyncThunk(
       let url = '/order-detail';
       if (userId) {
         url += `?userId=${userId}`;
-        // Nếu có userId, chỉ truyền orderDetailRequestDTO
         data = { orderDetailRequestDTO: data.orderDetailRequestDTO };
       }
       const response = await http.post<ResponseData<OrderDetail>>(url, data)

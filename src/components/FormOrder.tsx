@@ -151,15 +151,41 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
   // console.log('O ITEM: ', orderItem)
 
+  // useEffect(() => {
+  //   if (cartItemsFromProps.length > 0) {
+  //     const updatedCartItems = cart.map((item) => ({
+  //       productId: item.productId,
+  //       productMaterialId: item.productMaterialId,
+  //       sizeName: item.sizeName || '',
+  //       colorName: item.colorName || '',
+  //       accessoryName: item.accessoryName || ''
+  //     }))
+
+  //     const mergedCartItems = updatedCartItems
+  //       .map((item, index) => ({
+  //         ...item,
+  //         quantity: cartItemsFromProps[index]?.quantity || 0
+  //       }))
+  //       .filter((item) => item.quantity > 0)
+
+  //     setOrderDetail((prevState) => ({
+  //       ...prevState,
+  //       cartItems: mergedCartItems
+  //     }))
+  //   }
+  // }, [cart, cartItemsFromProps])
+
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
-      const updatedCartItems = cart.map((item) => ({
-        productId: item.productId,
-        productMaterialId: item.productMaterialId,
-        sizeName: item.sizeName || '',
-        colorName: item.colorName || '',
-        accessoryName: item.accessoryName || ''
-      }))
+      const updatedCartItems = cart
+        .filter((item) => item) // Ensure item is not null or undefined
+        .map((item) => ({
+          productId: item.productId,
+          productMaterialId: item.productMaterialId,
+          sizeName: item.sizeName || '',
+          colorName: item.colorName || '',
+          accessoryName: item.accessoryName || ''
+        }))
 
       const mergedCartItems = updatedCartItems
         .map((item, index) => ({
@@ -251,26 +277,24 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   // }
 
   const onSubmit = async (data: any) => {
-    const orderDetailRequestDTO = { ...data };
+    const orderDetailRequestDTO = { ...data }
     const filteredOrderDetail = {
       ...orderDetail,
       orderDetailRequestDTO,
       cartItems: orderDetail.cartItems.filter((item) => item.quantity > 0)
-    };
-  
-    if (userData?.id) {
-      dispatch(createOrderDetail({ data: { orderDetailRequestDTO }, userId: userData.id }));
-    } else {
-      dispatch(createOrderDetail({ data: filteredOrderDetail }));
     }
-  
-    localStorage.removeItem('cartItems');
-    setOrderDetail(initialOrderDetail);
-    reset();
-    setIsOrderForm(false);
-  };
-  
-  
+
+    if (userData?.id) {
+      dispatch(createOrderDetail({ data: { orderDetailRequestDTO }, userId: userData.id }))
+    } else {
+      dispatch(createOrderDetail({ data: filteredOrderDetail }))
+    }
+
+    localStorage.removeItem('cartItems')
+    setOrderDetail(initialOrderDetail)
+    reset()
+    setIsOrderForm(false)
+  }
 
   console.log('order: ', orderDetail)
   console.log('PRICE: ', totalPrice)
@@ -465,6 +489,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               <option value='' data-id=''>
                                 Chọn Tỉnh
                               </option>
+
                               {provinces.map((province) => (
                                 <option
                                   key={province.ProvinceID}
@@ -501,7 +526,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                               className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
                             >
                               <option value=''>Chọn Quận/Huyện</option>
-                              {districts.map((district) => (
+                              {/* {districts.map((district) => (
                                 <option
                                   key={district.DistrictID}
                                   value={district.DistrictName}
@@ -509,7 +534,22 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                                 >
                                   {district.DistrictName}
                                 </option>
-                              ))}
+                              ))} */}
+                              {districts && districts.length > 0 ? (
+                                districts.map((district) => (
+                                  <option
+                                    key={district.DistrictID}
+                                    value={district.DistrictName}
+                                    district-id={district.DistrictID}
+                                  >
+                                    {district.DistrictName}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value='' disabled>
+                                  Không có phường/xã nào
+                                </option>
+                              )}
                             </select>
                             {fieldState.error && (
                               <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>
@@ -519,7 +559,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                       />
                     </div>
                     <div className='items-center m-2 mb-4'>
-                      <Controller
+                      {/* <Controller
                         name='ward'
                         control={control}
                         defaultValue=''
@@ -542,6 +582,42 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                                   {ward.WardName}
                                 </option>
                               ))}
+                            </select>
+                            {fieldState.error && (
+                              <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>
+                            )}
+                          </>
+                        )}
+                      /> */}
+                      <Controller
+                        name='ward'
+                        control={control}
+                        defaultValue=''
+                        rules={{ required: 'Vui lòng chọn phường/xã' }}
+                        render={({ field, fieldState }) => (
+                          <>
+                            <select
+                              id='ward'
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e)
+                                setSelectedWard(e.target.value)
+                              }}
+                              disabled={!selectedDistrict}
+                              className='w-full px-3 py-2 border border-gray-300 bg-[#AAAAAA] rounded-md'
+                            >
+                              <option value=''>Chọn Phường/Xã</option>
+                              {wards && wards.length > 0 ? (
+                                wards.map((ward) => (
+                                  <option key={ward.DistrictID} value={ward.WardName}>
+                                    {ward.WardName}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value='' disabled>
+                                  Không có phường/xã nào
+                                </option>
+                              )}
                             </select>
                             {fieldState.error && (
                               <span className='ml-1 italic text-red-400'>{fieldState.error.message}</span>

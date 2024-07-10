@@ -61,7 +61,7 @@ export default function CustomizeProduct() {
     dispatch(getAccessories({ signal }))
     dispatch(getColors({ signal }))
     dispatch(getSizes({ signal }))
-    dispatch(getProductDetail(11))
+    dispatch(getProductDetail(1))
 
     return () => {
       abortController.abort()
