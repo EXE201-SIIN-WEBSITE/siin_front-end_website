@@ -114,7 +114,6 @@ const Cart = () => {
                   onIncrease={() => updateQuantity(index, 1)}
                   onDecrease={() => updateQuantity(index, -1)}
                   onRemove={() => removeItem(index)}
-   
                 />
                 <div className='flex justify-start md:ml-[210px]'>
                   <button
@@ -148,10 +147,9 @@ const Cart = () => {
         <div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-50'>
           <div className='p-8 bg-white rounded-md'>
             {selectedProduct.accessId
-              ? accessory && accessory.image && <img className='w-[250px] rounded-md' src={accessory.image} alt='Accessory' />
-              : cart && (
-                 <></>
-                )}
+              ? accessory &&
+                accessory.image && <img className='w-[250px] rounded-md' src={accessory.image} alt='Accessory' />
+              : cart && <></>}
             <div className='mt-[10px] flex justify-center flex-col items-start p-2 border-2 rounded-md'>
               <p>Màu sắc: {color?.name}</p>
               <p>Kích cỡ: {size?.name}</p>

@@ -39,8 +39,8 @@ export default function CustomizeProduct() {
   const [activeSize, setActiveSize] = useState<number | null>(null)
   const [activeColor, setActiveColor] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.user.user)
-  const userId = userData?.id;
-  
+  const userId = userData?.id
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [product] = useState({
     id: 0,
@@ -52,7 +52,7 @@ export default function CustomizeProduct() {
     colorId: 0,
     sizeId: 0,
     accessoryId: 0,
-    quantity: 0,
+    quantity: 0
   })
   useEffect(() => {
     const abortController = new AbortController()
@@ -117,8 +117,9 @@ export default function CustomizeProduct() {
   }, [selectedColor, selectedSize, selectedAccess, accessoryData, color, size, quantity])
 
   useEffect(() => {
-    const productPrice = productDetail?.price || 0
-    const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
+    // const productPrice = productDetail?.price || 0
+    // const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
+    const calculatedTotalPrice =  colorPrice + sizePrice + accessoryPrice
     setPriceSum(calculatedTotalPrice)
     setTotalPrice(calculatedTotalPrice)
   }, [productDetail, colorPrice, sizePrice, accessoryPrice])
@@ -174,9 +175,9 @@ export default function CustomizeProduct() {
 
     const newCartItemForStore = {
       cartItem: cartInfo,
-      ...(userId && { userId: userId }), 
-      ...(product.id && { id: product.id })  
-    };
+      ...(userId && { userId: userId }),
+      ...(product.id && { id: product.id })
+    }
     dispatch(createCartItem(newCartItemForStore))
 
     // eslint-disable-next-line prefer-const
@@ -284,12 +285,11 @@ export default function CustomizeProduct() {
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Màu sắc:</label>
-              <div></div>
               <div className='flex justify-around gap-2 colorbutton'>
                 {color.map((color, index) => (
                   <button
                     key={index}
-                    className={`w-6 h-6 lg:w-8 lg:h-8  ${activeColor === color.id ? 'text-white' : 'text-black'}`}
+                    className={`border-2 border-[#E5E7E9] w-6 h-6 lg:w-8 lg:h-8  ${activeColor === color.id ? 'text-[#D5DBDB]' : 'text-black'}`}
                     style={{ backgroundColor: color.name }}
                     // onClick={() => handleColorSelect(index)}
                     onClick={() => handleColorSelect(color.id!)}

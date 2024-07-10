@@ -4,16 +4,16 @@ import App from './App.tsx'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'tailwindcss/tailwind.css'
 import './index.css'
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './redux/containers/store.ts'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <App />
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 )
