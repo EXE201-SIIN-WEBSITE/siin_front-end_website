@@ -37,6 +37,20 @@ export const getProducts = createAsyncThunk('product/getProducts', async ({ sign
   }
 })
 
+export const getProductGift = createAsyncThunk('product/getProductGift', async ({ signal }: GetProductsParams, thunkAPI) => {
+  try {
+    const response = await http.get<ResponseData<product[]>>(`/product/get-all/-1?currentPage=-1&pageSize=5&field=name&categoryId=1`, {
+      signal 
+    })
+    return response.data.data
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+    }
+    return thunkAPI.rejectWithValue(error.response?.data || error)
+  }
+})
+
 export const getProducts2 = createAsyncThunk(
   'product/getProducts2',
   async ({ signal, currentPage }: GetProductsParams2, thunkAPI) => {

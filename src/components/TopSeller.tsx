@@ -37,14 +37,6 @@ const PrevArrow: React.FC<ArrowProps> = ({ onClick, className }) => (
 const TopSeller = () => {
   const productData = useSelector((state: RootState) => state.product.productList)
   const dispatch = useAppDispatch()
-  // useEffect(() => {
-  //   const promise = dispatch(getProduct)
-  // }, [dispatch])
-  // console.log('data: ', productData)
-
-  // const formatPriceToVND = (price: number): string => {
-  //   return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
-  // }
 
   useEffect(() => {
     const abortController = new AbortController()

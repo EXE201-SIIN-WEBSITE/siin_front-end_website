@@ -262,7 +262,7 @@ const ProductDetail = () => {
                   const colorName = colors.find((c) => c.id === color.colorId)?.name || 'Unknown'
                   return (
                     <button
-                      className={`md:h-20 md:w-20 mr-[1px] h-[44px] w-[34px] ${activeColor === color.colorId ? 'text-white' : 'text-black'}`}
+                      className={`border-2 border-[#E5E7E9] md:h-20 md:w-20 mr-[1px] h-[44px] w-[34px] ${activeColor === color.colorId ? 'text-[#D5DBDB] text-2xl' : 'text-black'}`}
                       key={color.id}
                       onClick={() => handleColorClick(color.colorId)}
                       style={{ backgroundColor: colorName }}

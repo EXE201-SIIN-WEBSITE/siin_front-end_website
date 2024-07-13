@@ -61,7 +61,7 @@ export default function CustomizeProduct() {
     dispatch(getAccessories({ signal }))
     dispatch(getColors({ signal }))
     dispatch(getSizes({ signal }))
-    dispatch(getProductDetail(11))
+    dispatch(getProductDetail(1))
 
     return () => {
       abortController.abort()
@@ -117,8 +117,9 @@ export default function CustomizeProduct() {
   }, [selectedColor, selectedSize, selectedAccess, accessoryData, color, size, quantity])
 
   useEffect(() => {
-    const productPrice = productDetail?.price || 0
-    const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
+    // const productPrice = productDetail?.price || 0
+    // const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
+    const calculatedTotalPrice =  colorPrice + sizePrice + accessoryPrice
     setPriceSum(calculatedTotalPrice)
     setTotalPrice(calculatedTotalPrice)
   }, [productDetail, colorPrice, sizePrice, accessoryPrice])
@@ -284,12 +285,11 @@ export default function CustomizeProduct() {
             </div>
             <div className='w-3/4 relative flex flex-col gap-3 colors after:absolute after:bottom-[-25%] after:left-[50%] after:translate-x-[-50%] after:bg-black after:h-[2px] mx-auto after:lg:w-96 after:sm:w-40'>
               <label className='text-2xl text-left'>Màu sắc:</label>
-              <div></div>
               <div className='flex justify-around gap-2 colorbutton'>
                 {color.map((color, index) => (
                   <button
                     key={index}
-                    className={`w-6 h-6 lg:w-8 lg:h-8  ${activeColor === color.id ? 'text-white' : 'text-black'}`}
+                    className={`border-2 border-[#E5E7E9] w-6 h-6 lg:w-8 lg:h-8  ${activeColor === color.id ? 'text-[#D5DBDB]' : 'text-black'}`}
                     style={{ backgroundColor: color.name }}
                     // onClick={() => handleColorSelect(index)}
                     onClick={() => handleColorSelect(color.id!)}
