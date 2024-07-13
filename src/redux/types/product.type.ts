@@ -13,7 +13,6 @@ export interface ProductState {
 
 export const initialProductState: ProductState = {
   productList: [],
-  
   productDetail: null,
   // editProduct: null,
   currentPage: 1,

@@ -5,7 +5,6 @@ import { initialUserState } from '../types/user.type'
 import { getUserIdByToken, getUserInfo } from '../actions/user.actions'
 import { logout } from '../actions/auth.action'
 
-
 const userSlice = createSlice({
   name: 'user',
   initialState: initialUserState,
@@ -23,9 +22,8 @@ const userSlice = createSlice({
         state.user = action.payload
       })
       .addCase(logout.fulfilled, (state) => {
-        state.user = null;
+        state.user = null
       })
-
 
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),
