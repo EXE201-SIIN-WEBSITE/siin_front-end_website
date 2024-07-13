@@ -1,5 +1,4 @@
-import { User } from "~/types/user.type"
-
+import { User } from '~/types/user.type'
 
 export interface UserState {
   user: User | null

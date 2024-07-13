@@ -21,7 +21,6 @@ const sizeSlice = createSlice({
         state.size = action.payload
       })
 
-
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),
         (state, action) => {

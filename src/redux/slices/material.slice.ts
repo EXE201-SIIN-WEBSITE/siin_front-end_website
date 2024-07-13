@@ -26,7 +26,6 @@ const materialSlice = createSlice({
         state.material = action.payload
       })
 
-
       .addMatcher<PendingAction>(
         (action) => action.type.endsWith('/pending'),
         (state, action) => {
