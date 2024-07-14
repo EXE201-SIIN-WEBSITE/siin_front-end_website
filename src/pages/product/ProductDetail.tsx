@@ -185,7 +185,8 @@ const ProductDetail = () => {
       sizeId: newCartItem.sizeId,
       colorId: newCartItem.colorId,
       sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
-      colorName: colors.find((c) => c.id === colorId)?.name || 'N/A'
+      colorName: colors.find((c) => c.id === colorId)?.name || 'N/A',
+
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.id)
