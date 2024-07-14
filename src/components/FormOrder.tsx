@@ -184,7 +184,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
-      const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as cartItem[]
+      const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as Omit<cartItem, 'image'>[]
       updatedCartItems
         .filter((item) => item) // Ensure item is not null or undefined
         .map((item) => ({

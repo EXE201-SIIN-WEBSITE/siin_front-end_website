@@ -8,6 +8,7 @@ export interface addCartItem {
 }
 
 export interface cartItem {
+  id?: number
   quantity: number
   sizeName?: string
   colorName?: string

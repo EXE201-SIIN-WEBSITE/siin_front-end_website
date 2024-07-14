@@ -1,3 +1,4 @@
+import { unwrapResult } from '@reduxjs/toolkit'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -156,11 +157,12 @@ const ProductDetail = () => {
     return null
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (activeColor === null || activeSize === null) {
       return
     }
     const productInCart = addToCart()
+
     if (!productInCart) {
       return
     }
@@ -177,10 +179,12 @@ const ProductDetail = () => {
       cartItem: newCartItem,
       ...(userId && { userId: userId })
     }
-    dispatch(createCartItem(newCartItemForStore))
+    const data = await dispatch(createCartItem(newCartItemForStore)).then(unwrapResult)
+
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+
     const newLocalStorageCartItem = {
-      ...productInCart,
+      ...data,
       quantity: newCartItem.quantity,
       sizeId: newCartItem.sizeId,
       colorId: newCartItem.colorId,
