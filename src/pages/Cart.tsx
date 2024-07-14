@@ -24,7 +24,8 @@ const Cart = () => {
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
 
-  // console.log('access in CART', cart)
+  console.log('access in CART', cart)
+  
 
   const toggleFormOrder = () => {
     setFormOrder(!formOrder)
@@ -39,11 +40,20 @@ const Cart = () => {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
   }
 
-  useEffect(() => {
-    const items = JSON.parse(localStorage.getItem('cartItems') || '[]')
-    setCartItems(items)
-  }, [])
+  // useEffect(() => {
+  //   const items = JSON.parse(localStorage.getItem('cartItems') || '[]')
+  //   setCartItems(items)
+  // }, [])
 
+  useEffect(() => {
+    try {
+      const items = JSON.parse(localStorage.getItem('cartItems') || '[]') as CartItem[];
+      setCartItems(items);
+    } catch (error) {
+      console.error('Error parsing cart items from localStorage', error);
+      setCartItems([]);
+    }
+  }, []);
   const updateQuantity = (index: number, quantity: number) => {
     const updatedItems = cartItems
       .map((item, i) => (i === index ? { ...item, quantity: item.quantity + quantity } : item))

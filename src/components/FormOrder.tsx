@@ -19,6 +19,7 @@ import { province } from '~/types/province.type'
 import { ResponseData } from '~/types/respone.type'
 import { ward } from '~/types/ward.type'
 import { ghnApi } from '~/utils/http'
+import { createPayment } from '~/redux/actions/payment.action'
 
 interface FormOrderProps {
   toggleFormOrder: () => void
@@ -27,7 +28,7 @@ interface FormOrderProps {
 }
 
 const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cartItemsFromProps }) => {
-  const { control, handleSubmit, reset } = useForm()
+  const { control, handleSubmit } = useForm()
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
   const [isThankYou, setIsThankYou] = useState(false)
@@ -149,31 +150,6 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     status: true
   })
 
-  // console.log('O ITEM: ', orderItem)
-
-  // useEffect(() => {
-  //   if (cartItemsFromProps.length > 0) {
-  //     const updatedCartItems = cart.map((item) => ({
-  //       productId: item.productId,
-  //       productMaterialId: item.productMaterialId,
-  //       sizeName: item.sizeName || '',
-  //       colorName: item.colorName || '',
-  //       accessoryName: item.accessoryName || ''
-  //     }))
-
-  //     const mergedCartItems = updatedCartItems
-  //       .map((item, index) => ({
-  //         ...item,
-  //         quantity: cartItemsFromProps[index]?.quantity || 0
-  //       }))
-  //       .filter((item) => item.quantity > 0)
-
-  //     setOrderDetail((prevState) => ({
-  //       ...prevState,
-  //       cartItems: mergedCartItems
-  //     }))
-  //   }
-  // }, [cart, cartItemsFromProps])
 
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
@@ -297,7 +273,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   }
 
   console.log('order: ', orderDetail)
-  console.log('PRICE: ', totalPrice)
+  // console.log('PRICE: ', totalPrice)
 
   const validatePhoneNumber = (value: string) => {
     const phoneNumberRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/
@@ -317,10 +293,19 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     try {
       const abort = new AbortController()
       const signal = abort.signal
-      const res = await dispatch(createPaymentPayOS({ id: orderDetailProps.orderDetail?.id || 0, signal }))
-      const paymentData = unwrapResult(res)
-      if (paymentData.checkoutUrl) {
-        window.open(paymentData.checkoutUrl, '_blank')
+      if (payment.typePayment === 'Thanh toán online') {
+        const res = await dispatch(createPaymentPayOS({ id: orderDetailProps.orderDetail?.id || 0, signal }))
+        const paymentData = unwrapResult(res)
+        if (paymentData.checkoutUrl) {
+          window.open(paymentData.checkoutUrl, '_blank')
+          setIsThankYou(true)
+          dispatch(clearCart())
+        } else {
+          console.error('No checkoutUrl found in response')
+        }
+      }
+      if (payment.typePayment === 'Thanh toán khi nhận hàng') {
+        await dispatch(createPayment({ ...payment, orderDetailId: orderDetailProps.orderDetail?.id || 0 }))
         setIsThankYou(true)
         dispatch(clearCart())
       } else {
@@ -736,13 +721,6 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
                   </div>
 
                   <div className='flex justify-around'>
-                    <div>
-                      {payment.typePayment === 'Thanh toán online' && (
-                        <div>
-                          <img src='/assets/qr.png' alt='QR Code' className='md:w-32 md:h-32 w-28' />
-                        </div>
-                      )}
-                    </div>
                     <div>
                       <h2 className='flex justify-end mb-4'>GIÁ TRỊ</h2>
                       <h3 className='flex justify-end mb-4'>

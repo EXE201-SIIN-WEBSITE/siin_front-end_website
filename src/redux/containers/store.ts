@@ -28,7 +28,7 @@ export const store = configureStore({
     size: sizeSlice,
     payos: paymentPayOSSlice,
     auth: authSlice,
-    user: userSlice,
+    user: userSlice
   }
 })
 

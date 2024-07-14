@@ -11,7 +11,7 @@ interface GetProductsParams {
 interface GetProductsParams2 {
   signal: AbortSignal
   currentPage: number
-  
+
   // pageSize: number,
   // categoryId: number,
 }
@@ -25,9 +25,12 @@ interface GetProductsParams2 {
 
 export const getProducts = createAsyncThunk('product/getProducts', async ({ signal }: GetProductsParams, thunkAPI) => {
   try {
-    const response = await http.get<ResponseData<product[]>>(`/product/get-all-excluding-customize/-1?pageSize=5&field=name`, {
-      signal // Pass the abort signal for request cancellation
-    })
+    const response = await http.get<ResponseData<product[]>>(
+      `/product/get-all-excluding-customize/-1?pageSize=5&field=name`,
+      {
+        signal // Pass the abort signal for request cancellation
+      }
+    )
     return response.data.data
   } catch (error: any) {
     if (error.name === 'AbortError') {
@@ -37,19 +40,25 @@ export const getProducts = createAsyncThunk('product/getProducts', async ({ sign
   }
 })
 
-export const getProductGift = createAsyncThunk('product/getProductGift', async ({ signal }: GetProductsParams, thunkAPI) => {
-  try {
-    const response = await http.get<ResponseData<product[]>>(`/product/get-all/-1?currentPage=-1&pageSize=5&field=name&categoryId=1`, {
-      signal 
-    })
-    return response.data.data
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+export const getProductGift = createAsyncThunk(
+  'product/getProductGift',
+  async ({ signal }: GetProductsParams, thunkAPI) => {
+    try {
+      const response = await http.get<ResponseData<product[]>>(
+        `/product/get-all/-1?currentPage=-1&pageSize=5&field=name&categoryId=1`,
+        {
+          signal
+        }
+      )
+      return response.data.data
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+      }
+      return thunkAPI.rejectWithValue(error.response?.data || error)
     }
-    return thunkAPI.rejectWithValue(error.response?.data || error)
   }
-})
+)
 
 export const getProducts2 = createAsyncThunk(
   'product/getProducts2',

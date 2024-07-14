@@ -23,16 +23,16 @@ import { http } from '~/utils/http'
 //   }
 // )
 
-type OrderDetailData = OrderDetail | { orderDetailRequestDTO: any };
+type OrderDetailData = OrderDetail | { orderDetailRequestDTO: any }
 
 export const createOrderDetail = createAsyncThunk(
   'orderDetail/createOrderDetail',
-  async ({data, userId}:{data: OrderDetailData; userId?: number}, thunkAPI) => {
+  async ({ data, userId }: { data: OrderDetailData; userId?: number }, thunkAPI) => {
     try {
-      let url = '/order-detail';
+      let url = '/order-detail'
       if (userId) {
-        url += `?userId=${userId}`;
-        data = { orderDetailRequestDTO: data.orderDetailRequestDTO };
+        url += `?userId=${userId}`
+        data = { orderDetailRequestDTO: data.orderDetailRequestDTO }
       }
       const response = await http.post<ResponseData<OrderDetail>>(url, data)
       return response.data.data

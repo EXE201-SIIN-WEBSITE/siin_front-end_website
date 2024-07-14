@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
 import { getProductGift } from '~/redux/actions/product.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
-import { product } from '~/types/product.type'
-
 interface ArrowProps {
   onClick?: () => void
   className?: string
@@ -75,12 +73,9 @@ const ProductGift = () => {
     ]
   }
 
-
-  
-
   return (
     <div className='w-full'>
-     {productData.length > 0 ? (
+      {productData.length > 0 ? (
         <Slider {...settings}>
           {productData.map((item) => (
             <div className='md:p-1' key={item.id}>
@@ -105,7 +100,7 @@ const ProductGift = () => {
           ))}
         </Slider>
       ) : (
-        <div className='text-center text-gray-500 text-xl'>Chưa có sản phẩm trong danh mục quà tặng</div>
+        <div className='text-xl text-center text-gray-500'>Chưa có sản phẩm trong danh mục quà tặng</div>
       )}
     </div>
   )
