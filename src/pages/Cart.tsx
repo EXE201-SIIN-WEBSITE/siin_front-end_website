@@ -24,7 +24,7 @@ const Cart = () => {
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
   const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
 
-  console.log('access in CART', cart)
+  // console.log('access in CART', cart)
 
   const toggleFormOrder = () => {
     setFormOrder(!formOrder)

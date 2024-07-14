@@ -292,7 +292,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
-    reset()
+    // reset()
     setIsOrderForm(false)
   }
 
