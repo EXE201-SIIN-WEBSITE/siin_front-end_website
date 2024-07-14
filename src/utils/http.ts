@@ -14,7 +14,7 @@ class Http {
 
 const ghn = axios.create({
   baseURL: 'https://online-gateway.ghn.vn/shiip/public-api/master-data/',
-  timeout: 1000,
+  timeout: 10000,
   headers: { token: '3270f806-2693-11ef-ad6a-e6aec6d1ae72' }
 })
 
