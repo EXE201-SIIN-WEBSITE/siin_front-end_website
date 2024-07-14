@@ -32,19 +32,5 @@ export const createCartItem = createAsyncThunk(
   }
 )
 
-export const createCartItem2 = createAsyncThunk('cartItem/createCartItem2', async (data: addCartItem, thunkAPI) => {
-  try {
-    const response = await http.post<ResponseData<cartItem>>(`/cart-item`, data)
-    console.log('DATA RESPONE: ', response)
-
-    return response.data.data
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
-    }
-    return thunkAPI.rejectWithValue(error.response?.data || error.message)
-  }
-})
-
 export const clearCart = createAction('cartItem/clearCart')
 export const removeItemFromCart = createAction<number>('cartItem/removeItemFromCart')

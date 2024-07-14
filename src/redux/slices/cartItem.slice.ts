@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { FulfilledAction, PendingAction, RejectedAction } from '~/types/redux.type'
 import { initialCartItemState } from '../types/cartItem.type'
-import { createCartItem, createCartItem2 } from '../actions/cartItem.action'
+import { createCartItem } from '../actions/cartItem.action'
 
 const cartItemSlice = createSlice({
   name: 'cartItem',
@@ -19,12 +19,6 @@ const cartItemSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(createCartItem.fulfilled, (state, action) => {
-        state.loading = false
-        state.cartItemList.push(action.payload)
-        // state.cartItem = action.payload
-      })
-
-      .addCase(createCartItem2.fulfilled, (state, action) => {
         state.loading = false
         state.cartItemList.push(action.payload)
         // state.cartItem = action.payload
