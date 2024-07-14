@@ -5,7 +5,6 @@ export interface OrderDetail {
   id?: number
   cartItems: cartItem[]
   orderDetailRequestDTO: OrderDetailRequestDTO
-  
 }
 
 export interface OrderDetailRequestDTO {

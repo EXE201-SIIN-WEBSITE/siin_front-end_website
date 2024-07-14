@@ -119,7 +119,7 @@ export default function CustomizeProduct() {
   useEffect(() => {
     // const productPrice = productDetail?.price || 0
     // const calculatedTotalPrice = productPrice + colorPrice + sizePrice + accessoryPrice
-    const calculatedTotalPrice =  colorPrice + sizePrice + accessoryPrice
+    const calculatedTotalPrice = colorPrice + sizePrice + accessoryPrice
     setPriceSum(calculatedTotalPrice)
     setTotalPrice(calculatedTotalPrice)
   }, [productDetail, colorPrice, sizePrice, accessoryPrice])

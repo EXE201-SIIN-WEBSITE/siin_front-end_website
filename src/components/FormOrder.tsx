@@ -126,7 +126,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
   // console.log('CÂCCAC: ', cart)
 
   const initialOrderDetail = {
-    cartItems: [],
+    cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems') || '') : [],
     orderDetailRequestDTO: {
       nameCustomer: '',
       phone: '',
@@ -149,6 +149,12 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     orderDetailId: 0,
     status: true
   })
+  useEffect(() => {
+    setOrderDetail((prevState) => ({
+      ...prevState,
+      cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems') || '') : []
+    }))
+  }, [])
 
   // console.log('O ITEM: ', orderItem)
 
@@ -178,7 +184,8 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
-      const updatedCartItems = cart
+      const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as cartItem[]
+      updatedCartItems
         .filter((item) => item) // Ensure item is not null or undefined
         .map((item) => ({
           productId: item.productId,
