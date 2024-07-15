@@ -19,6 +19,7 @@ import { addCartItem } from '~/types/cartItem.type'
 import { CartItem } from '~/types/product.type'
 
 import image from '../../public/assets/cusdefault.jpg'
+import { unwrapResult } from '@reduxjs/toolkit'
 
 export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
@@ -122,7 +123,7 @@ export default function CustomizeProduct() {
     const calculatedTotalPrice = colorPrice + sizePrice + accessoryPrice
     setPriceSum(calculatedTotalPrice)
     setTotalPrice(calculatedTotalPrice)
-  }, [productDetail, colorPrice, sizePrice, accessoryPrice])
+  }, [colorPrice, sizePrice, accessoryPrice])
 
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => prevQuantity + 1)
@@ -164,7 +165,7 @@ export default function CustomizeProduct() {
 
   console.log('Cart info: ', cartInfo)
 
-  const handleAddToCart = () => {
+  const handleAddToCart =  async () => {
     if (activeColor === null || activeSize === null || selectedAccess === null) {
       return
     }
@@ -178,17 +179,20 @@ export default function CustomizeProduct() {
       ...(userId && { userId: userId }),
       ...(product.id && { id: product.id })
     }
-    dispatch(createCartItem(newCartItemForStore))
+    // dispatch(createCartItem(newCartItemForStore))
+    const data = await dispatch(createCartItem(newCartItemForStore)).then(unwrapResult)
 
     // eslint-disable-next-line prefer-const
     let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
 
     const newLocalStorageCartItem = {
-      ...productInCart,
+      ...data,
       quantity: cartInfo.quantity,
       sizeId: cartInfo.sizeId,
       colorId: cartInfo.colorId,
-      accessId: cartInfo.accessoryId
+      accessoryId: cartInfo.accessoryId,
+      // sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
+      // colorName: colors.find((c) => c.id === colorId)?.name || 'N/A',
     }
 
     const existingProductIndex = cartItems.findIndex(
@@ -196,7 +200,7 @@ export default function CustomizeProduct() {
         // item.productId === newLocalStorageCartItem.id &&
         item.sizeId === newLocalStorageCartItem.sizeId &&
         item.colorId === newLocalStorageCartItem.colorId &&
-        item.accessoryId === newLocalStorageCartItem.accessId
+        item.accessoryId === newLocalStorageCartItem.accessoryId
     )
 
     // const existingProductIndex = cartItems.findIndex((item: CartItem) => item.id === newLocalStorageCartItem.id);
@@ -217,7 +221,7 @@ export default function CustomizeProduct() {
     })
   }
 
-  console.log('PRICE: ', totalPrice)
+  console.log('PRICE: ', priceSum)
 
   return (
     <div className='flex flex-col lg:flex-row min-h-screen px-[1%]'>

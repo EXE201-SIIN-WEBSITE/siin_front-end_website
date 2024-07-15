@@ -1,3 +1,4 @@
+import { unwrapResult } from '@reduxjs/toolkit'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -156,40 +157,47 @@ const ProductDetail = () => {
     return null
   }
 
-  const handleAddToCart = () => {
-    if (activeColor === null || activeSize === null) {
+  const handleAddToCart = async () => {
+    if (activeColor === null || activeSize === null || selectedMaterialId === null) {
       return
     }
     const productInCart = addToCart()
+
     if (!productInCart) {
       return
     }
+
     const sizeId = cartItem.sizeId !== undefined && cartItem.sizeId !== null ? cartItem.sizeId : 0
     const colorId = cartItem.colorId !== undefined && cartItem.colorId !== null ? cartItem.colorId : 0
+
     const newCartItem: addCartItem = {
       quantity: cartItem.quantity,
       sizeId: sizeId,
-      colorId: colorId
-      // userId: cartItem.userId
+      colorId: colorId,
+      productMaterialId: selectedMaterialId
     }
+
     const newCartItemForStore = {
       id: numericId,
       cartItem: newCartItem,
       ...(userId && { userId: userId })
     }
-    dispatch(createCartItem(newCartItemForStore))
+    const data = await dispatch(createCartItem(newCartItemForStore)).then(unwrapResult)
+
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]')
+
     const newLocalStorageCartItem = {
-      ...productInCart,
+      ...data,
       quantity: newCartItem.quantity,
       sizeId: newCartItem.sizeId,
       colorId: newCartItem.colorId,
       sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
-      colorName: colors.find((c) => c.id === colorId)?.name || 'N/A',
-
+      colorName: colors.find((c) => c.id === colorId)?.name || 'N/A'
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const existingProductIndex = cartItems.findIndex((item: any) => item.id === newLocalStorageCartItem.id)
+    const existingProductIndex = cartItems.findIndex(
+      (item: any) => item.productMaterialId === newLocalStorageCartItem.productMaterialId
+    )
     if (existingProductIndex !== -1) {
       cartItems[existingProductIndex].quantity += newLocalStorageCartItem.quantity
     } else {
@@ -198,6 +206,7 @@ const ProductDetail = () => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems))
     const event = new CustomEvent('cartUpdated') // tao event khi cái function này chạy
     window.dispatchEvent(event)
+
     console.log('productInCart:', newCartItemForStore)
     swal({
       title: 'Sản phẩm đã được thêm vào giỏ hàng!',

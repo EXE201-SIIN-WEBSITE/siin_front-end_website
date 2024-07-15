@@ -86,16 +86,33 @@ export const getProducts2 = createAsyncThunk(
   }
 )
 
+// export const getProductDetail = createAsyncThunk('product/getProductDetail', async (id: number, thunkAPI) => {
+//   try {
+//     const response = await http.get<ResponseData<product>>(`/product/${id}`, {})
+//     console.log('dtat: ', response)
+
+//     return response.data.data
+//   } catch (error: any) {
+//     if (error.name === 'AbortError') {
+//       return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+//     }
+//     return thunkAPI.rejectWithValue(error.response?.data || error)
+//   }
+// })
+
 export const getProductDetail = createAsyncThunk('product/getProductDetail', async (id: number, thunkAPI) => {
   try {
-    const response = await http.get<ResponseData<product>>(`/product/${id}`, {})
-    console.log('dtat: ', response)
+    const response = await http.get<ResponseData<product>>(`/product/${id}`, {});
+    console.log('data: ', response);
 
-    return response.data.data
+    return response.data.data;
   } catch (error: any) {
     if (error.name === 'AbortError') {
-      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' })
+      return thunkAPI.rejectWithValue({ message: 'Request was cancelled' });
     }
-    return thunkAPI.rejectWithValue(error.response?.data || error)
+    // Trả về thông tin lỗi đơn giản
+    const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred';
+    const errorCode = error.response?.status || error.code || 'UNKNOWN_ERROR';
+    return thunkAPI.rejectWithValue({ message: errorMessage, code: errorCode });
   }
-})
+});

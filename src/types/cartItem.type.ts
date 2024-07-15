@@ -1,5 +1,6 @@
 export interface addCartItem {
   colorId?: number
+  productMaterialId?: number
   sizeId?: number
   accessoryId?: number
   quantity?: number
@@ -8,6 +9,7 @@ export interface addCartItem {
 }
 
 export interface cartItem {
+  id?: number
   quantity: number
   sizeName?: string
   colorName?: string
