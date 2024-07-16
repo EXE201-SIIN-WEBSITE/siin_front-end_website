@@ -74,7 +74,7 @@ const ProductGift = () => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full h-52'>
       {productData.length > 0 ? (
         <Slider {...settings}>
           {productData.map((item) => (

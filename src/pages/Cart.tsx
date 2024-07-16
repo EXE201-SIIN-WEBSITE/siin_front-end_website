@@ -31,11 +31,15 @@ const Cart = () => {
     setFormOrder(!formOrder)
   }
 
+  const turnOffFormOrder = () => {
+    setFormOrder(false)
+  }
+
   const handleOrderForm = (totalPrice: number) => {
     setOrderTotal(totalPrice)
     toggleFormOrder()
   }
-  useKey('Escape', toggleFormOrder)
+  useKey('Escape', turnOffFormOrder)
 
   const formatPriceToVND = (price: number): string => {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })

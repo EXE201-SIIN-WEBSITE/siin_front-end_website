@@ -79,7 +79,7 @@ const TopSeller = () => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full h-52'>
       <Slider {...settings}>
         {productData.map((item: product) => (
           <div className='md:p-1' key={item.id}>

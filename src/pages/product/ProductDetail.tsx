@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { unwrapResult } from '@reduxjs/toolkit'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -194,7 +195,6 @@ const ProductDetail = () => {
       sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
       colorName: colors.find((c) => c.id === colorId)?.name || 'N/A'
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const existingProductIndex = cartItems.findIndex(
       (item: any) => item.productMaterialId === newLocalStorageCartItem.productMaterialId
     )

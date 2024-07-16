@@ -156,7 +156,6 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     }))
   }, [])
 
-
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
       const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as Omit<cartItem, 'image'>[]
@@ -304,7 +303,7 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
         const res = await dispatch(createPaymentPayOS({ id: orderDetailProps.orderDetail?.id || 0, signal }))
         const paymentData = unwrapResult(res)
         if (paymentData.checkoutUrl) {
-          window.open(paymentData.checkoutUrl, '_blank')
+          window.open(paymentData.checkoutUrl, '_blank')?.focus()
           setIsThankYou(true)
           dispatch(clearCart())
         } else {
