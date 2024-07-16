@@ -25,7 +25,6 @@ export default function CustomizeProduct() {
   const color = useSelector((state: RootState) => state.color.colorList)
   const size = useSelector((state: RootState) => state.size.sizeList)
   const accessoryData = useSelector((state: RootState) => state.accessory.accessoryList)
-  const productDetail = useSelector((state: RootState) => state.product.productDetail)
   const dispatch = useAppDispatch()
   const swiperRef = useRef<SwiperCore | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -165,7 +164,7 @@ export default function CustomizeProduct() {
 
   console.log('Cart info: ', cartInfo)
 
-  const handleAddToCart =  async () => {
+  const handleAddToCart = async () => {
     if (activeColor === null || activeSize === null || selectedAccess === null) {
       return
     }
@@ -190,7 +189,7 @@ export default function CustomizeProduct() {
       quantity: cartInfo.quantity,
       sizeId: cartInfo.sizeId,
       colorId: cartInfo.colorId,
-      accessoryId: cartInfo.accessoryId,
+      accessoryId: cartInfo.accessoryId
       // sizeName: sizes.find((s) => s.id === sizeId)?.name || 'N/A',
       // colorName: colors.find((c) => c.id === colorId)?.name || 'N/A',
     }
