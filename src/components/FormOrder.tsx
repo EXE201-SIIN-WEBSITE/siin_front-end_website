@@ -28,7 +28,7 @@ interface FormOrderProps {
 }
 
 const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cartItemsFromProps }) => {
-  const { control, handleSubmit, reset } = useForm()
+  const { control, handleSubmit } = useForm()
   const elModal = useRef<HTMLDivElement>(null)
   const [isOrderForm, setIsOrderForm] = useState(true)
   const [isThankYou, setIsThankYou] = useState(false)
@@ -156,35 +156,10 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
     }))
   }, [])
 
-  // console.log('O ITEM: ', orderItem)
-
-  // useEffect(() => {
-  //   if (cartItemsFromProps.length > 0) {
-  //     const updatedCartItems = cart.map((item) => ({
-  //       productId: item.productId,
-  //       productMaterialId: item.productMaterialId,
-  //       sizeName: item.sizeName || '',
-  //       colorName: item.colorName || '',
-  //       accessoryName: item.accessoryName || ''
-  //     }))
-
-  //     const mergedCartItems = updatedCartItems
-  //       .map((item, index) => ({
-  //         ...item,
-  //         quantity: cartItemsFromProps[index]?.quantity || 0
-  //       }))
-  //       .filter((item) => item.quantity > 0)
-
-  //     setOrderDetail((prevState) => ({
-  //       ...prevState,
-  //       cartItems: mergedCartItems
-  //     }))
-  //   }
-  // }, [cart, cartItemsFromProps])
 
   useEffect(() => {
     if (cartItemsFromProps.length > 0) {
-      const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as cartItem[]
+      const updatedCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]') as Omit<cartItem, 'image'>[]
       updatedCartItems
         .filter((item) => item) // Ensure item is not null or undefined
         .map((item) => ({
@@ -300,12 +275,12 @@ const FormOrder: React.FC<FormOrderProps> = ({ toggleFormOrder, totalPrice, cart
 
     localStorage.removeItem('cartItems')
     setOrderDetail(initialOrderDetail)
-    reset()
+    // reset()
     setIsOrderForm(false)
   }
 
   console.log('order: ', orderDetail)
-  console.log('PRICE: ', totalPrice)
+  // console.log('PRICE: ', totalPrice)
 
   const validatePhoneNumber = (value: string) => {
     const phoneNumberRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})$/

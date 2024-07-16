@@ -11,6 +11,8 @@ import { getSizeDetail } from '~/redux/actions/size.action'
 import { RootState, useAppDispatch } from '~/redux/containers/store'
 import { CartItem } from '~/types/product.type'
 import '../components/animation/formOrder.css'
+import { getProductDetail } from '~/redux/actions/product.action'
+import { getProductMaterialDetail } from '~/redux/actions/material.action'
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -21,9 +23,9 @@ const Cart = () => {
   const accessory = useSelector((state: RootState) => state.accessory.accessory)
   const color = useSelector((state: RootState) => state.color.color)
   const size = useSelector((state: RootState) => state.size.size)
-  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  
   const [selectedProduct, setSelectedProduct] = useState<CartItem | null>(null)
-
+  const [totalPrice, setTotalPrice] = useState(0)
   console.log('access in CART', cart)
 
   const toggleFormOrder = () => {
@@ -35,14 +37,49 @@ const Cart = () => {
     toggleFormOrder()
   }
   useKey('Escape', toggleFormOrder)
-  const formatPriceToVND = (price: number): string => {
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ₫`
-  }
+
+ const formatPriceToVND = (price: number): string => {
+  return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+}
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('cartItems') || '[]')
     setCartItems(items)
   }, [])
+
+  useEffect(() => {
+    const itemsWithoutPrice = cartItems.filter(item => !item.price);
+    if (itemsWithoutPrice.length > 0) {
+      itemsWithoutPrice.forEach(item => {
+        if (item.productMaterialId !== undefined) {
+          dispatch(getProductMaterialDetail(item.productMaterialId)).then((action: any) => {
+            const materialDetail = action.payload;
+            const updatedItems = cartItems.map(cartItem => {
+              if (cartItem.productMaterialId === materialDetail.id) {
+                return {
+                  ...cartItem,
+                  price: materialDetail.price, // Assuming price is in materialDetail
+                };
+              }
+              return cartItem;
+            });
+            setCartItems(updatedItems);
+            localStorage.setItem('cartItems', JSON.stringify(updatedItems)); // Update localStorage
+          });
+        }
+      });
+    }
+  }, [cartItems, dispatch]);
+
+
+  
+
+  useEffect(() => {
+    const newTotalPrice = cartItems.reduce((total, item) => {
+      return total + (item.price || 0) * item.quantity;
+    }, 0);
+    setTotalPrice(newTotalPrice);
+  }, [cartItems]);
 
   const updateQuantity = (index: number, quantity: number) => {
     const updatedItems = cartItems
@@ -128,7 +165,8 @@ const Cart = () => {
           </div>
 
           <div className='flex justify-end gap-6 mt-4 mr-5'>
-            <h1 className='text-xl font-bold'>Tổng cộng: {formatPriceToVND(totalPrice)}</h1>
+          <h1 className='text-xl font-bold'>Tổng cộng: {formatPriceToVND(totalPrice)}</h1>
+
             <button
               className='px-2 py-1 bg-black text-white rounded-md md:w-[16%] custom-button custom-button:hover'
               onClick={() => handleOrderForm(totalPrice)}

@@ -14,7 +14,7 @@ export interface product {
 export interface CartItem {
   id: number
   name?: string
-  price: number
+  price?: number
   quantity: number
   image?: string
   productMaterialId?: number
